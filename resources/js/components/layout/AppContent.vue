@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { SidebarInset } from '@/components/ui/sidebar';
 import { computed } from 'vue';
-import AppFooter from '@/components/AppFooter.vue';
+import { usePage } from '@inertiajs/vue3';
+import AppFooter from '@/components/layout/AppFooter.vue';
 
 interface Props {
     variant?: 'header' | 'sidebar';

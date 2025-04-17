@@ -1,17 +1,25 @@
+<template>
+  <component
+    :is="as"
+    :class="[
+      'scroll-m-20',
+      size === 'lg' && 'text-3xl font-bold tracking-tight md:text-4xl',
+      size === 'md' && 'text-2xl font-semibold tracking-tight',
+      size === 'sm' && 'text-xl font-semibold tracking-tight',
+    ]"
+  >
+    <slot />
+  </component>
+</template>
+
 <script setup lang="ts">
 interface Props {
-    title: string;
-    description?: string;
+  as?: 'h1' | 'h2' | 'h3' | 'h4'
+  size?: 'sm' | 'md' | 'lg'
 }
 
-defineProps<Props>();
+withDefaults(defineProps<Props>(), {
+  as: 'h1',
+  size: 'lg',
+})
 </script>
-
-<template>
-    <div class="mb-8 space-y-0.5">
-        <h2 class="text-xl font-semibold tracking-tight">{{ title }}</h2>
-        <p v-if="description" class="text-sm text-muted-foreground">
-            {{ description }}
-        </p>
-    </div>
-</template>
