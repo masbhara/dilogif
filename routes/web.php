@@ -6,6 +6,8 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\TeamMemberController;
 use App\Http\Controllers\ContactMessageController;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\CategoryController;
 
 Route::middleware(['auth'])->group(function () {
     // Dashboard Route
@@ -49,6 +51,16 @@ Route::get('/contact', function () {
 })->name('contact');
 
 Route::post('/contact', [ContactMessageController::class, 'store'])->name('contact.store');
+
+Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
+    // Products
+    Route::resource('products', ProductController::class);
+    Route::delete('products/gallery/{gallery}', [ProductController::class, 'deleteGalleryImage'])->name('products.gallery.delete');
+    Route::post('products/gallery/order', [ProductController::class, 'updateGalleryOrder'])->name('products.gallery.order');
+
+    // Categories
+    Route::resource('categories', CategoryController::class);
+});
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

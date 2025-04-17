@@ -260,12 +260,12 @@ class HandleInertiaRequests extends Middleware
     {
         // Hardcoded mapping untuk backward compatibility
         $routeToComponentMap = [
-            'admin.dashboard' => 'admin/Dashboard/Index',
-            'admin.users.index' => 'admin/Users/Index',
-            'admin.roles.index' => 'admin/Roles/Index',
-            'admin.permissions.index' => 'admin/Permissions/Index',
-            'admin.email.index' => 'admin/Email/Index',
-            'admin.settings.index' => 'admin/Settings/Index',
+            'admin.dashboard' => 'admin/dashboard/Index',
+            'admin.users.index' => 'admin/users/Index',
+            'admin.roles.index' => 'admin/roles/Index',
+            'admin.permissions.index' => 'admin/permissions/Index',
+            'admin.email.index' => 'admin/email/Index',
+            'admin.settings.index' => 'admin/settings/Index',
         ];
         
         // Jika ada di mapping langsung, gunakan itu

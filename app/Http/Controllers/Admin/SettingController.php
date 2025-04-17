@@ -17,7 +17,7 @@ class SettingController extends Controller
     {
         $settings = WebsiteSetting::getSettings();
         
-        return Inertia::render('admin/Settings/Index', [
+        return Inertia::render('admin/settings/Index', [
             'settings' => $settings,
             'mediaUrls' => [
                 'logo' => $settings->getLogoUrl(),

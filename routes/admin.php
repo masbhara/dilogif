@@ -36,7 +36,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
             // Data aktivitas lainnya...
         ];
         
-        return inertia('admin/Dashboard/Index', [
+        return inertia('admin/dashboard/Index', [
             'stats' => [
                 [
                     'title' => 'Total Pengguna',

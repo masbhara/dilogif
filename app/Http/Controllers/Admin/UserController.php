@@ -44,7 +44,7 @@ class UserController extends Controller
         
         $usersData = $query->paginate(10)->withQueryString();
         
-        return Inertia::render('admin/Users/Index', [
+        return Inertia::render('admin/users/Index', [
             'users' => [
                 'data' => $usersData->items(),
                 'links' => $usersData->linkCollection()->toArray(),
@@ -73,7 +73,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        return Inertia::render('admin/Users/Create', [
+        return Inertia::render('admin/users/Create', [
             'roles' => Role::all(),
             'genders' => [
                 ['id' => 'male', 'name' => 'Laki-laki'],
@@ -121,7 +121,7 @@ class UserController extends Controller
     {
         $user->load('roles');
         
-        return Inertia::render('admin/Users/Show', [
+        return Inertia::render('admin/users/Show', [
             'user' => $user,
             'title' => 'Detail Pengguna',
         ]);
@@ -134,7 +134,7 @@ class UserController extends Controller
     {
         $user->load('roles');
         
-        return Inertia::render('admin/Users/Edit', [
+        return Inertia::render('admin/users/Edit', [
             'user' => $user,
             'roles' => Role::all(),
             'userRoles' => $user->roles->pluck('id')->toArray(),

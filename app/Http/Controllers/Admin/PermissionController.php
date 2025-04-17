@@ -16,7 +16,7 @@ class PermissionController extends Controller
     {
         $permissions = Permission::paginate(10);
         
-        return Inertia::render('admin/Permissions/Index', [
+        return Inertia::render('admin/permissions/Index', [
             'permissions' => $permissions,
             'title' => 'Manajemen Izin',
         ]);
@@ -27,7 +27,7 @@ class PermissionController extends Controller
      */
     public function create()
     {
-        return Inertia::render('admin/Permissions/Create', [
+        return Inertia::render('admin/permissions/Create', [
             'title' => 'Tambah Izin',
         ]);
     }
@@ -57,7 +57,7 @@ class PermissionController extends Controller
     {
         $permission->load('roles');
         
-        return Inertia::render('admin/Permissions/Show', [
+        return Inertia::render('admin/permissions/Show', [
             'permission' => $permission,
             'title' => 'Detail Izin',
         ]);
@@ -68,7 +68,7 @@ class PermissionController extends Controller
      */
     public function edit(Permission $permission)
     {
-        return Inertia::render('admin/Permissions/Edit', [
+        return Inertia::render('admin/permissions/Edit', [
             'permission' => $permission,
             'title' => 'Edit Izin',
         ]);

@@ -21,7 +21,7 @@ class RoleController extends Controller
             ->withCount('users')
             ->paginate(10);
         
-        return Inertia::render('admin/Roles/Index', [
+        return Inertia::render('admin/roles/Index', [
             'roles' => $roles,
             'title' => 'Manajemen Peran',
         ]);
@@ -34,7 +34,7 @@ class RoleController extends Controller
     {
         $permissions = Permission::all();
         
-        return Inertia::render('admin/Roles/Create', [
+        return Inertia::render('admin/roles/Create', [
             'permissions' => $permissions,
             'title' => 'Tambah Peran Baru',
         ]);
@@ -68,7 +68,7 @@ class RoleController extends Controller
         $role->load('permissions');
         $role->loadCount('users');
         
-        return Inertia::render('admin/Roles/Show', [
+        return Inertia::render('admin/roles/Show', [
             'role' => $role,
             'title' => 'Detail Peran',
         ]);
@@ -82,7 +82,7 @@ class RoleController extends Controller
         $role->load('permissions');
         $permissions = Permission::all();
         
-        return Inertia::render('admin/Roles/Edit', [
+        return Inertia::render('admin/roles/Edit', [
             'role' => $role,
             'permissions' => $permissions,
             'title' => 'Edit Peran',

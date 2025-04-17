@@ -44,12 +44,40 @@ class RoleAndPermissionSeeder extends Seeder
             
             // Permissions untuk user biasa
             'view own profile',
-            'edit own profile'
+            'edit own profile',
+
+            // Permissions untuk modul products
+            'view products',
+            'create products',
+            'edit products',
+            'delete products',
+
+            // Permissions untuk modul orders
+            'view orders',
+            'create orders',
+            'edit orders',
+            'delete orders'
         ]);
 
         // Buat role admin dan berikan semua permissions
         $adminRole = Role::firstOrCreate(['name' => 'admin']);
         $adminRole->syncPermissions(Permission::all());
+
+        // Buat role staff dan berikan permissions yang sesuai
+        $staffRole = Role::firstOrCreate(['name' => 'staff']);
+        $staffRole->syncPermissions([
+            'view users',
+            'view own profile',
+            'edit own profile',
+            'view products',
+            'create products',
+            'edit products',
+            'delete products',
+            'view orders',
+            'create orders',
+            'edit orders',
+            'delete orders'
+        ]);
 
         // Buat role user biasa dan berikan beberapa permissions
         $userRole = Role::firstOrCreate(['name' => 'user']);

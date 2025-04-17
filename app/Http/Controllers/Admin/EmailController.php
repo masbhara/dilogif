@@ -19,7 +19,7 @@ class EmailController extends Controller
         // Ambil pengaturan email atau buat instance baru jika belum ada
         $emailSettings = EmailSetting::getSettings();
         
-        return Inertia::render('admin/Email/Index', [
+        return Inertia::render('admin/email/Index', [
             'emailSettings' => $emailSettings,
             'title' => 'Pengaturan Email',
         ]);
