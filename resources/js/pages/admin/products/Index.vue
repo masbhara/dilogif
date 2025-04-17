@@ -30,6 +30,7 @@
                                 <TableHead class="py-3 px-6 font-medium text-muted-foreground">Nama</TableHead>
                                 <TableHead class="py-3 px-6 font-medium text-muted-foreground">Kategori</TableHead>
                                 <TableHead class="py-3 px-6 font-medium text-muted-foreground">Harga</TableHead>
+                                <TableHead class="py-3 px-6 font-medium text-muted-foreground">URL</TableHead>
                                 <TableHead class="py-3 px-6 font-medium text-muted-foreground">Status</TableHead>
                                 <TableHead class="py-3 px-6 font-medium text-muted-foreground text-right">Tindakan</TableHead>
                             </TableRow>
@@ -53,6 +54,26 @@
                                     </Badge>
                                 </TableCell>
                                 <TableCell class="py-3.5 px-6 align-middle">{{ formatPrice(product.price) }}</TableCell>
+                                <TableCell class="py-3.5 px-6 align-middle">
+                                    <div v-if="product.url" class="flex items-center gap-2">
+                                        <a 
+                                            :href="product.url" 
+                                            target="_blank" 
+                                            class="text-blue-600 hover:text-blue-800 underline text-xs truncate max-w-[150px]"
+                                            :title="product.url"
+                                        >
+                                            {{ product.slug }}
+                                        </a>
+                                        <button 
+                                            @click="copyToClipboard(product.url)" 
+                                            class="text-gray-500 hover:text-gray-700 focus:outline-none"
+                                            title="Salin URL"
+                                        >
+                                            <ClipboardIcon class="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                    <span v-else>-</span>
+                                </TableCell>
                                 <TableCell class="py-3.5 px-6 align-middle">
                                     <Badge 
                                         :class="[
@@ -122,7 +143,7 @@
 import { Head, Link } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { PlusIcon, MoreHorizontal, Eye, Pencil, Trash, Trash2 } from 'lucide-vue-next';
+import { PlusIcon, MoreHorizontal, Eye, Pencil, Trash, Trash2, ClipboardIcon } from 'lucide-vue-next';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -194,6 +215,13 @@ const hapusProduct = () => {
         onFinish: () => {
             loading.value = false;
         }
+    });
+};
+
+// Fungsi untuk menyalin URL ke clipboard
+const copyToClipboard = (url) => {
+    navigator.clipboard.writeText(url).then(() => {
+        toast.success('URL berhasil disalin!');
     });
 };
 </script> 

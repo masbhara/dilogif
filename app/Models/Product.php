@@ -27,6 +27,8 @@ class Product extends Model
         'is_active' => 'boolean',
     ];
 
+    protected $appends = ['url'];
+
     protected static function boot()
     {
         parent::boot();
@@ -36,6 +38,28 @@ class Product extends Model
                 $product->slug = Str::slug($product->name);
             }
         });
+
+        static::updating(function ($product) {
+            // Jika nama berubah, update slug kecuali custom_url diisi
+            if ($product->isDirty('name') && empty($product->custom_url)) {
+                $product->slug = Str::slug($product->name);
+            }
+            
+            // Jika custom_url diisi, gunakan itu sebagai slug
+            if ($product->isDirty('custom_url') && !empty($product->custom_url)) {
+                $product->slug = Str::slug($product->custom_url);
+            }
+        });
+    }
+
+    /**
+     * Get the URL to the product page.
+     *
+     * @return string
+     */
+    public function getUrlAttribute()
+    {
+        return route('products.show', $this->slug);
     }
 
     public function category()

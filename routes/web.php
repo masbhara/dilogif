@@ -8,6 +8,7 @@ use App\Http\Controllers\TeamMemberController;
 use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\ProductsController;
 
 Route::middleware(['auth'])->group(function () {
     // Dashboard Route
@@ -51,6 +52,10 @@ Route::get('/contact', function () {
 })->name('contact');
 
 Route::post('/contact', [ContactMessageController::class, 'store'])->name('contact.store');
+
+// Rute Produk Publik
+Route::get('/products', [ProductsController::class, 'index'])->name('products.index');
+Route::get('/products/{slug}', [ProductsController::class, 'show'])->name('products.show');
 
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
     // Products
