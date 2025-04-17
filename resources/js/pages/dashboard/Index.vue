@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import { defineComponent as _defineComponent } from "vue";
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
-import PlaceholderPattern from '@/components/PlaceholderPattern.vue';
+import PlaceholderPattern from '@/components/ui/PlaceholderPattern.vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
