@@ -39,13 +39,15 @@
 
                                 <div>
                                     <Label for="category">Kategori</Label>
-                                    <Select v-model="form.category_id">
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Pilih kategori" />
+                                    <Select 
+                                        v-model="selectedCategory"
+                                    >
+                                        <SelectTrigger class="w-full">
+                                            <SelectValue placeholder="Pilih kategori" class="truncate text-start" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem
-                                                value=""
+                                                :value="null"
                                                 class="text-amber-600 font-medium"
                                             >
                                                 -- Tanpa Kategori --
@@ -76,6 +78,9 @@
                                         class="mt-1 block w-full"
                                         required
                                     />
+                                    <p class="text-xs text-muted-foreground mt-1">
+                                        Masukkan harga tanpa tanda baca, contoh: 100000
+                                    </p>
                                     <InputError :message="form.errors.price" class="mt-2" />
                                 </div>
 
@@ -87,14 +92,25 @@
                                         type="text"
                                         class="mt-1 block w-full"
                                     />
+                                    <p class="text-xs text-muted-foreground mt-1">
+                                        Opsional: URL kustom untuk produk (tanpa spasi dan karakter khusus)
+                                    </p>
                                     <InputError :message="form.errors.custom_url" class="mt-2" />
                                 </div>
 
                                 <div>
                                     <Label for="featured_image">Gambar Utama</Label>
                                     <div class="mt-2">
+                                        <!-- Tampilkan gambar utama saat ini atau preview -->
                                         <img
-                                            :src="'/storage/' + product.featured_image"
+                                            v-if="featuredImagePreview"
+                                            :src="featuredImagePreview"
+                                            :alt="product.name"
+                                            class="w-32 h-32 object-cover rounded-md mb-2"
+                                        />
+                                        <img
+                                            v-else
+                                            :src="featuredImageUrl"
                                             :alt="product.name"
                                             class="w-32 h-32 object-cover rounded-md mb-2"
                                         />
@@ -102,10 +118,13 @@
                                     <Input
                                         id="featured_image"
                                         type="file"
-                                        @input="form.featured_image = $event.target.files[0]"
+                                        @input="handleFeaturedImageChange"
                                         accept="image/*"
                                         class="mt-1 block w-full"
                                     />
+                                    <p class="text-xs text-muted-foreground mt-1">
+                                        Opsional: Ganti gambar utama produk. Format yang didukung: JPEG, PNG, JPG, GIF. Maksimal 2MB.
+                                    </p>
                                     <InputError :message="form.errors.featured_image" class="mt-2" />
                                 </div>
 
@@ -134,11 +153,14 @@
                                     <Input
                                         id="gallery"
                                         type="file"
-                                        @input="form.gallery = Array.from($event.target.files)"
+                                        @input="handleGalleryImagesChange"
                                         accept="image/*"
                                         multiple
                                         class="mt-4 block w-full"
                                     />
+                                    <p class="text-xs text-muted-foreground mt-1">
+                                        Opsional: Tambahkan gambar baru ke galeri produk. Format yang didukung: JPEG, PNG, JPG, GIF. Maksimal 2MB per gambar.
+                                    </p>
                                     <InputError :message="form.errors.gallery" class="mt-2" />
                                 </div>
                             </div>
@@ -172,8 +194,8 @@
 
         <!-- Dialog Konfirmasi Hapus Gambar -->
         <ConfirmationDialog
-            :open="showDeleteDialog"
-            @update:open="showDeleteDialog = $event"
+            :open="showDeleteConfirm"
+            @update:open="showDeleteConfirm = $event"
             title="Konfirmasi Penghapusan Gambar"
             dangerMode
             :icon="Trash2"
@@ -198,7 +220,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import InputError from '@/components/InputError.vue';
 import { router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, computed, watch } from 'vue';
 import ConfirmationDialog from '@/components/ui/ConfirmationDialog.vue';
 import { toast } from 'vue-sonner';
 
@@ -224,9 +246,18 @@ const props = defineProps({
 });
 
 // State untuk dialog hapus gambar
-const selectedImage = ref(null);
-const showDeleteDialog = ref(false);
+const imageToDelete = ref(null);
+const showDeleteConfirm = ref(false);
 const loading = ref(false);
+
+// Preview gambar utama baru
+const featuredImagePreview = ref(null);
+
+// Gunakan ref terpisah untuk menangani pilihan kategori
+const selectedCategory = ref(props.product.category_id);
+
+// Tambahkan array untuk menangani gambar galeri baru
+const newGalleryImages = ref([]);
 
 const form = useForm({
     name: props.product.name,
@@ -234,51 +265,108 @@ const form = useForm({
     price: props.product.price,
     description: props.product.description,
     featured_image: null,
-    gallery: [],
+    gallery: props.product.gallery || [],
     custom_url: props.product.custom_url,
-    _method: 'PUT'
+    _method: 'PUT' // Metode HTTP yang benar untuk update
+});
+
+// Perhatikan perubahan pada selectedCategory dan perbarui form.category_id
+watch(selectedCategory, (newValue) => {
+    form.category_id = newValue;
+});
+
+// Fungsi untuk preview gambar utama
+const handleFeaturedImageChange = (event) => {
+    const file = event.target.files[0];
+    form.featured_image = file;
+    
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            featuredImagePreview.value = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    } else {
+        featuredImagePreview.value = null;
+    }
+};
+
+// Fungsi untuk menangani penambahan gambar galeri baru
+const handleGalleryImagesChange = (event) => {
+    if (event.target.files && event.target.files.length > 0) {
+        newGalleryImages.value = Array.from(event.target.files);
+    }
+};
+
+// URLs untuk gambar yang ada
+const featuredImageUrl = computed(() => {
+    return `/storage/${props.product.featured_image}`;
 });
 
 const submit = () => {
     loading.value = true;
-    form.post(route('admin.products.update', props.product.id), {
+    
+    const formData = new FormData();
+    formData.append("_method", "PUT");
+    formData.append("name", form.name);
+    formData.append("description", form.description);
+    formData.append("price", form.price);
+    formData.append("custom_url", form.custom_url);
+    
+    if (form.category_id) {
+        formData.append("category_id", form.category_id);
+    }
+    
+    if (form.featured_image && typeof form.featured_image !== 'string') {
+        formData.append("featured_image", form.featured_image);
+    }
+    
+    if (newGalleryImages.value.length > 0) {
+        newGalleryImages.value.forEach((image) => {
+            formData.append("gallery[]", image);
+        });
+    }
+    
+    // Tambahkan gallery_ids yang akan dipertahankan
+    form.gallery.forEach((item) => {
+        formData.append("gallery_ids[]", item.id);
+    });
+    
+    router.post(route("admin.products.update", props.product.id), formData, {
         onSuccess: () => {
             loading.value = false;
-            toast.success('Berhasil', {
-                description: `Produk ${props.product.name} berhasil diperbarui`,
-            });
-            // Redirect ke halaman index produk
-            router.visit(route('admin.products.index'));
+            toast.success("Produk berhasil diperbarui");
+            newGalleryImages.value = [];
+            showDeleteConfirm.value = false;
+            imageToDelete.value = null;
         },
         onError: (errors) => {
             loading.value = false;
-            toast.error('Gagal', {
-                description: `Terjadi kesalahan saat memperbarui produk`,
-            });
-            console.error('Error:', errors);
+            toast.error("Gagal memperbarui produk");
+            console.error(errors);
         },
-        forceFormData: true
+        forceFormData: true,
     });
 };
 
 const showDeleteGalleryDialog = (image) => {
-    selectedImage.value = image;
-    showDeleteDialog.value = true;
+    imageToDelete.value = image;
+    showDeleteConfirm.value = true;
 };
 
 const deleteGalleryImage = () => {
-    if (!selectedImage.value) return;
+    if (!imageToDelete.value) return;
     
     loading.value = true;
     
-    router.delete(route('admin.products.gallery.delete', selectedImage.value.id), {
+    router.delete(route('admin.products.gallery.delete', imageToDelete.value.id), {
         preserveScroll: true,
-        only: ['product'],
+        only: ['product'], // Hanya refresh data product
         onSuccess: () => {
             toast.success('Berhasil', {
                 description: 'Gambar berhasil dihapus dari galeri',
             });
-            showDeleteDialog.value = false;
+            showDeleteConfirm.value = false;
         },
         onError: (errors) => {
             toast.error('Gagal', {

@@ -44,41 +44,68 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'category_id' => 'nullable|exists:categories,id',
-            'price' => 'required|numeric|min:0',
-            'description' => 'required|string',
-            'featured_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'custom_url' => 'nullable|string|max:255',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'category_id' => 'nullable|exists:categories,id',
+                'price' => 'required|numeric|min:0',
+                'description' => 'required|string',
+                'featured_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'custom_url' => 'nullable|string|max:255',
+            ]);
 
-        $featuredImage = $request->file('featured_image')->store('products', 'public');
+            $featuredImage = $request->file('featured_image')->store('products', 'public');
 
-        $product = Product::create([
-            'name' => $request->name,
-            'slug' => Str::slug($request->name),
-            'category_id' => $request->category_id ?: null,
-            'price' => $request->price,
-            'description' => $request->description,
-            'featured_image' => $featuredImage,
-            'custom_url' => $request->custom_url,
-        ]);
+            $product = Product::create([
+                'name' => $request->name,
+                'slug' => Str::slug($request->name),
+                'category_id' => $request->category_id ?: null,
+                'price' => $request->price,
+                'description' => $request->description,
+                'featured_image' => $featuredImage,
+                'custom_url' => $request->custom_url,
+                'is_active' => true, // Default to active
+            ]);
 
-        if ($request->hasFile('gallery')) {
-            foreach ($request->file('gallery') as $index => $image) {
-                $path = $image->store('products/gallery', 'public');
-                ProductGallery::create([
-                    'product_id' => $product->id,
-                    'image' => $path,
-                    'sort_order' => $index
+            if ($request->hasFile('gallery')) {
+                foreach ($request->file('gallery') as $index => $image) {
+                    $path = $image->store('products/gallery', 'public');
+                    ProductGallery::create([
+                        'product_id' => $product->id,
+                        'image' => $path,
+                        'sort_order' => $index
+                    ]);
+                }
+            }
+
+            // Load relationships
+            $product->load('gallery', 'category');
+
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Produk berhasil dibuat',
+                    'product' => $product
                 ]);
             }
-        }
 
-        return redirect()->route('admin.products.index')
-            ->with('success', 'Product created successfully.');
+            return redirect()->route('admin.products.index')
+                ->with('success', 'Produk berhasil dibuat');
+        
+        } catch (\Exception $e) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal membuat produk',
+                    'error' => $e->getMessage()
+                ], 500);
+            }
+            
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['error' => 'Gagal membuat produk: ' . $e->getMessage()]);
+        }
     }
 
     /**
@@ -112,50 +139,77 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'category_id' => 'nullable|exists:categories,id',
-            'price' => 'required|numeric|min:0',
-            'description' => 'required|string',
-            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'custom_url' => 'nullable|string|max:255',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'category_id' => 'nullable|exists:categories,id',
+                'price' => 'required|numeric|min:0',
+                'description' => 'required|string',
+                'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'custom_url' => 'nullable|string|max:255',
+            ]);
 
-        $data = [
-            'name' => $request->name,
-            'slug' => Str::slug($request->name),
-            'category_id' => $request->category_id ?: null,
-            'price' => $request->price,
-            'description' => $request->description,
-            'custom_url' => $request->custom_url,
-        ];
+            $data = [
+                'name' => $request->name,
+                'slug' => Str::slug($request->name),
+                'category_id' => $request->category_id ?: null,
+                'price' => $request->price,
+                'description' => $request->description,
+                'custom_url' => $request->custom_url,
+            ];
 
-        // Proses gambar utama jika ada
-        if ($request->hasFile('featured_image')) {
-            // Hapus gambar lama jika ada
-            if ($product->featured_image) {
-                Storage::disk('public')->delete($product->featured_image);
+            // Proses gambar utama jika ada
+            if ($request->hasFile('featured_image')) {
+                // Hapus gambar lama jika ada
+                if ($product->featured_image) {
+                    Storage::disk('public')->delete($product->featured_image);
+                }
+                $data['featured_image'] = $request->file('featured_image')->store('products', 'public');
             }
-            $data['featured_image'] = $request->file('featured_image')->store('products', 'public');
-        }
 
-        // Update produk
-        $product->update($data);
+            // Update produk
+            $product->update($data);
 
-        // Proses gambar galeri jika ada
-        if ($request->hasFile('gallery')) {
-            foreach ($request->file('gallery') as $image) {
-                ProductGallery::create([
-                    'product_id' => $product->id,
-                    'image' => $image->store('products/gallery', 'public'),
-                    'sort_order' => $product->gallery()->count()
+            // Proses gambar galeri jika ada
+            if ($request->hasFile('gallery')) {
+                foreach ($request->file('gallery') as $image) {
+                    ProductGallery::create([
+                        'product_id' => $product->id,
+                        'image' => $image->store('products/gallery', 'public'),
+                        'sort_order' => $product->gallery()->count()
+                    ]);
+                }
+            }
+
+            // Refresh product data with gallery
+            $product->refresh();
+            $product->load('gallery', 'category');
+
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Produk berhasil diperbarui',
+                    'product' => $product
                 ]);
             }
-        }
 
-        return redirect()->route('admin.products.index')
-            ->with('success', 'Produk berhasil diperbarui');
+            return redirect()->back()
+                ->with('success', 'Produk berhasil diperbarui');
+                
+        } catch (\Exception $e) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal memperbarui produk',
+                    'error' => $e->getMessage()
+                ], 500);
+            }
+            
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['error' => 'Gagal memperbarui produk: ' . $e->getMessage()]);
+        }
     }
 
     /**
@@ -163,28 +217,82 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        Storage::disk('public')->delete($product->featured_image);
-        
-        foreach ($product->gallery as $gallery) {
-            Storage::disk('public')->delete($gallery->image);
-        }
-        
-        $product->delete();
+        try {
+            // Hapus gambar utama
+            if ($product->featured_image) {
+                Storage::disk('public')->delete($product->featured_image);
+            }
+            
+            // Hapus semua gambar galeri
+            foreach ($product->gallery as $gallery) {
+                Storage::disk('public')->delete($gallery->image);
+                $gallery->delete();
+            }
+            
+            // Hapus produk (menggunakan soft delete)
+            $product->delete();
 
-        return redirect()->route('admin.products.index')
-            ->with('success', 'Product deleted successfully.');
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Produk berhasil dihapus'
+                ]);
+            }
+
+            return redirect()->route('admin.products.index')
+                ->with('success', 'Produk berhasil dihapus');
+                
+        } catch (\Exception $e) {
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal menghapus produk',
+                    'error' => $e->getMessage()
+                ], 500);
+            }
+            
+            return redirect()->back()
+                ->withErrors(['error' => 'Gagal menghapus produk: ' . $e->getMessage()]);
+        }
     }
 
     public function deleteGalleryImage(ProductGallery $gallery)
     {
-        Storage::disk('public')->delete($gallery->image);
-        $gallery->delete();
+        try {
+            $productId = $gallery->product_id;
+            
+            // Hapus file gambar
+            Storage::disk('public')->delete($gallery->image);
+            
+            // Hapus record dari database
+            $gallery->delete();
 
-        if (request()->wantsJson()) {
-            return response()->json(['message' => 'Gallery image deleted successfully.']);
+            // Ambil produk yang direfresh dengan gallery baru
+            $product = Product::with('gallery', 'category')->find($productId);
+
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Gambar galeri berhasil dihapus',
+                    'product' => $product
+                ]);
+            }
+            
+            return redirect()->back()
+                ->with('success', 'Gambar galeri berhasil dihapus');
+                
+        } catch (\Exception $e) {
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal menghapus gambar',
+                    'error' => $e->getMessage()
+                ], 500);
+            }
+            
+            return redirect()->back()
+                ->withErrors(['error' => 'Gagal menghapus gambar: ' . $e->getMessage()]);
         }
-        
-        return redirect()->back()->with('success', 'Gambar galeri berhasil dihapus.');
     }
 
     public function updateGalleryOrder(Request $request)
