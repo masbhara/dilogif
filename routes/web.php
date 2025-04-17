@@ -8,6 +8,11 @@ use App\Http\Controllers\TeamMemberController;
 use App\Http\Controllers\ContactMessageController;
 
 Route::middleware(['auth'])->group(function () {
+    // Dashboard Route
+    Route::get('/dashboard', function () {
+        return Inertia::render('dashboard/Index');
+    })->name('dashboard');
+    
     // Dashboard Routes
     Route::prefix('dashboard')->name('dashboard.')->group(function () {
         // Pages

@@ -33,28 +33,54 @@ const toggleFaq = (index) => {
 <template>
   <MainLayout>
     <!-- Hero Section -->
-    <section class="bg-[#3B8BEE] text-[#FCFDFD] py-20">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div>
-            <h1 class="text-4xl md:text-5xl font-bold mb-6">
-              Buat Bisnis Anda Makin Dikenal Luas, Mau?
-            </h1>
-            <p class="text-lg mb-8">
-              Kami hadir untuk membantu bisnis Anda untuk berkembang, 
-              melalui jasa digital marketing yang profesional.
-            </p>
-            <div class="flex gap-4">
-              <a href="#" class="bg-white text-[#3B8BEE] px-6 py-3 rounded-lg font-medium hover:bg-opacity-90 transition-colors">
-                Cek Sekarang
-              </a>
-              <a href="#" class="border border-white px-6 py-3 rounded-lg font-medium hover:bg-white hover:text-[#3B8BEE] transition-colors">
-                Tanya CS
-              </a>
+    <section class="relative min-h-[80vh] flex items-center">
+      <!-- Background Image with Overlay -->
+      <div class="absolute inset-0 z-0">
+        <img 
+          src="/images/bg-home.jpg" 
+          alt="Background" 
+          class="w-full h-full object-cover"
+        />
+        <div 
+          class="absolute inset-0 bg-gradient-to-r from-[#3B8BEE] to-[#3B8BEE]/80"
+          style="background: linear-gradient(86.88deg, #3B8BEE 1.38%, rgba(59, 139, 238, 0.8) 64.35%, rgba(59, 139, 238, 0.6) 119.91%);"
+        ></div>
+      </div>
+
+      <!-- Content -->
+      <div class="relative z-10 w-full py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div>
+              <h1 class="text-4xl md:text-5xl font-bold mb-6 text-white">
+                Buat Bisnis Anda Makin Dikenal Luas, Mau?
+              </h1>
+              <p class="text-lg mb-8 text-white/90">
+                Kami hadir untuk membantu bisnis Anda untuk berkembang, 
+                melalui jasa digital marketing yang profesional.
+              </p>
+              <div class="flex flex-wrap gap-4">
+                <a 
+                  href="#" 
+                  class="bg-white text-[#3B8BEE] px-8 py-4 rounded-lg font-medium hover:bg-opacity-90 transition-colors"
+                >
+                  Cek Sekarang
+                </a>
+                <a 
+                  href="#" 
+                  class="border-2 border-white text-white px-8 py-4 rounded-lg font-medium hover:bg-white hover:text-[#3B8BEE] transition-all"
+                >
+                  Tanya CS
+                </a>
+              </div>
             </div>
-          </div>
-          <div class="hidden md:block">
-            <img src="/images/hero-dashboard.svg" alt="Dashboard Preview" class="w-full h-auto" />
+            <div class="hidden md:block">
+              <img 
+                src="/images/hero-dashboard.svg" 
+                alt="Dashboard Preview" 
+                class="w-full h-auto max-w-lg mx-auto"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -98,6 +124,60 @@ const toggleFaq = (index) => {
             <h3 class="text-xl font-semibold mb-3 text-[#343434]">Bisnis Bisa Berkembang</h3>
             <p class="text-[#343434]">
               Saat bisnis Anda dikenal luas, peluang untuk berkembang semakin besar.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Go Digital Section -->
+    <section class="py-20 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          <div>
+            <h2 class="text-4xl font-bold text-[#3B8BEE] mb-4">
+              Saatnya Go Digital..
+            </h2>
+            <p class="text-lg text-[#343434] mb-8">
+              Optimalkan pemasaran digital bisnis Anda, untuk mendapatkan omset berlipat ganda
+            </p>
+            <a href="#" class="inline-flex items-center gap-2 bg-[#3B8BEE] text-white px-6 py-3 rounded-lg font-medium hover:bg-opacity-90 transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Form Konsultasi
+            </a>
+          </div>
+          <div class="relative">
+            <img src="/images/hero-dashboard.svg" alt="Business Statistics" class="w-full h-auto rounded-lg shadow-lg" />
+            <div class="absolute inset-0 flex items-center justify-center">
+              <button class="w-16 h-16 bg-[#3B8BEE] rounded-full flex items-center justify-center shadow-lg hover:bg-opacity-90 transition-colors">
+                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Process Steps -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-20">
+          <div class="text-center">
+            <h3 class="text-xl font-bold text-[#3B8BEE] mb-3">Siap Konsultasi</h3>
+            <p class="text-[#343434]">
+              Mau tanya-tanya sebelum order, kami sediakan ruang diskusi via WhatsApp atau Google Meet
+            </p>
+          </div>
+          <div class="text-center">
+            <h3 class="text-xl font-bold text-[#3B8BEE] mb-3">Siap Membantu</h3>
+            <p class="text-[#343434]">
+              Pelayanan kepada client oleh tim Dilogif ketika mengalami kesulitan pasca order project
+            </p>
+          </div>
+          <div class="text-center">
+            <h3 class="text-xl font-bold text-[#3B8BEE] mb-3">Siap Amanah</h3>
+            <p class="text-[#343434]">
+              Transaksi dijelaskan di awal akad order, garansi project selesai sesuai jadwal
             </p>
           </div>
         </div>
