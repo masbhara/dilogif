@@ -4,9 +4,19 @@
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
         <!-- Company Info -->
         <div class="col-span-1">
-          <h3 class="text-2xl font-bold text-[#FFFFFF] mb-4">Company Name</h3>
+          <div class="flex items-center gap-3 mb-4">
+            <img 
+              v-if="websiteSettings?.logoUrl" 
+              :src="websiteSettings.logoUrl" 
+              :alt="websiteSettings?.siteName || websiteSettings?.site_name" 
+              class="h-10 w-auto"
+            />
+            <h3 class="text-2xl font-bold text-[#FFFFFF]">
+              {{ websiteSettings?.siteName || websiteSettings?.site_name || 'Company Name' }}
+            </h3>
+          </div>
           <p class="text-sm">
-            Providing innovative solutions for your business needs. Let's grow together.
+            {{ websiteSettings?.siteDescription || websiteSettings?.site_description || 'Providing innovative solutions for your business needs. Let\'s grow together.' }}
           </p>
         </div>
 
@@ -38,7 +48,7 @@
         <div class="col-span-1">
           <h4 class="text-lg font-semibold text-[#FFFFFF] mb-4">Contact Us</h4>
           <ul class="space-y-2 text-sm">
-            <li>Email: info@company.com</li>
+            <li>Email: {{ websiteSettings?.contactEmail || 'info@company.com' }}</li>
             <li>Phone: +1234567890</li>
             <li>Address: Your Address Here</li>
           </ul>
@@ -46,7 +56,7 @@
       </div>
 
       <div class="border-t border-[#FCFDFD]/20 mt-12 pt-8 text-sm text-center">
-        <p>&copy; {{ new Date().getFullYear() }} Company Name. All rights reserved.</p>
+        <p>{{ websiteSettings?.copyright || `© ${new Date().getFullYear()} ${websiteSettings?.siteName || websiteSettings?.site_name || 'Company Name'}. All rights reserved.` }}</p>
       </div>
     </div>
   </footer>
@@ -57,6 +67,7 @@ import { computed } from 'vue'
 import { usePage } from '@inertiajs/vue3'
 
 const page = usePage()
+const websiteSettings = computed(() => page.props.websiteSettings)
 
 const navigation = computed(() => [
   { name: 'Home', href: '/' },

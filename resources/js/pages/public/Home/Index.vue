@@ -223,11 +223,11 @@ const toggleFaq = (index) => {
     </section>
 
     <!-- FAQ Section -->
-    <section class="py-20 bg-[#3B8BEE]">
+    <section class="py-20 bg-[#f9f9f9]">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-3xl font-bold text-center text-white mb-12">FAQ's</h2>
+        <h2 class="text-3xl font-bold text-center text-[#343434] mb-12">FAQ's</h2>
         <div class="max-w-3xl mx-auto space-y-4">
-          <div v-for="(faq, index) in faqs" :key="index" class="bg-white rounded-lg">
+          <div v-for="(faq, index) in faqs" :key="index" class="bg-white rounded-lg shadow-sm">
             <button 
               class="w-full px-6 py-4 text-left flex justify-between items-center"
               @click="toggleFaq(index)"
