@@ -1,161 +1,176 @@
 <template>
   <Head :title="product.name" />
 
-  <div class="container mx-auto px-4 py-8">
-    <!-- Breadcrumb -->
-    <div class="flex items-center gap-2 text-sm text-gray-600 mb-8">
-      <Link :href="route('home')" class="hover:text-primary-600">Beranda</Link>
-      <span>&rsaquo;</span>
-      <Link :href="route('products.index')" class="hover:text-primary-600">Produk</Link>
-      <span>&rsaquo;</span>
-      <Link 
-        v-if="product.category" 
-        :href="route('products.index', { category: product.category.slug })" 
-        class="hover:text-primary-600"
-      >
-        {{ product.category.name }}
-      </Link>
-      <template v-if="product.category">
-        <span>&rsaquo;</span>
-      </template>
-      <span class="font-medium">{{ product.name }}</span>
-    </div>
+  <main class="bg-gray-50 py-12">
+    <div class="container mx-auto px-4">
+      <!-- Breadcrumb -->
+      <div class="bg-white p-4 rounded-lg shadow-sm mb-8">
+        <Breadcrumb :items="breadcrumbItems" />
+      </div>
 
-    <!-- Product Detail -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-      <!-- Product Images -->
-      <div>
-        <!-- Main Image -->
-        <div class="mb-4 overflow-hidden rounded-lg">
-          <img :src="selectedImage" :alt="product.name" class="w-full h-auto object-cover rounded-md" />
-        </div>
-        
-        <!-- Thumbnail Gallery -->
-        <div v-if="product.gallery && product.gallery.length > 0" class="grid grid-cols-5 gap-2">
-          <!-- Featured Image Thumbnail -->
+      <!-- Product Detail -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+        <!-- Product Images -->
+        <div class="bg-white rounded-xl shadow-sm p-6">
+          <!-- Main Image -->
+          <div class="mb-6 overflow-hidden rounded-lg">
+            <img :src="selectedImage" :alt="product.name" class="w-full h-auto max-h-[500px] object-contain rounded-md" />
+          </div>
+          
+          <!-- Thumbnail Gallery -->
           <div 
-            class="aspect-square overflow-hidden cursor-pointer rounded-md border-2"
-            :class="selectedImageIndex === -1 ? 'border-primary-600' : 'border-transparent'"
-            @click="selectImage(-1)"
+            v-if="product.gallery && product.gallery.length > 0" 
+            class="grid grid-cols-5 xl:grid-cols-6 gap-3"
           >
-            <img 
-              :src="`/storage/${product.featured_image}`" 
-              :alt="product.name" 
-              class="w-full h-full object-cover"
-            />
-          </div>
-          
-          <!-- Gallery Images -->
-          <div 
-            v-for="(image, index) in product.gallery" 
-            :key="image.id" 
-            class="aspect-square overflow-hidden cursor-pointer rounded-md border-2"
-            :class="selectedImageIndex === index ? 'border-primary-600' : 'border-transparent'"
-            @click="selectImage(index)"
-          >
-            <img 
-              :src="`/storage/${image.image}`" 
-              :alt="`${product.name} - Gambar ${index + 1}`" 
-              class="w-full h-full object-cover"
-            />
-          </div>
-        </div>
-      </div>
-      
-      <!-- Product Info -->
-      <div>
-        <h1 class="text-3xl font-bold mb-2">{{ product.name }}</h1>
-        
-        <div class="flex items-center gap-2 mb-4">
-          <Badge v-if="product.category" variant="outline">{{ product.category.name }}</Badge>
-          <Badge variant="secondary">{{ product.is_active ? 'Tersedia' : 'Tidak Tersedia' }}</Badge>
-        </div>
-        
-        <div class="text-2xl font-bold text-primary-600 mb-6">
-          {{ formatPrice(product.price) }}
-        </div>
-        
-        <div class="prose prose-sm mb-6">
-          <div v-html="product.description"></div>
-        </div>
-        
-        <div class="flex items-center gap-4 mb-8">
-          <Button>
-            <ShoppingCartIcon class="w-4 h-4 mr-2" />
-            Tambah ke Keranjang
-          </Button>
-          
-          <Button variant="outline">
-            <HeartIcon class="w-4 h-4 mr-2" />
-            Tambah ke Wishlist
-          </Button>
-        </div>
-        
-        <div class="border-t border-gray-200 pt-4">
-          <div class="text-sm text-gray-600">
-            <div>Kode Produk: <span class="font-medium">{{ product.id }}</span></div>
-            <div v-if="product.custom_url">URL Khusus: <span class="font-medium">{{ product.custom_url }}</span></div>
-          </div>
-          
-          <!-- Share Links -->
-          <div class="mt-4">
-            <p class="text-sm font-medium mb-2">Bagikan:</p>
-            <div class="flex items-center gap-2">
-              <Button variant="ghost" size="icon" @click="shareOnFacebook">
-                <FacebookIcon class="w-5 h-5" />
-              </Button>
-              <Button variant="ghost" size="icon" @click="shareOnTwitter">
-                <TwitterIcon class="w-5 h-5" />
-              </Button>
-              <Button variant="ghost" size="icon" @click="shareOnWhatsApp">
-                <MessageCircleIcon class="w-5 h-5" />
-              </Button>
-              <Button variant="ghost" size="icon" @click="copyLink">
-                <LinkIcon class="w-5 h-5" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Related Products -->
-    <div v-if="relatedProducts.length > 0" class="border-t border-gray-200 pt-8 mt-8">
-      <h2 class="text-2xl font-bold mb-6">Produk Terkait</h2>
-      
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        <div v-for="product in relatedProducts" :key="product.id" class="border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
-          <Link :href="product.url" class="block">
-            <div class="aspect-square overflow-hidden bg-gray-100">
+            <!-- Featured Image Thumbnail -->
+            <div 
+              class="aspect-square overflow-hidden cursor-pointer rounded-md border-2 transition-all duration-200"
+              :class="selectedImageIndex === -1 ? 'border-primary-600 scale-[1.05] shadow-md' : 'border-transparent hover:border-primary-300'"
+              @click="selectImage(-1)"
+            >
               <img 
                 :src="`/storage/${product.featured_image}`" 
                 :alt="product.name" 
-                class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                class="w-full h-full object-cover"
               />
             </div>
-            <div class="p-4">
-              <h3 class="text-lg font-semibold mb-2 line-clamp-2">{{ product.name }}</h3>
-              <div class="text-sm text-gray-500 mb-2" v-if="product.category">
-                {{ product.category.name }}
+            
+            <!-- Gallery Images -->
+            <div 
+              v-for="(image, index) in product.gallery" 
+              :key="image.id" 
+              class="aspect-square overflow-hidden cursor-pointer rounded-md border-2 transition-all duration-200"
+              :class="selectedImageIndex === index ? 'border-primary-600 scale-[1.05] shadow-md' : 'border-transparent hover:border-primary-300'"
+              @click="selectImage(index)"
+            >
+              <img 
+                :src="`/storage/${image.image}`" 
+                :alt="`${product.name} - Gambar ${index + 1}`" 
+                class="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        </div>
+        
+        <!-- Product Info -->
+        <div class="bg-white rounded-xl shadow-sm p-6">
+          <h1 class="text-3xl font-bold mb-2">{{ product.name }}</h1>
+          
+          <div class="flex flex-wrap items-center gap-2 mb-6">
+            <Badge v-if="product.category" variant="outline">{{ product.category.name }}</Badge>
+            <Badge variant="secondary">{{ product.is_active ? 'Tersedia' : 'Tidak Tersedia' }}</Badge>
+          </div>
+          
+          <div class="text-3xl font-bold text-primary-600 mb-6">
+            {{ formatPrice(product.price) }}
+          </div>
+          
+          <div class="prose prose-sm mb-8 max-w-none">
+            <div v-html="product.description"></div>
+          </div>
+          
+          <div class="border-t border-gray-200 pt-6 mb-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <Button class="w-full">
+                  <ShoppingCartIcon class="w-4 h-4 mr-2" />
+                  Tambah ke Keranjang
+                </Button>
               </div>
-              <div class="flex justify-between items-center">
-                <div class="text-primary-600 font-bold">
-                  {{ formatPrice(product.price) }}
-                </div>
-                <Button variant="outline" size="sm">Lihat Detail</Button>
+              <div>
+                <Button variant="outline" class="w-full">
+                  <HeartIcon class="w-4 h-4 mr-2" />
+                  Tambah ke Wishlist
+                </Button>
               </div>
             </div>
-          </Link>
+          </div>
+          
+          <div class="border-t border-gray-200 pt-6">
+            <div class="text-sm text-gray-600 grid gap-2">
+              <div class="flex">
+                <span class="w-32 font-medium">Kode Produk:</span>
+                <span>{{ product.id }}</span>
+              </div>
+              <div class="flex" v-if="product.custom_url">
+                <span class="w-32 font-medium">URL Khusus:</span>
+                <span>{{ product.custom_url }}</span>
+              </div>
+            </div>
+            
+            <!-- Share Links -->
+            <div class="mt-6">
+              <p class="text-sm font-medium mb-3">Bagikan produk ini:</p>
+              <div class="flex items-center gap-2">
+                <Button variant="outline" size="icon" @click="shareOnFacebook" class="rounded-full h-10 w-10">
+                  <FacebookIcon class="w-5 h-5" />
+                </Button>
+                <Button variant="outline" size="icon" @click="shareOnTwitter" class="rounded-full h-10 w-10">
+                  <TwitterIcon class="w-5 h-5" />
+                </Button>
+                <Button variant="outline" size="icon" @click="shareOnWhatsApp" class="rounded-full h-10 w-10">
+                  <MessageCircleIcon class="w-5 h-5" />
+                </Button>
+                <Button variant="outline" size="icon" @click="copyLink" class="rounded-full h-10 w-10">
+                  <LinkIcon class="w-5 h-5" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Related Products -->
+      <div v-if="relatedProducts.length > 0" class="mb-8">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold">Produk Terkait</h2>
+          <Link :href="route('products.index')" class="text-primary-600 hover:text-primary-800 text-sm font-medium">Lihat Semua Produk</Link>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div 
+            v-for="product in relatedProducts" 
+            :key="product.id" 
+            class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 group"
+          >
+            <Link :href="product.url" class="block h-full flex flex-col">
+              <div class="aspect-square overflow-hidden bg-gray-100 relative">
+                <img 
+                  :src="`/storage/${product.featured_image}`" 
+                  :alt="product.name" 
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div v-if="product.category" class="absolute top-2 left-2">
+                  <Badge variant="primary" class="bg-primary/80 backdrop-blur-sm">{{ product.category.name }}</Badge>
+                </div>
+              </div>
+              <div class="p-5 flex flex-col flex-grow">
+                <h3 class="text-lg font-bold mb-2 line-clamp-2 group-hover:text-primary-600 transition-colors">{{ product.name }}</h3>
+                <p class="text-sm text-gray-500 mb-3 line-clamp-2">
+                  {{ truncateDescription(product.description) }}
+                </p>
+                <div class="mt-auto flex justify-between items-center">
+                  <div class="text-xl font-bold text-primary-600">
+                    {{ formatPrice(product.price) }}
+                  </div>
+                  <Button variant="outline" size="sm" class="group-hover:bg-primary group-hover:text-white transition-colors">
+                    Lihat Detail
+                  </Button>
+                </div>
+              </div>
+            </Link>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </main>
 </template>
 
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import Breadcrumb from '@/components/ui/breadcrumb.vue';
 import { ref, computed } from 'vue';
 import { 
   ShoppingCartIcon, 
@@ -198,6 +213,14 @@ const formatPrice = (price) => {
   }).format(price);
 };
 
+// Menghilangkan HTML dan memotong teks deskripsi
+const truncateDescription = (html) => {
+  if (!html) return '';
+  // Hapus tag HTML
+  const text = html.replace(/<[^>]*>/g, '');
+  return text.length > 60 ? text.substring(0, 60) + '...' : text;
+};
+
 // Share functions
 const shareOnFacebook = () => {
   const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`;
@@ -221,4 +244,23 @@ const copyLink = () => {
     toast.success('Link berhasil disalin!');
   });
 };
+
+// Breadcrumb data
+const breadcrumbItems = computed(() => {
+  const items = [
+    { label: 'Beranda', href: route('home') },
+    { label: 'Produk', href: route('products.index') },
+  ];
+
+  if (props.product.category) {
+    items.push({
+      label: props.product.category.name,
+      href: route('products.index', { category: props.product.category.slug })
+    });
+  }
+
+  items.push({ label: props.product.name });
+  
+  return items;
+});
 </script> 

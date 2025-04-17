@@ -36,19 +36,19 @@ Route::middleware(['auth'])->group(function () {
 
 // Public Routes
 Route::get('/', function () {
-    return Inertia::render('public/Home/Index');
+    return Inertia::render('public/home/Index');
 })->name('home');
 
 Route::get('/about', function () {
-    return Inertia::render('public/About/Index');
+    return Inertia::render('public/about/Index');
 })->name('about');
 
 Route::get('/services', function () {
-    return Inertia::render('public/Services/Index');
+    return Inertia::render('public/services/Index');
 })->name('services');
 
 Route::get('/contact', function () {
-    return Inertia::render('public/Contact/Index');
+    return Inertia::render('public/contact/Index');
 })->name('contact');
 
 Route::post('/contact', [ContactMessageController::class, 'store'])->name('contact.store');

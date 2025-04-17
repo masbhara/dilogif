@@ -33,34 +33,20 @@
                                         type="text"
                                         class="mt-1 block w-full"
                                         required
+                                        autocomplete="name"
                                     />
                                     <InputError :message="form.errors.name" class="mt-2" />
                                 </div>
 
                                 <div>
                                     <Label for="category">Kategori</Label>
-                                    <Select 
-                                        v-model="selectedCategory"
-                                    >
-                                        <SelectTrigger class="w-full">
-                                            <SelectValue placeholder="Pilih kategori" class="truncate text-start" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem
-                                                :value="null"
-                                                class="text-amber-600 font-medium"
-                                            >
-                                                -- Tanpa Kategori --
-                                            </SelectItem>
-                                            <SelectItem
-                                                v-for="category in categories"
-                                                :key="category.id"
-                                                :value="category.id"
-                                            >
-                                                {{ category.name }}
-                                            </SelectItem>
-                                        </SelectContent>
-                                    </Select>
+                                    <Combobox
+                                        id="category"
+                                        v-model="form.category_id"
+                                        :options="categoryOptions"
+                                        placeholder="Pilih kategori"
+                                        class="mt-1 block w-full"
+                                    />
                                     <div v-if="!form.category_id" class="mt-1 text-xs text-amber-600">
                                         Produk ini tidak memiliki kategori. Pilih kategori atau biarkan kosong.
                                     </div>
@@ -69,15 +55,19 @@
 
                                 <div>
                                     <Label for="price">Harga</Label>
-                                    <Input
-                                        id="price"
-                                        v-model="form.price"
-                                        type="number"
-                                        min="0"
-                                        step="0.01"
-                                        class="mt-1 block w-full"
-                                        required
-                                    />
+                                    <div class="mt-1 relative rounded-md shadow-sm">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <span class="text-gray-500 sm:text-sm"> Rp </span>
+                                        </div>
+                                        <Input
+                                            id="price"
+                                            v-model="form.price"
+                                            type="number"
+                                            class="pl-12 mt-1 block w-full"
+                                            placeholder="0"
+                                            required
+                                        />
+                                    </div>
                                     <p class="text-xs text-muted-foreground mt-1">
                                         Masukkan harga tanpa tanda baca, contoh: 100000
                                     </p>
@@ -215,9 +205,8 @@ import { ArrowLeft, Loader2, X, Trash2 } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Combobox } from '@/components/ui/combobox/Combobox.vue';
 import InputError from '@/components/InputError.vue';
 import { router } from '@inertiajs/vue3';
 import { ref, computed, watch } from 'vue';
@@ -242,7 +231,10 @@ const breadcrumbs = [
 
 const props = defineProps({
     product: Object,
-    categories: Array
+    categories: {
+        type: Array,
+        default: () => []
+    }
 });
 
 // State untuk dialog hapus gambar
@@ -252,9 +244,6 @@ const loading = ref(false);
 
 // Preview gambar utama baru
 const featuredImagePreview = ref(null);
-
-// Gunakan ref terpisah untuk menangani pilihan kategori
-const selectedCategory = ref(props.product.category_id);
 
 // Tambahkan array untuk menangani gambar galeri baru
 const newGalleryImages = ref([]);
@@ -268,11 +257,6 @@ const form = useForm({
     gallery: props.product.gallery || [],
     custom_url: props.product.custom_url,
     _method: 'PUT' // Metode HTTP yang benar untuk update
-});
-
-// Perhatikan perubahan pada selectedCategory dan perbarui form.category_id
-watch(selectedCategory, (newValue) => {
-    form.category_id = newValue;
 });
 
 // Fungsi untuk preview gambar utama
@@ -301,6 +285,14 @@ const handleGalleryImagesChange = (event) => {
 // URLs untuk gambar yang ada
 const featuredImageUrl = computed(() => {
     return `/storage/${props.product.featured_image}`;
+});
+
+// Transform categories for Combobox component
+const categories = computed(() => {
+    return props.categories.map(category => ({
+        label: category.name,
+        value: category.id
+    }));
 });
 
 const submit = () => {

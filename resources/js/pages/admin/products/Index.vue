@@ -4,14 +4,17 @@
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 p-4 md:p-6">
             <!-- Header dengan judul dan tombol tambah -->
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <h1 class="text-2xl font-bold">Produk</h1>
-                <Link :href="route('admin.products.create')" class="cursor-pointer">
-                    <Button class="flex items-center gap-1.5 w-full sm:w-auto cursor-pointer">
-                        <PlusIcon class="h-4 w-4" />
-                        Tambah Produk
-                    </Button>
-                </Link>
+            <div class="mb-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="font-semibold text-lg text-gray-800 leading-tight">Produk</h1>
+                        <Breadcrumb :items="breadcrumbItems" />
+                    </div>
+                    <Link :href="route('admin.products.create')" class="flex items-center gap-2 bg-primary hover:bg-primary/90 transition-all text-white px-4 py-2 rounded-md">
+                        <PlusCircleIcon class="w-5 h-5" />
+                        <span>Tambah Produk</span>
+                    </Link>
+                </div>
             </div>
                 
             <div class="bg-card text-card-foreground rounded-xl shadow border border-sidebar-border/70 dark:border-sidebar-border overflow-hidden">
@@ -141,7 +144,7 @@
 
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { PlusIcon, MoreHorizontal, Eye, Pencil, Trash, Trash2, ClipboardIcon } from 'lucide-vue-next';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -153,6 +156,8 @@ import Pagination from '@/components/ui/pagination/Pagination.vue';
 import ConfirmationDialog from '@/components/ui/ConfirmationDialog.vue';
 import { router } from '@inertiajs/vue3';
 import { toast } from 'vue-sonner';
+import { PlusCircleIcon, TrashIcon, PencilSquareIcon, EyeIcon } from '@heroicons/vue/24/outline';
+import Breadcrumb from '@/components/ui/breadcrumb.vue';
 
 // Breadcrumbs untuk navigasi
 const breadcrumbs = [
@@ -165,6 +170,12 @@ const breadcrumbs = [
         href: route('admin.products.index'),
     },
 ];
+
+// Breadcrumb data
+const breadcrumbItems = computed(() => [
+    { label: 'Dashboard', href: route('admin.dashboard') },
+    { label: 'Produk' }
+]);
 
 // State untuk dialog hapus
 const selectedProduct = ref(null);
