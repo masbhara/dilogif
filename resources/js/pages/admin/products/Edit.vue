@@ -661,16 +661,18 @@ const deleteGalleryImage = () => {
 .custom-select-container {
   position: relative;
   width: 100%;
+  border-radius: 0.375rem;
 }
 
 .custom-select-dropdown {
   position: absolute;
-  top: calc(100% + 4px);
+  top: calc(100%);
   left: 0;
   width: 100%;
   max-height: 200px;
   overflow-y: auto;
   animation: slideDown 0.15s ease-out;
+  z-index: 50;
 }
 
 .custom-select-option:first-child {
@@ -686,5 +688,37 @@ const deleteGalleryImage = () => {
 @keyframes slideDown {
   from { opacity: 0; transform: translateY(-5px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Perbaikan outline saat fokus */
+.custom-select-trigger {
+  outline: none !important;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.custom-select-trigger:focus,
+.custom-select-trigger:focus-visible,
+.custom-select-trigger:active,
+.custom-select-trigger:hover,
+.custom-select-trigger:-moz-focusring {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: hsl(var(--primary)) !important;
+}
+
+/* Fix untuk Firefox */
+.custom-select-trigger:-moz-focusring {
+  outline: none !important;
+}
+
+/* Fix untuk Safari dan Chrome */
+.custom-select-trigger::-webkit-focus-inner {
+  border: 0;
+}
+
+/* Fix tambahan untuk Chrome */
+*:focus {
+  outline-color: transparent !important;
 }
 </style> 
