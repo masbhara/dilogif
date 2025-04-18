@@ -5,7 +5,7 @@
         <div class="flex h-full flex-1 flex-col gap-4 p-4 md:p-6">
             <!-- Header dengan judul dan tombol tambah -->
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <h1 class="text-2xl font-bold">Kategori</h1>
+                <h1 class="text-2xl font-bold text-secondary-900 dark:text-white">Kategori</h1>
                 <Link :href="route('admin.categories.create')" class="cursor-pointer">
                     <Button class="flex items-center gap-1.5 w-full sm:w-auto cursor-pointer">
                         <PlusIcon class="h-4 w-4" />
@@ -14,27 +14,27 @@
                 </Link>
             </div>
             
-            <div class="bg-card text-card-foreground rounded-xl shadow border border-sidebar-border/70 dark:border-sidebar-border overflow-hidden">
-                <div class="p-6 border-b">
+            <div class="bg-white dark:bg-secondary-900 text-secondary-900 dark:text-white rounded-xl shadow border border-secondary-200 dark:border-secondary-800 overflow-hidden">
+                <div class="p-6 border-b border-secondary-200 dark:border-secondary-800">
                     <div>
-                        <h2 class="text-lg font-medium">Daftar Kategori</h2>
-                        <p class="text-muted-foreground mt-1">Kelola kategori produk di situs Anda</p>
+                        <h2 class="text-lg font-medium text-secondary-900 dark:text-white">Daftar Kategori</h2>
+                        <p class="text-secondary-600 dark:text-secondary-400 mt-1">Kelola kategori produk di situs Anda</p>
                     </div>
                 </div>
                 
                 <div class="overflow-x-auto">
                     <Table>
                         <TableHeader>
-                            <TableRow class="hover:bg-transparent border-b border-border">
-                                <TableHead class="py-3 px-6 font-medium text-muted-foreground">Ikon</TableHead>
-                                <TableHead class="py-3 px-6 font-medium text-muted-foreground">Nama</TableHead>
-                                <TableHead class="py-3 px-6 font-medium text-muted-foreground">Produk</TableHead>
-                                <TableHead class="py-3 px-6 font-medium text-muted-foreground">Status</TableHead>
-                                <TableHead class="py-3 px-6 font-medium text-muted-foreground text-right">Tindakan</TableHead>
+                            <TableRow class="hover:bg-transparent border-b border-secondary-200 dark:border-secondary-800">
+                                <TableHead class="py-3 px-6 font-medium">Ikon</TableHead>
+                                <TableHead class="py-3 px-6 font-medium">Nama</TableHead>
+                                <TableHead class="py-3 px-6 font-medium">Produk</TableHead>
+                                <TableHead class="py-3 px-6 font-medium">Status</TableHead>
+                                <TableHead class="py-3 px-6 font-medium text-right">Tindakan</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            <TableRow v-for="category in categories.data" :key="category.id" class="border-b border-border/60 hover:bg-muted/20">
+                            <TableRow v-for="category in categories.data" :key="category.id">
                                 <TableCell class="py-3.5 px-6 align-middle">
                                     <img
                                         v-if="category.icon"
@@ -42,24 +42,16 @@
                                         :alt="category.name"
                                         class="w-10 h-10 object-cover rounded-md"
                                     />
-                                    <div v-else class="w-10 h-10 bg-gray-200 rounded-md flex items-center justify-center">
-                                        <FolderIcon class="w-6 h-6 text-gray-400" />
+                                    <div v-else class="w-10 h-10 bg-secondary-100 dark:bg-secondary-800 rounded-md flex items-center justify-center">
+                                        <FolderIcon class="w-6 h-6 text-secondary-400 dark:text-secondary-500" />
                                     </div>
                                 </TableCell>
                                 <TableCell class="py-3.5 px-6 align-middle font-medium">{{ category.name }}</TableCell>
                                 <TableCell class="py-3.5 px-6 align-middle">{{ category.products_count }}</TableCell>
                                 <TableCell class="py-3.5 px-6 align-middle">
-                                    <Badge 
-                                        :class="[
-                                            'px-2.5 py-0.5 text-xs font-medium',
-                                            category.is_active 
-                                                ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 border-green-800/20 dark:border-green-300/20' 
-                                                : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 border-red-800/20 dark:border-red-300/20'
-                                        ]"
-                                        variant="outline"
-                                    >
+                                    <StatusBadge :status="category.is_active ? 'active' : 'inactive'">
                                         {{ category.is_active ? 'Aktif' : 'Nonaktif' }}
-                                    </Badge>
+                                    </StatusBadge>
                                 </TableCell>
                                 <TableCell class="py-3.5 px-6 align-middle text-right">
                                     <DropdownMenu>
@@ -75,7 +67,7 @@
                                                 <span>Edit</span>
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator />
-                                            <DropdownMenuItem @click="showHapusDialog(category)" class="flex items-center gap-2 cursor-pointer py-1.5 text-red-600">
+                                            <DropdownMenuItem @click="showHapusDialog(category)" variant="destructive" class="flex items-center gap-2 cursor-pointer py-1.5">
                                                 <Trash class="h-4 w-4" />
                                                 <span>Hapus</span>
                                             </DropdownMenuItem>
@@ -87,7 +79,7 @@
                     </Table>
                 </div>
                 
-                <div v-if="categories.links && categories.links.length > 0" class="py-4 px-6 flex items-center justify-between border-t">
+                <div v-if="categories.links && categories.links.length > 0" class="py-4 px-6 flex items-center justify-between border-t border-secondary-200 dark:border-secondary-800">
                     <Pagination :links="categories.links" />
                 </div>
             </div>
@@ -121,6 +113,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import Pagination from '@/components/ui/pagination/Pagination.vue';
 import ConfirmationDialog from '@/components/ui/ConfirmationDialog.vue';
+import StatusBadge from '@/components/ui/StatusBadge.vue';
 import { router } from '@inertiajs/vue3';
 import { toast } from 'vue-sonner';
 

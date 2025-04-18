@@ -18,74 +18,74 @@ export const buttonTheme = {
   
   // Warna sekunder
   secondary: {
-    bg: 'bg-gray-200',
-    hover: 'hover:bg-gray-300',
-    text: 'text-gray-800',
-    border: 'border-gray-300',
-    focusRing: 'focus:ring-gray-300',
-    disabled: 'disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed',
-    loading: 'bg-gray-100',
-    spinner: 'border-gray-500 border-t-transparent'
+    bg: 'bg-secondary-600',
+    hover: 'hover:bg-secondary-700',
+    text: 'text-white',
+    border: 'border-secondary-600',
+    focusRing: 'focus:ring-secondary-500',
+    disabled: 'disabled:bg-secondary-400 disabled:text-white disabled:cursor-not-allowed',
+    loading: 'bg-secondary-500',
+    spinner: 'border-white border-t-transparent'
   },
   
   // Outline style - transparan dengan border
   outline: {
     bg: 'bg-transparent',
-    hover: 'hover:bg-gray-50 hover:text-gray-900',
-    text: 'text-gray-700',
-    border: 'border border-gray-300',
-    focusRing: 'focus:ring-gray-300',
-    disabled: 'disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed disabled:border-gray-200',
-    loading: 'bg-gray-50',
-    spinner: 'border-gray-500 border-t-transparent'
+    hover: 'hover:bg-primary-50 hover:text-primary-700',
+    text: 'text-primary-600',
+    border: 'border border-primary-300',
+    focusRing: 'focus:ring-primary-300',
+    disabled: 'disabled:bg-transparent disabled:text-primary-300 disabled:cursor-not-allowed disabled:border-primary-200',
+    loading: 'bg-primary-50',
+    spinner: 'border-primary-500 border-t-transparent'
   },
   
   // Danger/destructive untuk actions berbahaya
   danger: {
-    bg: 'bg-red-600',
-    hover: 'hover:bg-red-700',
+    bg: 'bg-danger-600',
+    hover: 'hover:bg-danger-700',
     text: 'text-white',
-    border: 'border-red-600',
-    focusRing: 'focus:ring-red-500',
-    disabled: 'disabled:bg-red-400 disabled:cursor-not-allowed',
-    loading: 'bg-red-500',
+    border: 'border-danger-600',
+    focusRing: 'focus:ring-danger-500',
+    disabled: 'disabled:bg-danger-400 disabled:cursor-not-allowed',
+    loading: 'bg-danger-500',
     spinner: 'border-white border-t-transparent'
   },
   
   // Success untuk aksi berhasil/positif
   success: {
-    bg: 'bg-green-600',
-    hover: 'hover:bg-green-700', 
+    bg: 'bg-success-600',
+    hover: 'hover:bg-success-700', 
     text: 'text-white',
-    border: 'border-green-600',
-    focusRing: 'focus:ring-green-500',
-    disabled: 'disabled:bg-green-400 disabled:cursor-not-allowed',
-    loading: 'bg-green-500',
+    border: 'border-success-600',
+    focusRing: 'focus:ring-success-500',
+    disabled: 'disabled:bg-success-400 disabled:cursor-not-allowed',
+    loading: 'bg-success-500',
     spinner: 'border-white border-t-transparent'
   },
   
   // Warning untuk peringatan
   warning: {
-    bg: 'bg-yellow-500',
-    hover: 'hover:bg-yellow-600',
+    bg: 'bg-warning-500',
+    hover: 'hover:bg-warning-600',
     text: 'text-white',
-    border: 'border-yellow-500',
-    focusRing: 'focus:ring-yellow-400',
-    disabled: 'disabled:bg-yellow-300 disabled:cursor-not-allowed',
-    loading: 'bg-yellow-400',
+    border: 'border-warning-500',
+    focusRing: 'focus:ring-warning-400',
+    disabled: 'disabled:bg-warning-300 disabled:cursor-not-allowed',
+    loading: 'bg-warning-400',
     spinner: 'border-white border-t-transparent'
   },
   
   // Ghost (transparan tanpa border)
   ghost: {
     bg: 'bg-transparent',
-    hover: 'hover:bg-gray-100',
-    text: 'text-gray-700',
+    hover: 'hover:bg-primary-100',
+    text: 'text-primary-600',
     border: 'border-transparent',
-    focusRing: 'focus:ring-gray-200',
-    disabled: 'disabled:bg-transparent disabled:text-gray-300 disabled:cursor-not-allowed',
-    loading: 'bg-gray-50',
-    spinner: 'border-gray-400 border-t-transparent'
+    focusRing: 'focus:ring-primary-200',
+    disabled: 'disabled:bg-transparent disabled:text-primary-300 disabled:cursor-not-allowed',
+    loading: 'bg-primary-50',
+    spinner: 'border-primary-400 border-t-transparent'
   },
   
   // Link style
@@ -95,7 +95,7 @@ export const buttonTheme = {
     text: 'text-primary-600',
     border: 'border-transparent',
     focusRing: 'focus:ring-primary-200',
-    disabled: 'disabled:text-gray-300 disabled:cursor-not-allowed disabled:no-underline',
+    disabled: 'disabled:text-primary-300 disabled:cursor-not-allowed disabled:no-underline',
     loading: 'bg-transparent',
     spinner: 'border-primary-600 border-t-transparent'
   }

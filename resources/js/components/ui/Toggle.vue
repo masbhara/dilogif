@@ -1,8 +1,8 @@
 <template>
   <button
     type="button"
-    class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
-    :class="modelValue ? 'bg-primary dark:bg-slate-950' : 'bg-gray-200 dark:bg-slate-800'"
+    class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-secondary-900"
+    :class="modelValue ? 'bg-primary-600 dark:bg-primary-700' : 'bg-secondary-200 dark:bg-secondary-800'"
     @click="$emit('update:modelValue', !modelValue)"
   >
     <span class="sr-only">{{ label }}</span>
@@ -15,7 +15,7 @@
         :class="modelValue ? 'opacity-0 duration-100 ease-out' : 'opacity-100 duration-200 ease-in'"
         aria-hidden="true"
       >
-        <svg class="h-3 w-3 text-gray-400" fill="none" viewBox="0 0 12 12">
+        <svg class="h-3 w-3 text-secondary-400" fill="none" viewBox="0 0 12 12">
           <path
             d="M4 8l2-2m0 0l2-2M6 6L4 4m2 2l2 2"
             stroke="currentColor"

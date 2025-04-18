@@ -1,6 +1,4 @@
-@import 'tailwindcss';
-
-@import "tw-animate-css";
+@import "tailwindcss";
 
 /* Import Google Font Manrope */
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
@@ -9,6 +7,142 @@
 @source '../../storage/framework/views/*.php';
 
 @custom-variant dark (&:is(.dark *));
+
+/* Definisi tema warna lengkap */
+@theme {
+  /* Colors */
+  --color-primary-50: #f0f9ff;
+  --color-primary-100: #e0f2fe;
+  --color-primary-200: #bae6fd;
+  --color-primary-300: #7dd3fc;
+  --color-primary-400: #38bdf8;
+  --color-primary-500: #0ea5e9;
+  --color-primary-600: #0284c7;
+  --color-primary-700: #0369a1;
+  --color-primary-800: #075985;
+  --color-primary-900: #0c4a6e;
+  --color-primary-950: #082f49;
+  
+  --color-secondary-50: #f9fafb;
+  --color-secondary-100: #f3f4f6;
+  --color-secondary-200: #e5e7eb;
+  --color-secondary-300: #d1d5db;
+  --color-secondary-400: #9ca3af;
+  --color-secondary-500: #6b7280;
+  --color-secondary-600: #4b5563;
+  --color-secondary-700: #374151;
+  --color-secondary-800: #1f2937;
+  --color-secondary-900: #111827;
+  --color-secondary-950: #030712;
+  
+  --color-success-50: #f0fdf4;
+  --color-success-100: #dcfce7;
+  --color-success-200: #bbf7d0;
+  --color-success-300: #86efac;
+  --color-success-400: #4ade80;
+  --color-success-500: #22c55e;
+  --color-success-600: #16a34a;
+  --color-success-700: #15803d;
+  --color-success-800: #166534;
+  --color-success-900: #14532d;
+  --color-success-950: #052e16;
+  
+  --color-danger-50: #fef2f2;
+  --color-danger-100: #fee2e2;
+  --color-danger-200: #fecaca;
+  --color-danger-300: #fca5a5;
+  --color-danger-400: #f87171;
+  --color-danger-500: #ef4444;
+  --color-danger-600: #dc2626;
+  --color-danger-700: #b91c1c;
+  --color-danger-800: #991b1b;
+  --color-danger-900: #7f1d1d;
+  --color-danger-950: #450a0a;
+  
+  --color-warning-50: #fffbeb;
+  --color-warning-100: #fef3c7;
+  --color-warning-200: #fde68a;
+  --color-warning-300: #fcd34d;
+  --color-warning-400: #fbbf24;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+  --color-warning-700: #b45309;
+  --color-warning-800: #92400e;
+  --color-warning-900: #78350f;
+  --color-warning-950: #451a03;
+  
+  /* Fonts */
+  --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/* Definisi utility */
+@utility bg-success-50 {
+  background-color: var(--color-success-50);
+}
+@utility bg-success-100 {
+  background-color: var(--color-success-100);
+}
+@utility bg-success-200 {
+  background-color: var(--color-success-200);
+}
+@utility bg-success-300 {
+  background-color: var(--color-success-300);
+}
+@utility bg-success-400 {
+  background-color: var(--color-success-400);
+}
+@utility bg-success-500 {
+  background-color: var(--color-success-500);
+}
+@utility bg-success-600 {
+  background-color: var(--color-success-600);
+}
+@utility bg-success-700 {
+  background-color: var(--color-success-700);
+}
+@utility bg-success-800 {
+  background-color: var(--color-success-800);
+}
+@utility bg-success-900 {
+  background-color: var(--color-success-900);
+}
+@utility bg-success-950 {
+  background-color: var(--color-success-950);
+}
+
+@utility bg-danger-50 {
+  background-color: var(--color-danger-50);
+}
+@utility bg-danger-100 {
+  background-color: var(--color-danger-100);
+}
+@utility bg-danger-200 {
+  background-color: var(--color-danger-200);
+}
+@utility bg-danger-300 {
+  background-color: var(--color-danger-300);
+}
+@utility bg-danger-400 {
+  background-color: var(--color-danger-400);
+}
+@utility bg-danger-500 {
+  background-color: var(--color-danger-500);
+}
+@utility bg-danger-600 {
+  background-color: var(--color-danger-600);
+}
+@utility bg-danger-700 {
+  background-color: var(--color-danger-700);
+}
+@utility bg-danger-800 {
+  background-color: var(--color-danger-800);
+}
+@utility bg-danger-900 {
+  background-color: var(--color-danger-900);
+}
+@utility bg-danger-950 {
+  background-color: var(--color-danger-950);
+}
 
 /*
   The default border color has changed to `currentColor` in Tailwind CSS v4,
@@ -21,42 +155,142 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: theme('colors.gray.200', currentColor);
+    border-color: theme('--color-secondary-200', currentColor);
+  }
+  
+  body,
+  html {
+    font-family: var(--font-sans);
   }
 }
 
 @layer utilities {
-  body,
-  html {
-    font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif,
-      'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-      'Noto Color Emoji';
+  /* Definisi kustom untuk komponen yang ada */
+  .bg-card {
+    background-color: var(--color-secondary-50);
+  }
+  .dark .bg-card {
+    background-color: var(--color-secondary-900);
+  }
+  
+  .text-card-foreground {
+    color: var(--color-secondary-900);
+  }
+  .dark .text-card-foreground {
+    color: white;
+  }
+  
+  .text-muted-foreground {
+    color: var(--color-secondary-500);
+  }
+  .dark .text-muted-foreground {
+    color: var(--color-secondary-400);
+  }
+  
+  .border-border {
+    border-color: var(--color-secondary-200);
+  }
+  .dark .border-border {
+    border-color: var(--color-secondary-800);
+  }
+  
+  .bg-muted {
+    background-color: var(--color-secondary-100);
+  }
+  .dark .bg-muted {
+    background-color: var(--color-secondary-800);
+  }
+  
+  /* Border sidebar definitions */
+  .border-sidebar-border {
+    border-color: var(--color-secondary-800);
+  }
+  
+  .border-sidebar-border\/70 {
+    border-color: var(--color-secondary-200);
+  }
+  .dark .border-sidebar-border\/70 {
+    border-color: var(--color-secondary-800);
+  }
+  
+  .border-sidebar-border\/80 {
+    border-color: var(--color-secondary-200);
+  }
+  .dark .border-sidebar-border\/80 {
+    border-color: var(--color-secondary-800);
+  }
+  
+  /* Styling untuk badges di dark mode */
+  .dark .aktif,
+  .dark .active,
+  .dark .sukses {
+    background-color: var(--color-success-700);
+    color: white;
+  }
+  
+  .dark .tidak-aktif,
+  .dark .inactive,
+  .dark .gagal {
+    background-color: var(--color-danger-700);
+    color: white;
+  }
+  
+  /* Styling untuk light mode badges */
+  .aktif,
+  .active,
+  .sukses {
+    background-color: var(--color-success-500);
+    color: white;
+  }
+  
+  .tidak-aktif,
+  .inactive,
+  .gagal {
+    background-color: var(--color-danger-500);
+    color: white;
+  }
+  
+  /* Text colors */
+  .text-white {
+    color: white;
   }
 }
 
 @layer base {
   * {
-    @apply border-gray-200;
+    @apply border-secondary-200;
   }
   body {
-    @apply bg-white text-gray-900;
+    @apply bg-white text-secondary-900;
   }
 }
 
 /* Dark mode can be implemented using Tailwind's dark: variant */
 .dark * {
-  @apply border-gray-700;
+  @apply border-secondary-800;
 }
 .dark body {
-  @apply bg-gray-900 text-white;
+  @apply bg-secondary-950 text-white;
 }
 
 /* Updated base styling to use Tailwind classes directly */
 @layer base {
   * {
-    @apply border-gray-200 outline-gray-400/50;
+    @apply border-secondary-200 outline-secondary-400/50;
   }
   body {
-    @apply bg-white text-gray-900;
+    @apply bg-white text-secondary-900;
   }
+  
+  .dark * {
+    @apply border-secondary-800 outline-secondary-600/50;
+  }
+  .dark body {
+    @apply bg-secondary-950 text-white;
+  }
+}
+
+/* Memastikan dropdown bekerja dengan benar di dark mode */
+.dark [data-state="open"] {
+  @apply bg-secondary-900 border-secondary-800;
 }

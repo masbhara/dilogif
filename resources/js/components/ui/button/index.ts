@@ -10,16 +10,20 @@ export const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          'bg-primary text-primary-foreground shadow-xs hover:bg-primary/90',
+          'bg-primary-600 text-white shadow-xs hover:bg-primary-700 focus-visible:ring-primary-500/50',
         destructive:
-          'bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60',
+          'bg-danger-600 text-white shadow-xs hover:bg-danger-700 focus-visible:ring-danger-500/50',
         outline:
-          'border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50',
+          'border border-primary-300 bg-transparent shadow-xs hover:bg-primary-50 hover:text-primary-700 focus-visible:ring-primary-300/50 dark:border-primary-700 dark:hover:bg-primary-950/50',
         secondary:
-          'bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80',
+          'bg-secondary-600 text-white shadow-xs hover:bg-secondary-700 focus-visible:ring-secondary-500/50',
         ghost:
-          'hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50',
-        link: 'text-primary underline-offset-4 hover:underline',
+          'hover:bg-primary-100 text-primary-600 hover:text-primary-700 focus-visible:ring-primary-200/50',
+        link: 'text-primary-600 underline-offset-4 hover:underline focus-visible:ring-primary-200/50',
+        success:
+          'bg-success-600 text-white shadow-xs hover:bg-success-700 focus-visible:ring-success-500/50',
+        warning:
+          'bg-warning-500 text-white shadow-xs hover:bg-warning-600 focus-visible:ring-warning-400/50',
       },
       size: {
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',

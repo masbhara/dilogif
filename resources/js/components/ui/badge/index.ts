@@ -8,13 +8,19 @@ export const badgeVariants = cva(
     variants: {
       variant: {
         default:
-          'border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90',
+          'border-transparent bg-primary-600 text-white [a&]:hover:bg-primary-700',
         secondary:
-          'border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90',
+          'border-transparent bg-secondary-600 text-white [a&]:hover:bg-secondary-700',
         destructive:
-         'border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60',
+         'border-transparent bg-danger-600 text-white [a&]:hover:bg-danger-700 focus-visible:ring-danger-500/50',
         outline:
-          'text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground',
+          'border-primary-300 bg-transparent text-primary-700 [a&]:hover:bg-primary-50 dark:border-primary-700 dark:text-primary-400',
+        success:
+          'border-transparent bg-success-600 text-white [a&]:hover:bg-success-700 focus-visible:ring-success-500/50',
+        warning:
+          'border-transparent bg-warning-500 text-white [a&]:hover:bg-warning-600 focus-visible:ring-warning-400/50',
+        ghost:
+          'border-transparent bg-primary-100 text-primary-700 [a&]:hover:bg-primary-200',
       },
     },
     defaultVariants: {

@@ -310,7 +310,7 @@ const toggleFilterPanel = () => {
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="flex h-full flex-1 flex-col gap-4 p-4 md:p-6">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h1 class="text-2xl font-bold">Manajemen Pengguna</h1>
+        <h1 class="text-2xl font-bold text-secondary-900 dark:text-white">Manajemen Pengguna</h1>
         <Link :href="route('admin.users.create')" class="cursor-pointer">
           <Button class="flex items-center gap-1.5 w-full sm:w-auto cursor-pointer">
             <Plus class="h-4 w-4" />
@@ -319,18 +319,18 @@ const toggleFilterPanel = () => {
         </Link>
       </div>
 
-      <div class="bg-card text-card-foreground rounded-xl shadow border border-sidebar-border/70 dark:border-sidebar-border overflow-hidden">
-        <div class="p-6 border-b">
+      <div class="bg-secondary-50 dark:bg-secondary-900 text-secondary-900 dark:text-white rounded-xl shadow border border-secondary-200 dark:border-secondary-800 overflow-hidden">
+        <div class="p-6 border-b border-secondary-200 dark:border-secondary-800">
           <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h2 class="text-lg font-medium">Daftar Pengguna</h2>
-              <p class="text-muted-foreground mt-1">Kelola pengguna dan akses mereka di sistem.</p>
+              <h2 class="text-lg font-medium text-secondary-900 dark:text-white">Daftar Pengguna</h2>
+              <p class="text-secondary-500 dark:text-secondary-400 mt-1">Kelola pengguna dan akses mereka di sistem.</p>
             </div>
             
             <div class="flex items-center gap-3">
               <!-- Filter dan Pencarian -->
               <div class="relative w-full sm:w-64">
-                <Search class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Search class="absolute left-2.5 top-2.5 h-4 w-4 text-secondary-500 dark:text-secondary-400" />
                 <Input 
                   type="search" 
                   placeholder="Cari nama atau email..."
@@ -364,7 +364,7 @@ const toggleFilterPanel = () => {
             <CardContent class="p-4">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="space-y-2">
-                  <label class="text-sm font-medium">Status</label>
+                  <label class="text-sm font-medium text-secondary-900 dark:text-white">Status</label>
                   <Select v-model="filters.status">
                     <SelectTrigger>
                       <SelectValue placeholder="Pilih status" />
@@ -378,7 +378,7 @@ const toggleFilterPanel = () => {
                 </div>
                 
                 <div class="space-y-2">
-                  <label class="text-sm font-medium">Peran</label>
+                  <label class="text-sm font-medium text-secondary-900 dark:text-white">Peran</label>
                   <Select v-model="filters.role">
                     <SelectTrigger>
                       <SelectValue placeholder="Pilih peran" />
@@ -398,43 +398,43 @@ const toggleFilterPanel = () => {
         <div class="overflow-x-auto">
           <Table class="w-full">
             <TableHeader>
-              <TableRow class="hover:bg-transparent border-b border-border">
-                <TableHead class="py-3 px-6 font-medium text-muted-foreground">Nama</TableHead>
-                <TableHead class="py-3 px-6 font-medium text-muted-foreground">Email</TableHead>
-                <TableHead class="py-3 px-6 font-medium text-muted-foreground hidden md:table-cell">WhatsApp</TableHead>
-                <TableHead class="py-3 px-6 font-medium text-muted-foreground">Status</TableHead>
-                <TableHead class="py-3 px-6 font-medium text-muted-foreground hidden md:table-cell">Peran</TableHead>
-                <TableHead class="py-3 px-6 font-medium text-muted-foreground hidden md:table-cell">Tanggal Daftar</TableHead>
-                <TableHead class="py-3 px-6 font-medium text-muted-foreground w-[60px]"></TableHead>
+              <TableRow class="hover:bg-transparent border-b border-secondary-200 dark:border-secondary-800">
+                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Nama</TableHead>
+                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Email</TableHead>
+                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400 hidden md:table-cell">WhatsApp</TableHead>
+                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Status</TableHead>
+                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400 hidden md:table-cell">Peran</TableHead>
+                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400 hidden md:table-cell">Tanggal Daftar</TableHead>
+                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400 w-[60px]"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              <TableRow v-if="isFiltering" class="border-b border-border">
+              <TableRow v-if="isFiltering" class="border-b border-secondary-200 dark:border-secondary-800">
                 <TableCell colspan="7" class="py-12 text-center">
                   <div class="flex flex-col items-center justify-center gap-2">
                     <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
-                    <span class="text-sm text-muted-foreground">Memuat data...</span>
+                    <span class="text-sm text-secondary-500 dark:text-secondary-400">Memuat data...</span>
                   </div>
                 </TableCell>
               </TableRow>
               
-              <TableRow v-else-if="props.users.data.length === 0" class="border-b border-border">
+              <TableRow v-else-if="props.users.data.length === 0" class="border-b border-secondary-200 dark:border-secondary-800">
                 <TableCell colspan="7" class="py-12 text-center">
                   <div class="flex flex-col items-center justify-center gap-2">
-                    <div class="bg-muted rounded-full p-3">
-                      <Search class="h-6 w-6 text-muted-foreground" />
+                    <div class="bg-secondary-100 dark:bg-secondary-800 rounded-full p-3">
+                      <Search class="h-6 w-6 text-secondary-500 dark:text-secondary-400" />
                     </div>
-                    <span class="text-lg font-medium">Tidak ada pengguna ditemukan</span>
-                    <span class="text-sm text-muted-foreground">Coba ubah filter atau buat pengguna baru</span>
+                    <span class="text-lg font-medium text-secondary-900 dark:text-white">Tidak ada pengguna ditemukan</span>
+                    <span class="text-sm text-secondary-500 dark:text-secondary-400">Coba ubah filter atau buat pengguna baru</span>
                   </div>
                 </TableCell>
               </TableRow>
               
               <template v-else>
-                <TableRow v-for="user in props.users.data" :key="user.id" class="border-b border-border/60 hover:bg-muted/20">
-                  <TableCell class="py-3.5 px-6 align-middle font-medium">{{ user.name }}</TableCell>
-                  <TableCell class="py-3.5 px-6 align-middle text-sm">{{ user.email }}</TableCell>
-                  <TableCell class="py-3.5 px-6 align-middle text-sm hidden md:table-cell">{{ user.whatsapp || '-' }}</TableCell>
+                <TableRow v-for="user in props.users.data" :key="user.id" class="border-b border-secondary-200 dark:border-secondary-800 hover:bg-secondary-100 dark:hover:bg-secondary-800">
+                  <TableCell class="py-3.5 px-6 align-middle font-medium text-secondary-900 dark:text-white">{{ user.name }}</TableCell>
+                  <TableCell class="py-3.5 px-6 align-middle text-sm text-secondary-900 dark:text-white">{{ user.email }}</TableCell>
+                  <TableCell class="py-3.5 px-6 align-middle text-sm text-secondary-900 dark:text-white hidden md:table-cell">{{ user.whatsapp || '-' }}</TableCell>
                   <TableCell class="py-3.5 px-6 align-middle">
                     <Badge :class="getStatusColor(user.status)" class="px-2.5 py-0.5 text-xs font-medium">
                       {{ user.status === 'active' ? 'Aktif' : 
@@ -449,7 +449,7 @@ const toggleFilterPanel = () => {
                       </Badge>
                     </div>
                   </TableCell>
-                  <TableCell class="py-3.5 px-6 align-middle hidden md:table-cell text-sm text-muted-foreground">{{ formatDate(user.created_at) }}</TableCell>
+                  <TableCell class="py-3.5 px-6 align-middle hidden md:table-cell text-sm text-secondary-500 dark:text-secondary-400">{{ formatDate(user.created_at) }}</TableCell>
                   <TableCell class="py-3.5 px-6 align-middle text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -507,8 +507,8 @@ const toggleFilterPanel = () => {
         </div>
         
         <!-- Pagination -->
-        <div v-if="props.users.data && props.users.data.length > 0" class="py-4 px-6 flex items-center justify-between border-t">
-          <div class="text-sm text-muted-foreground">
+        <div v-if="props.users.data && props.users.data.length > 0" class="py-4 px-6 flex items-center justify-between border-t border-secondary-200 dark:border-secondary-800">
+          <div class="text-sm text-secondary-500 dark:text-secondary-400">
             <span v-if="props.users.meta && props.users.meta.total">
               Menampilkan {{ props.users.data.length }} dari {{ props.users.meta.total }} pengguna
             </span>
@@ -521,10 +521,10 @@ const toggleFilterPanel = () => {
               v-for="(link, i) in props.users.links.slice(1, -1)" 
               :key="i"
               :href="link.url"
-              class="px-3 py-1 rounded text-sm border border-input"
+              class="px-3 py-1 rounded text-sm border border-secondary-200 dark:border-secondary-700"
               :class="{ 
-                'bg-primary text-primary-foreground border-primary': link.active,
-                'cursor-pointer hover:bg-accent': !link.active && link.url
+                'bg-primary text-white border-primary': link.active,
+                'cursor-pointer hover:bg-secondary-100 dark:hover:bg-secondary-800': !link.active && link.url
               }"
               v-html="link.label"
             />

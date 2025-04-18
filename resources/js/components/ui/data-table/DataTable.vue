@@ -78,9 +78,9 @@ const paginationMeta = computed(() => {
 // Handle row class based on function or string
 const getRowClass = (item: any, index: number) => {
   if (typeof props.rowClass === 'function') {
-    return cn('border-b border-border/60 hover:bg-muted/20', props.rowClass(item, index));
+    return cn('border-b border-secondary-200 dark:border-secondary-800 hover:bg-secondary-100 dark:hover:bg-secondary-800', props.rowClass(item, index));
   }
-  return cn('border-b border-border/60 hover:bg-muted/20', props.rowClass || '');
+  return cn('border-b border-secondary-200 dark:border-secondary-800 hover:bg-secondary-100 dark:hover:bg-secondary-800', props.rowClass || '');
 };
 
 const handlePageClick = (page: number) => {
@@ -93,11 +93,11 @@ const handlePageClick = (page: number) => {
     <div class="overflow-x-auto">
       <Table :class="tableClass || 'w-full'">
         <TableHeader>
-          <TableRow class="hover:bg-transparent border-b border-border">
+          <TableRow class="hover:bg-transparent border-b border-secondary-200 dark:border-secondary-800">
             <TableHead 
               v-for="column in visibleColumns" 
               :key="column.key" 
-              :class="column.headerClass || 'py-3 px-6 font-medium text-muted-foreground'"
+              :class="column.headerClass || 'py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400'"
             >
               {{ column.label }}
             </TableHead>
@@ -127,7 +127,7 @@ const handlePageClick = (page: number) => {
           <TableRow v-else>
             <TableCell 
               :colspan="visibleColumns.length" 
-              class="py-8 px-6 text-center text-muted-foreground"
+              class="py-8 px-6 text-center text-secondary-600 dark:text-secondary-400"
             >
               {{ emptyMessage || 'Tidak ada data yang tersedia' }}
             </TableCell>

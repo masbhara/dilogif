@@ -9,9 +9,11 @@ export const alertVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-white dark:bg-gray-900 text-gray-900 dark:text-white',
-        destructive:
-          'text-red-600 dark:text-red-500 bg-white dark:bg-gray-900 [&>svg]:text-current *:data-[slot=alert-description]:text-red-600/90 dark:*:data-[slot=alert-description]:text-red-500/90',
+        default: 'bg-white dark:bg-secondary-950 text-secondary-900 dark:text-white border-secondary-200 dark:border-secondary-800',
+        primary: 'bg-primary-50 dark:bg-primary-950 text-primary-800 dark:text-primary-300 border-primary-200 dark:border-primary-800 [&>svg]:text-primary-500',
+        destructive: 'bg-danger-50 dark:bg-danger-950 text-danger-800 dark:text-danger-300 border-danger-200 dark:border-danger-800 [&>svg]:text-danger-500',
+        success: 'bg-success-50 dark:bg-success-950 text-success-800 dark:text-success-300 border-success-200 dark:border-success-800 [&>svg]:text-success-500',
+        warning: 'bg-warning-50 dark:bg-warning-950 text-warning-800 dark:text-warning-300 border-warning-200 dark:border-warning-800 [&>svg]:text-warning-500',
       },
     },
     defaultVariants: {
