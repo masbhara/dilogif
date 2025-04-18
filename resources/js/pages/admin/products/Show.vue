@@ -4,8 +4,8 @@ import { Head, Link } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, PencilLine, ShoppingBag, Tag, CircleDollarSign, Calendar, CircleCheck, CircleX, ImageIcon, X } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { ArrowLeft, PencilLine, ShoppingBag, Tag, CircleDollarSign, Calendar, CircleCheck, CircleX, ImageIcon, X, CheckCircle, StarIcon, ExternalLink } from 'lucide-vue-next';
+import { ref, computed } from 'vue';
 
 // Breadcrumbs untuk navigasi
 const breadcrumbs = [
@@ -28,6 +28,19 @@ const props = defineProps({
     product: Object
 });
 
+// Cek apakah produk memiliki fitur dan nilai
+const hasProductFeatures = computed(() => {
+  return props.product.product_features && 
+         Array.isArray(props.product.product_features) && 
+         props.product.product_features.length > 0;
+});
+
+const hasProductValues = computed(() => {
+  return props.product.product_values && 
+         Array.isArray(props.product.product_values) && 
+         props.product.product_values.length > 0;
+});
+
 // Format tanggal
 const formatDate = (dateString) => {
     if (!dateString) return 'Tidak tersedia';
@@ -44,7 +57,9 @@ const formatDate = (dateString) => {
 const formatPrice = (price) => {
     return new Intl.NumberFormat('id-ID', {
         style: 'currency',
-        currency: 'IDR'
+        currency: 'IDR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
     }).format(price);
 };
 
@@ -70,26 +85,25 @@ const closeLightbox = () => {
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 p-4 md:p-6">
-            <div class="flex items-center gap-4">
-                <Link :href="route('admin.products.index')">
-                    <Button 
-                        variant="outline" 
-                        size="icon" 
-                        class="h-7 w-7 cursor-pointer"
-                    >
-                        <ArrowLeft class="h-4 w-4" />
-                    </Button>
-                </Link>
-                <h1 class="text-2xl font-bold">Detail Produk</h1>
-            </div>
-
-            <div class="flex justify-end gap-3 mb-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <Link :href="route('admin.products.index')">
+                        <Button 
+                            variant="outline" 
+                            size="icon" 
+                            class="h-8 w-8 cursor-pointer"
+                        >
+                            <ArrowLeft class="h-4 w-4" />
+                        </Button>
+                    </Link>
+                    <h1 class="text-2xl font-bold">Detail Produk</h1>
+                </div>
                 <Link :href="route('admin.products.edit', props.product.id)">
                     <Button 
                         variant="outline"
-                        class="cursor-pointer"
+                        class="cursor-pointer flex items-center gap-1.5 w-full sm:w-auto"
                     >
-                        <PencilLine class="h-4 w-4 mr-2" />
+                        <PencilLine class="h-4 w-4" />
                         Edit Produk
                     </Button>
                 </Link>
@@ -112,6 +126,14 @@ const closeLightbox = () => {
                                 </div>
                             </div>
 
+                            <div class="flex items-start gap-3" v-if="props.product.product_code">
+                                <ShoppingBag class="h-5 w-5 mt-0.5 text-gray-500" />
+                                <div class="flex-1">
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Kode Produk</p>
+                                    <p class="font-medium">{{ props.product.product_code }}</p>
+                                </div>
+                            </div>
+
                             <div class="flex items-start gap-3">
                                 <Tag class="h-5 w-5 mt-0.5 text-gray-500" />
                                 <div class="flex-1">
@@ -130,6 +152,20 @@ const closeLightbox = () => {
                                 <div class="flex-1">
                                     <p class="text-sm text-gray-500 dark:text-gray-400">Harga</p>
                                     <p class="font-medium">{{ formatPrice(props.product.price) }}</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-3" v-if="props.product.demo_url">
+                                <ExternalLink class="h-5 w-5 mt-0.5 text-gray-500" />
+                                <div class="flex-1">
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">URL Demo</p>
+                                    <a 
+                                        :href="props.product.demo_url" 
+                                        target="_blank"
+                                        class="text-primary-600 hover:underline"
+                                    >
+                                        {{ props.product.demo_url }}
+                                    </a>
                                 </div>
                             </div>
 
@@ -227,6 +263,44 @@ const closeLightbox = () => {
                         <div class="prose dark:prose-invert max-w-none">
                             <p>{{ props.product.description }}</p>
                         </div>
+                    </CardContent>
+                </Card>
+
+                <!-- Fitur Produk (jika ada) -->
+                <Card v-if="hasProductFeatures">
+                    <CardHeader>
+                        <CardTitle class="flex items-center gap-2">
+                            <CheckCircle class="h-5 w-5 text-primary-600" />
+                            Fitur Produk
+                        </CardTitle>
+                        <CardDescription>Fitur-fitur unggulan produk</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <ul class="space-y-2">
+                            <li v-for="(feature, index) in props.product.product_features" :key="index" class="flex items-start gap-2">
+                                <CircleCheck class="h-4 w-4 mt-0.5 text-primary-600 flex-shrink-0" />
+                                <span>{{ feature }}</span>
+                            </li>
+                        </ul>
+                    </CardContent>
+                </Card>
+
+                <!-- Nilai Produk (jika ada) -->
+                <Card v-if="hasProductValues">
+                    <CardHeader>
+                        <CardTitle class="flex items-center gap-2">
+                            <StarIcon class="h-5 w-5 text-amber-500" />
+                            Keunggulan Produk
+                        </CardTitle>
+                        <CardDescription>Nilai dan keunggulan produk</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <ul class="space-y-2">
+                            <li v-for="(value, index) in props.product.product_values" :key="index" class="flex items-start gap-2">
+                                <StarIcon class="h-4 w-4 mt-0.5 text-amber-500 flex-shrink-0" />
+                                <span>{{ value }}</span>
+                            </li>
+                        </ul>
                     </CardContent>
                 </Card>
             </div>

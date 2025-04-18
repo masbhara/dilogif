@@ -10,15 +10,12 @@
           <p class="text-gray-600 max-w-2xl mx-auto">Temukan koleksi produk terbaik kami dengan beragam pilihan yang sesuai kebutuhan Anda</p>
         </div>
         
-        <!-- Breadcrumb -->
-        <div class="bg-white p-4 rounded-lg shadow-sm mb-8">
-          <Breadcrumb :items="breadcrumbItems" />
-        </div>
         
         <!-- Filter -->
         <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="col-span-1 md:col-span-2">
+          <div class="flex flex-col md:flex-row items-stretch gap-4">
+            <!-- Pencarian -->
+            <div class="flex-1">
               <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Cari Produk</label>
               <div class="relative">
                 <input 
@@ -26,7 +23,7 @@
                   v-model="search" 
                   type="text" 
                   placeholder="Masukkan nama produk..." 
-                  class="w-full pl-10 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  class="w-full pl-10 px-4 py-2 h-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                   @keyup.enter="filterProducts"
                 />
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -37,12 +34,13 @@
               </div>
             </div>
             
-            <div>
+            <!-- Kategori -->
+            <div class="w-full md:w-72">
               <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
               <select 
                 id="category"
                 v-model="selectedCategory" 
-                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                class="w-full px-4 py-2 h-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                 @change="filterProducts"
               >
                 <option value="">Semua Kategori</option>
@@ -52,9 +50,10 @@
               </select>
             </div>
             
-            <div class="md:col-span-3 flex justify-end">
-              <Button @click="filterProducts">Filter Produk</Button>
-              <Button @click="resetFilters" variant="outline" class="ml-2">Reset</Button>
+            <!-- Tombol -->
+            <div class="flex items-end gap-2 mt-auto">
+              <Button @click="filterProducts" class="bg-gray-900 hover:bg-black h-10 px-5">Filter Produk</Button>
+              <Button @click="resetFilters" variant="outline" class="h-10">Reset</Button>
             </div>
           </div>
         </div>
@@ -87,7 +86,7 @@
                     <div class="text-xl font-bold text-primary-600">
                       {{ formatPrice(product.price) }}
                     </div>
-                    <Button variant="outline" size="sm" class="group-hover:bg-primary group-hover:text-white transition-colors">
+                    <Button variant="outline" size="sm" class="group-hover:bg-primary group-hover:text-white transition-colors cursor-pointer">
                       Lihat Detail
                     </Button>
                   </div>
@@ -119,7 +118,6 @@ import { Head, Link } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Pagination from '@/components/Pagination.vue';
-import Breadcrumb from '@/components/ui/breadcrumb.vue';
 import MainLayout from '@/components/layout/MainLayout.vue';
 import { ref, computed, onMounted } from 'vue';
 import { router } from '@inertiajs/vue3';
@@ -172,19 +170,5 @@ onMounted(() => {
   }
 });
 
-// Breadcrumb data
-const breadcrumbItems = computed(() => {
-  const items = [
-    { label: 'Beranda', href: route('home') },
-    { label: 'Produk' }
-  ];
-  
-  if (props.category) {
-    items.pop(); // Remove 'Produk' as last item
-    items.push({ label: 'Produk', href: route('products.index') });
-    items.push({ label: props.category.name });
-  }
-  
-  return items;
-});
+
 </script> 

@@ -4,19 +4,14 @@
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 p-4 md:p-6">
             <!-- Header dengan judul dan tombol kembali -->
-            <div class="mb-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h1 class="font-semibold text-lg text-gray-800 leading-tight">Edit Produk: {{ product.name }}</h1>
-                        <Breadcrumb :items="breadcrumbItems" />
-                    </div>
-                    <Link :href="route('admin.products.index')" class="cursor-pointer">
-                        <Button variant="outline" class="flex items-center gap-1.5 w-full sm:w-auto cursor-pointer">
-                            <ArrowLeft class="h-4 w-4" />
-                            Kembali
-                        </Button>
-                    </Link>
-                </div>
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <h1 class="text-2xl font-bold">Edit Produk: {{ product.name }}</h1>
+                <Link :href="route('admin.products.index')" class="cursor-pointer">
+                    <Button variant="outline" class="flex items-center gap-1.5 w-full sm:w-auto cursor-pointer">
+                        <ArrowLeft class="h-4 w-4" />
+                        Kembali
+                    </Button>
+                </Link>
             </div>
             
             <div class="bg-card text-card-foreground rounded-xl shadow border border-sidebar-border/70 dark:border-sidebar-border overflow-hidden">
@@ -44,18 +39,28 @@
                                 </div>
 
                                 <div>
+                                    <Label for="product_code">Kode Produk</Label>
+                                    <Input
+                                        id="product_code"
+                                        v-model="form.product_code"
+                                        type="text"
+                                        class="mt-1 block w-full opacity-60 cursor-not-allowed"
+                                        disabled
+                                    />
+                                    <p class="text-xs text-muted-foreground mt-1">
+                                        Kode produk digenerate otomatis oleh sistem dan tidak dapat diubah
+                                    </p>
+                                    <InputError :message="form.errors.product_code" class="mt-2" />
+                                </div>
+
+                                <div>
                                     <Label for="category">Kategori</Label>
                                     <Combobox
-                                        id="category"
                                         v-model="form.category_id"
                                         :options="categoryOptions"
-                                        placeholder="Pilih kategori"
-                                        class="mt-1 block w-full"
+                                        placeholder="Pilih kategori..."
                                     />
-                                    <div v-if="!form.category_id" class="mt-1 text-xs text-amber-600">
-                                        Produk ini tidak memiliki kategori. Pilih kategori atau biarkan kosong.
-                                    </div>
-                                    <InputError :message="form.errors.category_id" class="mt-2" />
+                                    <InputError :message="form.errors.category_id" />
                                 </div>
 
                                 <div>
@@ -91,6 +96,21 @@
                                         Opsional: URL kustom untuk produk (tanpa spasi dan karakter khusus)
                                     </p>
                                     <InputError :message="form.errors.custom_url" class="mt-2" />
+                                </div>
+
+                                <div>
+                                    <Label for="demo_url">URL Demo</Label>
+                                    <Input
+                                        id="demo_url"
+                                        v-model="form.demo_url"
+                                        type="url"
+                                        class="mt-1 block w-full"
+                                        placeholder="https://example.com"
+                                    />
+                                    <p class="text-xs text-muted-foreground mt-1">
+                                        Opsional: Masukkan URL untuk demo produk
+                                    </p>
+                                    <InputError :message="form.errors.demo_url" class="mt-2" />
                                 </div>
 
                                 <div>
@@ -161,6 +181,78 @@
                             </div>
 
                             <div>
+                                <div class="mb-6">
+                                    <Label>Fitur Produk</Label>
+                                    <div class="space-y-2 mt-2">
+                                        <div v-for="(feature, index) in productFeatures" :key="`feature-${index}`" class="flex items-start gap-2">
+                                            <div class="flex-1">
+                                                <Input
+                                                    v-model="feature.text"
+                                                    type="text"
+                                                    placeholder="Masukkan fitur produk"
+                                                    class="w-full"
+                                                />
+                                            </div>
+                                            <Button
+                                                type="button"
+                                                variant="destructive"
+                                                size="icon"
+                                                @click="removeFeature(index)"
+                                                class="h-10 w-10"
+                                            >
+                                                <X class="w-4 h-4" />
+                                            </Button>
+                                        </div>
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            @click="addFeature"
+                                            class="mt-2 w-full"
+                                        >
+                                            Tambah Fitur
+                                        </Button>
+                                    </div>
+                                    <p class="text-xs text-muted-foreground mt-1">
+                                        Opsional: Tambahkan fitur-fitur produk
+                                    </p>
+                                </div>
+
+                                <div class="mb-6">
+                                    <Label>Nilai/Keunggulan Produk</Label>
+                                    <div class="space-y-2 mt-2">
+                                        <div v-for="(value, index) in productValues" :key="`value-${index}`" class="flex items-start gap-2">
+                                            <div class="flex-1">
+                                                <Input
+                                                    v-model="value.text"
+                                                    type="text"
+                                                    placeholder="Masukkan nilai/keunggulan produk"
+                                                    class="w-full"
+                                                />
+                                            </div>
+                                            <Button
+                                                type="button"
+                                                variant="destructive"
+                                                size="icon"
+                                                @click="removeValue(index)"
+                                                class="h-10 w-10"
+                                            >
+                                                <X class="w-4 h-4" />
+                                            </Button>
+                                        </div>
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            @click="addValue"
+                                            class="mt-2 w-full"
+                                        >
+                                            Tambah Nilai/Keunggulan
+                                        </Button>
+                                    </div>
+                                    <p class="text-xs text-muted-foreground mt-1">
+                                        Opsional: Tambahkan nilai/keunggulan produk
+                                    </p>
+                                </div>
+
                                 <Label for="description">Deskripsi</Label>
                                 <Textarea
                                     id="description"
@@ -217,7 +309,6 @@ import { router } from '@inertiajs/vue3';
 import { ref, computed, watch } from 'vue';
 import ConfirmationDialog from '@/components/ui/ConfirmationDialog.vue';
 import { toast } from 'vue-sonner';
-import Breadcrumb from '@/components/ui/breadcrumb.vue';
 
 // Breadcrumbs untuk navigasi yang digunakan di AppLayout
 const breadcrumbs = [
@@ -235,20 +326,24 @@ const breadcrumbs = [
     }
 ];
 
-// Untuk komponen Breadcrumb dalam halaman
-const breadcrumbItems = computed(() => [
-    {
-        label: 'Admin',
-        href: route('admin.dashboard'),
-    },
-    {
-        label: 'Produk',
-        href: route('admin.products.index'),
-    },
-    {
-        label: 'Edit Produk',
-    }
-]);
+// Computed property untuk breadcrumb items
+const breadcrumbItems = computed(() => {
+    return [
+        {
+            title: 'Dashboard',
+            href: route('admin.dashboard'),
+        },
+        {
+            title: 'Produk',
+            href: route('admin.products.index'),
+        },
+        {
+            title: 'Edit Produk',
+            href: '#',
+            current: true
+        }
+    ];
+});
 
 const props = defineProps({
     product: Object,
@@ -257,6 +352,11 @@ const props = defineProps({
         default: () => []
     }
 });
+
+// Tambahkan log untuk melihat data produk
+console.log("Product data received:", props.product);
+console.log("Product features:", props.product.product_features);
+console.log("Product values:", props.product.product_values);
 
 // State untuk dialog hapus gambar
 const imageToDelete = ref(null);
@@ -269,6 +369,66 @@ const featuredImagePreview = ref(null);
 // Tambahkan array untuk menangani gambar galeri baru
 const newGalleryImages = ref([]);
 
+// Inisialisasi fitur dan nilai produk
+const initProductFeatures = () => {
+    console.log("Product features from DB:", props.product.product_features);
+    let features = [];
+    
+    // Kasus 1: Array biasa
+    if (props.product.product_features && Array.isArray(props.product.product_features)) {
+        features = props.product.product_features.map(feature => ({ text: feature }));
+    } 
+    // Kasus 2: String JSON
+    else if (typeof props.product.product_features === 'string' && props.product.product_features) {
+        try {
+            const parsed = JSON.parse(props.product.product_features);
+            if (Array.isArray(parsed)) {
+                features = parsed.map(feature => ({ text: feature }));
+            }
+        } catch (e) {
+            console.error("Error parsing features:", e);
+        }
+    }
+    
+    // Jika tidak ada data, tambahkan field kosong
+    if (features.length === 0) {
+        features.push({ text: '' });
+    }
+    
+    return features;
+};
+
+const initProductValues = () => {
+    console.log("Product values from DB:", props.product.product_values);
+    let values = [];
+    
+    // Kasus 1: Array biasa
+    if (props.product.product_values && Array.isArray(props.product.product_values)) {
+        values = props.product.product_values.map(value => ({ text: value }));
+    } 
+    // Kasus 2: String JSON
+    else if (typeof props.product.product_values === 'string' && props.product.product_values) {
+        try {
+            const parsed = JSON.parse(props.product.product_values);
+            if (Array.isArray(parsed)) {
+                values = parsed.map(value => ({ text: value }));
+            }
+        } catch (e) {
+            console.error("Error parsing values:", e);
+        }
+    }
+    
+    // Jika tidak ada data, tambahkan field kosong
+    if (values.length === 0) {
+        values.push({ text: '' });
+    }
+    
+    return values;
+};
+
+const productFeatures = ref(initProductFeatures());
+const productValues = ref(initProductValues());
+
 const form = useForm({
     name: props.product.name,
     category_id: props.product.category_id,
@@ -277,6 +437,8 @@ const form = useForm({
     featured_image: null,
     gallery: props.product.gallery || [],
     custom_url: props.product.custom_url,
+    demo_url: props.product.demo_url,
+    product_code: props.product.product_code,
     _method: 'PUT' // Metode HTTP yang benar untuk update
 });
 
@@ -321,6 +483,32 @@ const categoryOptions = computed(() => {
     return categories.value;
 });
 
+// Fungsi untuk mengelola fitur produk
+const addFeature = () => {
+    productFeatures.value.push({ text: '' });
+};
+
+const removeFeature = (index) => {
+    productFeatures.value.splice(index, 1);
+    // Pastikan selalu ada minimal satu field
+    if (productFeatures.value.length === 0) {
+        productFeatures.value.push({ text: '' });
+    }
+};
+
+// Fungsi untuk mengelola nilai produk
+const addValue = () => {
+    productValues.value.push({ text: '' });
+};
+
+const removeValue = (index) => {
+    productValues.value.splice(index, 1);
+    // Pastikan selalu ada minimal satu field
+    if (productValues.value.length === 0) {
+        productValues.value.push({ text: '' });
+    }
+};
+
 const submit = () => {
     loading.value = true;
     
@@ -330,6 +518,7 @@ const submit = () => {
     formData.append("description", form.description);
     formData.append("price", form.price);
     formData.append("custom_url", form.custom_url);
+    formData.append("demo_url", form.demo_url);
     
     if (form.category_id) {
         formData.append("category_id", form.category_id);
@@ -349,6 +538,17 @@ const submit = () => {
     form.gallery.forEach((item) => {
         formData.append("gallery_ids[]", item.id);
     });
+    
+    // Menambahkan product_features dan product_values sebagai JSON
+    if (productFeatures.value.length > 0) {
+        const features = productFeatures.value.filter(f => f.text.trim() !== '').map(f => f.text);
+        formData.append("product_features", JSON.stringify(features));
+    }
+    
+    if (productValues.value.length > 0) {
+        const values = productValues.value.filter(v => v.text.trim() !== '').map(v => v.text);
+        formData.append("product_values", JSON.stringify(values));
+    }
     
     router.post(route("admin.products.update", props.product.id), formData, {
         onSuccess: () => {

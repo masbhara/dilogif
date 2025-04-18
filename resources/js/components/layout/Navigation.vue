@@ -125,6 +125,7 @@ const websiteSettings = computed(() => page.props.websiteSettings)
 // Memisahkan navigasi utama
 const mainNavigation = computed(() => [
   { name: 'Home', route: 'home', current: page.url === '/' },
+  { name: 'Products', route: 'products.index', current: page.url.startsWith('/products') },
   { name: 'About', route: 'about', current: page.url === '/about' },
   { name: 'Services', route: 'services', current: page.url === '/services' },
   { name: 'Contact', route: 'contact', current: page.url === '/contact' }

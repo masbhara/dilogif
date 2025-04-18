@@ -53,18 +53,30 @@ class ProductController extends Controller
                 'featured_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'custom_url' => 'nullable|string|max:255',
+                'demo_url' => 'nullable|url|max:255',
+                'product_features' => 'nullable|json',
+                'product_values' => 'nullable|json',
             ]);
 
             $featuredImage = $request->file('featured_image')->store('products', 'public');
+            
+            // Generate product code
+            $latestProduct = Product::latest()->first();
+            $latestCode = $latestProduct ? $latestProduct->product_code : null;
+            $newCode = $this->generateProductCode($latestCode);
 
             $product = Product::create([
                 'name' => $request->name,
-                'slug' => Str::slug($request->name),
+                'slug' => empty($request->custom_url) ? Str::slug($request->name) : Str::slug($request->custom_url),
                 'category_id' => $request->category_id ?: null,
                 'price' => $request->price,
                 'description' => $request->description,
                 'featured_image' => $featuredImage,
                 'custom_url' => $request->custom_url,
+                'demo_url' => $request->demo_url,
+                'product_features' => $request->product_features ? json_decode($request->product_features) : null,
+                'product_values' => $request->product_values ? json_decode($request->product_values) : null,
+                'product_code' => $newCode,
                 'is_active' => true, // Default to active
             ]);
 
@@ -148,16 +160,32 @@ class ProductController extends Controller
                 'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'custom_url' => 'nullable|string|max:255',
+                'demo_url' => 'nullable|url|max:255',
+                'product_features' => 'nullable|json',
+                'product_values' => 'nullable|json',
             ]);
 
             $data = [
                 'name' => $request->name,
-                'slug' => Str::slug($request->name),
                 'category_id' => $request->category_id ?: null,
                 'price' => $request->price,
                 'description' => $request->description,
-                'custom_url' => $request->custom_url,
+                'demo_url' => $request->demo_url,
+                'product_features' => $request->product_features ? json_decode($request->product_features) : null,
+                'product_values' => $request->product_values ? json_decode($request->product_values) : null,
             ];
+            
+            // Hanya update custom_url jika dikirim dan tidak kosong
+            if ($request->has('custom_url')) {
+                $data['custom_url'] = $request->custom_url;
+            }
+            
+            // Update slug jika custom_url diisi
+            if (!empty($request->custom_url)) {
+                $data['slug'] = Str::slug($request->custom_url);
+            } else {
+                $data['slug'] = Str::slug($request->name);
+            }
 
             // Proses gambar utama jika ada
             if ($request->hasFile('featured_image')) {
@@ -308,5 +336,29 @@ class ProductController extends Controller
         }
 
         return response()->json(['message' => 'Gallery order updated successfully.']);
+    }
+
+    /**
+     * Generate a unique product code with format DLXXX
+     */
+    private function generateProductCode($latestCode = null)
+    {
+        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $length = 3;
+        
+        do {
+            $randomString = '';
+            for ($i = 0; $i < $length; $i++) {
+                $randomString .= $characters[rand(0, strlen($characters) - 1)];
+            }
+            
+            $productCode = 'DL' . $randomString;
+            
+            // Cek keunikan kode produk
+            $exists = Product::withTrashed()->where('product_code', $productCode)->exists();
+            
+        } while ($exists); // Ulangi jika kode sudah digunakan
+        
+        return $productCode;
     }
 }

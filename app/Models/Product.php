@@ -20,11 +20,17 @@ class Product extends Model
         'featured_image',
         'custom_url',
         'is_active',
+        'product_code',
+        'product_features',
+        'product_values',
+        'demo_url',
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
         'is_active' => 'boolean',
+        'product_features' => 'array',
+        'product_values' => 'array',
     ];
 
     protected $appends = ['url'];
@@ -34,8 +40,14 @@ class Product extends Model
         parent::boot();
         
         static::creating(function ($product) {
+            // Generate slug jika kosong
             if (empty($product->slug)) {
                 $product->slug = Str::slug($product->name);
+            }
+            
+            // Generate kode produk jika kosong
+            if (empty($product->product_code)) {
+                $product->product_code = self::generateProductCode();
             }
         });
 
@@ -50,6 +62,31 @@ class Product extends Model
                 $product->slug = Str::slug($product->custom_url);
             }
         });
+    }
+
+    /**
+     * Generate a unique product code with format DLXXX
+     */
+    public static function generateProductCode()
+    {
+        // Buat kode random dengan format DLXXX (XXX = kombinasi huruf dan angka)
+        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $length = 3;
+        
+        do {
+            $randomString = '';
+            for ($i = 0; $i < $length; $i++) {
+                $randomString .= $characters[random_int(0, strlen($characters) - 1)];
+            }
+            
+            $productCode = 'DL' . $randomString;
+            
+            // Cek keunikan kode produk
+            $exists = self::withTrashed()->where('product_code', $productCode)->exists();
+            
+        } while ($exists); // Ulangi jika kode sudah digunakan
+        
+        return $productCode;
     }
 
     /**

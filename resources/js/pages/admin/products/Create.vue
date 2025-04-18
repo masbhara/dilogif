@@ -38,6 +38,22 @@
                                 </div>
 
                                 <div>
+                                    <Label for="product_code">Kode Produk</Label>
+                                    <Input
+                                        id="product_code"
+                                        v-model="form.product_code"
+                                        type="text"
+                                        class="mt-1 block w-full opacity-60 cursor-not-allowed"
+                                        placeholder="Akan digenerate otomatis"
+                                        disabled
+                                    />
+                                    <p class="text-xs text-muted-foreground mt-1">
+                                        Kode produk akan digenerate otomatis oleh sistem
+                                    </p>
+                                    <InputError :message="form.errors.product_code" class="mt-2" />
+                                </div>
+
+                                <div>
                                     <Label for="category">Kategori</Label>
                                     <Select v-model="selectedCategory">
                                         <SelectTrigger class="w-full">
@@ -64,15 +80,21 @@
 
                                 <div>
                                     <Label for="price">Harga</Label>
-                                    <Input
-                                        id="price"
-                                        v-model="form.price"
-                                        type="number"
-                                        min="0"
-                                        step="0.01"
-                                        class="mt-1 block w-full"
-                                        required
-                                    />
+                                    <div class="mt-1 relative rounded-md shadow-sm">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <span class="text-gray-500 sm:text-sm"> Rp </span>
+                                        </div>
+                                        <Input
+                                            id="price"
+                                            v-model="form.price"
+                                            type="number"
+                                            min="0"
+                                            step="0.01"
+                                            class="pl-12 mt-1 block w-full"
+                                            placeholder="0"
+                                            required
+                                        />
+                                    </div>
                                     <p class="text-xs text-muted-foreground mt-1">
                                         Masukkan harga tanpa tanda baca, contoh: 100000
                                     </p>
@@ -91,6 +113,21 @@
                                         Opsional: URL kustom untuk produk (tanpa spasi dan karakter khusus)
                                     </p>
                                     <InputError :message="form.errors.custom_url" class="mt-2" />
+                                </div>
+
+                                <div>
+                                    <Label for="demo_url">URL Demo</Label>
+                                    <Input
+                                        id="demo_url"
+                                        v-model="form.demo_url"
+                                        type="url"
+                                        class="mt-1 block w-full"
+                                        placeholder="https://example.com"
+                                    />
+                                    <p class="text-xs text-muted-foreground mt-1">
+                                        Opsional: Masukkan URL untuk demo produk
+                                    </p>
+                                    <InputError :message="form.errors.demo_url" class="mt-2" />
                                 </div>
 
                                 <div>
@@ -136,6 +173,78 @@
                             </div>
 
                             <div>
+                                <div class="mb-6">
+                                    <Label>Fitur Produk</Label>
+                                    <div class="space-y-2 mt-2">
+                                        <div v-for="(feature, index) in productFeatures" :key="`feature-${index}`" class="flex items-start gap-2">
+                                            <div class="flex-1">
+                                                <Input
+                                                    v-model="feature.text"
+                                                    type="text"
+                                                    placeholder="Masukkan fitur produk"
+                                                    class="w-full"
+                                                />
+                                            </div>
+                                            <Button
+                                                type="button"
+                                                variant="destructive"
+                                                size="icon"
+                                                @click="removeFeature(index)"
+                                                class="h-10 w-10"
+                                            >
+                                                <X class="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            @click="addFeature"
+                                            class="mt-2 w-full"
+                                        >
+                                            Tambah Fitur
+                                        </Button>
+                                    </div>
+                                    <p class="text-xs text-muted-foreground mt-1">
+                                        Opsional: Tambahkan fitur-fitur produk
+                                    </p>
+                                </div>
+
+                                <div class="mb-6">
+                                    <Label>Nilai/Keunggulan Produk</Label>
+                                    <div class="space-y-2 mt-2">
+                                        <div v-for="(value, index) in productValues" :key="`value-${index}`" class="flex items-start gap-2">
+                                            <div class="flex-1">
+                                                <Input
+                                                    v-model="value.text"
+                                                    type="text"
+                                                    placeholder="Masukkan nilai/keunggulan produk"
+                                                    class="w-full"
+                                                />
+                                            </div>
+                                            <Button
+                                                type="button"
+                                                variant="destructive"
+                                                size="icon"
+                                                @click="removeValue(index)"
+                                                class="h-10 w-10"
+                                            >
+                                                <X class="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            @click="addValue"
+                                            class="mt-2 w-full"
+                                        >
+                                            Tambah Nilai/Keunggulan
+                                        </Button>
+                                    </div>
+                                    <p class="text-xs text-muted-foreground mt-1">
+                                        Opsional: Tambahkan nilai/keunggulan produk
+                                    </p>
+                                </div>
+
                                 <Label for="description">Deskripsi</Label>
                                 <Textarea
                                     id="description"
@@ -167,7 +276,7 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { ArrowLeft, Loader2 } from 'lucide-vue-next';
+import { ArrowLeft, Loader2, X } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -208,6 +317,10 @@ const featuredImagePreview = ref(null);
 // Ref terpisah untuk kategori
 const selectedCategory = ref(null);
 
+// Repeater untuk fitur dan nilai produk
+const productFeatures = ref([{ text: '' }]);
+const productValues = ref([{ text: '' }]);
+
 const form = useForm({
     name: '',
     category_id: '',
@@ -215,7 +328,9 @@ const form = useForm({
     description: '',
     featured_image: null,
     gallery: [],
-    custom_url: ''
+    custom_url: '',
+    product_code: '',
+    demo_url: ''
 });
 
 // Watch perubahan pada selectedCategory
@@ -249,7 +364,39 @@ const handleGalleryImagesChange = (event) => {
 const submit = () => {
     loading.value = true;
     
-    form.post(route('admin.products.store'), {
+    const formData = new FormData();
+    formData.append('name', form.name);
+    formData.append('description', form.description);
+    formData.append('price', form.price);
+    formData.append('custom_url', form.custom_url);
+    formData.append('demo_url', form.demo_url);
+    
+    if (form.category_id) {
+        formData.append('category_id', form.category_id);
+    }
+    
+    if (form.featured_image) {
+        formData.append('featured_image', form.featured_image);
+    }
+    
+    if (form.gallery && form.gallery.length > 0) {
+        form.gallery.forEach((image) => {
+            formData.append('gallery[]', image);
+        });
+    }
+    
+    // Menambahkan product_features dan product_values sebagai JSON
+    if (productFeatures.value.length > 0) {
+        const features = productFeatures.value.filter(f => f.text.trim() !== '').map(f => f.text);
+        formData.append('product_features', JSON.stringify(features));
+    }
+    
+    if (productValues.value.length > 0) {
+        const values = productValues.value.filter(v => v.text.trim() !== '').map(v => v.text);
+        formData.append('product_values', JSON.stringify(values));
+    }
+    
+    router.post(route('admin.products.store'), formData, {
         preserveScroll: true,
         forceFormData: true,
         onSuccess: () => {
@@ -257,6 +404,8 @@ const submit = () => {
             form.reset();
             featuredImagePreview.value = null;
             selectedCategory.value = null;
+            productFeatures.value = [{ text: '' }];
+            productValues.value = [{ text: '' }];
             
             toast.success('Berhasil', {
                 description: 'Produk baru berhasil ditambahkan',
@@ -273,5 +422,29 @@ const submit = () => {
             console.error('Error:', errors);
         }
     });
+};
+
+const addFeature = () => {
+    productFeatures.value.push({ text: '' });
+};
+
+const removeFeature = (index) => {
+    productFeatures.value.splice(index, 1);
+    // Pastikan selalu ada minimal satu field
+    if (productFeatures.value.length === 0) {
+        productFeatures.value.push({ text: '' });
+    }
+};
+
+const addValue = () => {
+    productValues.value.push({ text: '' });
+};
+
+const removeValue = (index) => {
+    productValues.value.splice(index, 1);
+    // Pastikan selalu ada minimal satu field
+    if (productValues.value.length === 0) {
+        productValues.value.push({ text: '' });
+    }
 };
 </script> 
