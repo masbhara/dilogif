@@ -114,7 +114,6 @@
 
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Pagination from '@/components/Pagination.vue';

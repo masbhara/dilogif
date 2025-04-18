@@ -4,14 +4,19 @@
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 p-4 md:p-6">
             <!-- Header dengan judul dan tombol kembali -->
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <h1 class="text-2xl font-bold">Edit Produk: {{ product.name }}</h1>
-                <Link :href="route('admin.products.index')" class="cursor-pointer">
-                    <Button variant="outline" class="flex items-center gap-1.5 w-full sm:w-auto cursor-pointer">
-                        <ArrowLeft class="h-4 w-4" />
-                        Kembali
-                    </Button>
-                </Link>
+            <div class="mb-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="font-semibold text-lg text-gray-800 leading-tight">Edit Produk: {{ product.name }}</h1>
+                        <Breadcrumb :items="breadcrumbItems" />
+                    </div>
+                    <Link :href="route('admin.products.index')" class="cursor-pointer">
+                        <Button variant="outline" class="flex items-center gap-1.5 w-full sm:w-auto cursor-pointer">
+                            <ArrowLeft class="h-4 w-4" />
+                            Kembali
+                        </Button>
+                    </Link>
+                </div>
             </div>
             
             <div class="bg-card text-card-foreground rounded-xl shadow border border-sidebar-border/70 dark:border-sidebar-border overflow-hidden">
@@ -206,14 +211,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Combobox } from '@/components/ui/combobox/Combobox.vue';
+import Combobox from '@/components/ui/combobox/Combobox.vue';
 import InputError from '@/components/InputError.vue';
 import { router } from '@inertiajs/vue3';
 import { ref, computed, watch } from 'vue';
 import ConfirmationDialog from '@/components/ui/ConfirmationDialog.vue';
 import { toast } from 'vue-sonner';
+import Breadcrumb from '@/components/ui/breadcrumb.vue';
 
-// Breadcrumbs untuk navigasi
+// Breadcrumbs untuk navigasi yang digunakan di AppLayout
 const breadcrumbs = [
     {
         title: 'Admin',
@@ -228,6 +234,21 @@ const breadcrumbs = [
         href: '#',
     }
 ];
+
+// Untuk komponen Breadcrumb dalam halaman
+const breadcrumbItems = computed(() => [
+    {
+        label: 'Admin',
+        href: route('admin.dashboard'),
+    },
+    {
+        label: 'Produk',
+        href: route('admin.products.index'),
+    },
+    {
+        label: 'Edit Produk',
+    }
+]);
 
 const props = defineProps({
     product: Object,
@@ -293,6 +314,11 @@ const categories = computed(() => {
         label: category.name,
         value: category.id
     }));
+});
+
+// Pass categories directly to the Combobox
+const categoryOptions = computed(() => {
+    return categories.value;
 });
 
 const submit = () => {

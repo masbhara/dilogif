@@ -159,7 +159,7 @@ import { toast } from 'vue-sonner';
 import { PlusCircleIcon, TrashIcon, PencilSquareIcon, EyeIcon } from '@heroicons/vue/24/outline';
 import Breadcrumb from '@/components/ui/breadcrumb.vue';
 
-// Breadcrumbs untuk navigasi
+// Breadcrumbs untuk AppLayout
 const breadcrumbs = [
     {
         title: 'Admin',
@@ -171,7 +171,7 @@ const breadcrumbs = [
     },
 ];
 
-// Breadcrumb data
+// Breadcrumb items untuk komponen Breadcrumb dalam halaman
 const breadcrumbItems = computed(() => [
     { label: 'Dashboard', href: route('admin.dashboard') },
     { label: 'Produk' }
