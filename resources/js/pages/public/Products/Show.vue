@@ -3,7 +3,7 @@
 
   <MainLayout>
     <div class="bg-gray-50 py-12">
-      <div class="container mx-auto px-4">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Breadcrumb -->
         <div class="bg-white p-4 rounded-lg shadow-sm mb-8">
           <Breadcrumb :items="breadcrumbItems" />

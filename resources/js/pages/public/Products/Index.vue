@@ -3,7 +3,7 @@
   
   <MainLayout>
     <div class="bg-gray-50 py-12">
-      <div class="container mx-auto px-4">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header -->
         <div class="mb-8 text-center">
           <h1 class="text-4xl font-bold mb-2">Katalog Produk</h1>
