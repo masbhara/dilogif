@@ -2,7 +2,7 @@
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/vue3';
-import { ref, onMounted, watch, defineProps } from 'vue';
+import { ref, onMounted, watch, defineProps, computed, onUnmounted, nextTick } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Table, TableHeader, TableHead, TableBody, TableRow, TableCell } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
@@ -45,6 +45,14 @@ const showFilterPanel = ref(false);
 const statusDropdownOpen = ref(false)
 const roleDropdownOpen = ref(false)
 
+// State untuk custom select dropdown status
+const isStatusSelectOpen = ref(false);
+const statusSelectRef = ref(null);
+
+// State untuk custom select dropdown role
+const isRoleSelectOpen = ref(false);
+const roleSelectRef = ref(null);
+
 // Breadcrumbs untuk navigasi
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -65,69 +73,6 @@ const statusOptions = [
   { value: 'blocked', label: 'Diblokir' },
   { value: 'rejected', label: 'Ditolak' }
 ];
-
-// Debug routes
-onMounted(() => {
-  // Debug route name dan path untuk membantu troubleshooting
-  try {
-    // Contoh user ID untuk debugging
-    const sampleUserId = 1;
-    console.log('Route update-status path:', route('admin.users.update-status', sampleUserId));
-    console.log('Available routes:', route().current());
-  } catch(e) {
-    console.error('Error saat debugging route:', e);
-  }
-  
-  // Tambahkan listener untuk route change
-  router.on('before', () => {
-    // Kosongkan selectedUser saat navigasi
-    selectedUser.value = null;
-    // Reset dialog
-    showActivationDialog.value = false;
-    showBlockDialog.value = false;
-    showDeleteDialog.value = false;
-  });
-});
-
-// Definisi props dari controller
-const props = defineProps<{
-    users: {
-        data: Array<{
-            id: number;
-            name: string;
-            email: string;
-            status: string;
-            created_at: string;
-            roles: Array<{
-                id: number;
-                name: string;
-            }>;
-            whatsapp?: string;
-        }>;
-        meta?: {
-            total?: number;
-            current_page?: number;
-            last_page?: number;
-        };
-        links?: Array<{
-            url: string | null;
-            label: string;
-            active: boolean;
-        }>;
-    };
-    filters?: {
-        search: string;
-        status: string;
-        role: string;
-    };
-}>();
-
-// Inisialisasi filter dari props jika tersedia
-if (props.filters) {
-    filters.value.search = props.filters.search || '';
-    filters.value.status = props.filters.status || '';
-    filters.value.role = props.filters.role || '';
-}
 
 // Mendapatkan daftar unique roles untuk filter
 const roleOptions = ref([
@@ -320,6 +265,140 @@ const hapusUser = () => {
 const toggleFilterPanel = () => {
   showFilterPanel.value = !showFilterPanel.value;
 };
+
+// Computed property untuk label status terpilih
+const selectedStatusLabel = computed(() => {
+    if (!filters.status) return 'Pilih status';
+    const status = statusOptions.find(option => option.value === filters.status);
+    return status ? status.label : 'Pilih status';
+});
+
+// Computed property untuk label peran terpilih
+const selectedRoleLabel = computed(() => {
+    if (!filters.role) return 'Pilih peran';
+    const role = roleOptions.find(option => option.value === filters.role);
+    return role ? role.label : 'Pilih peran';
+});
+
+// Toggle dropdown status
+const toggleStatusSelect = () => {
+    isStatusSelectOpen.value = !isStatusSelectOpen.value;
+    if (isStatusSelectOpen.value) {
+        isRoleSelectOpen.value = false;
+    }
+};
+
+// Toggle dropdown role
+const toggleRoleSelect = () => {
+    isRoleSelectOpen.value = !isRoleSelectOpen.value;
+    if (isRoleSelectOpen.value) {
+        isStatusSelectOpen.value = false;
+    }
+};
+
+// Pilih status
+const selectStatus = (statusValue) => {
+    filters.status = statusValue;
+    isStatusSelectOpen.value = false;
+    applyFilters();
+};
+
+// Pilih role
+const selectRole = (roleValue) => {
+    filters.role = roleValue;
+    isRoleSelectOpen.value = false;
+    applyFilters();
+};
+
+// Handle click outside untuk status
+const handleStatusClickOutside = (evt) => {
+    if (statusSelectRef.value && !statusSelectRef.value.contains(evt.target)) {
+        isStatusSelectOpen.value = false;
+    }
+};
+
+// Handle click outside untuk role
+const handleRoleClickOutside = (evt) => {
+    if (roleSelectRef.value && !roleSelectRef.value.contains(evt.target)) {
+        isRoleSelectOpen.value = false;
+    }
+};
+
+// Lifecycle hooks
+onMounted(() => {
+    document.addEventListener('click', handleStatusClickOutside);
+    document.addEventListener('click', handleRoleClickOutside);
+    
+    nextTick(() => {
+        statusSelectRef.value = document.querySelector('.status-select-container');
+        roleSelectRef.value = document.querySelector('.role-select-container');
+    });
+    
+    // Debug route name dan path untuk membantu troubleshooting
+    try {
+      // Contoh user ID untuk debugging
+      const sampleUserId = 1;
+      console.log('Route update-status path:', route('admin.users.update-status', sampleUserId));
+      console.log('Available routes:', route().current());
+    } catch(e) {
+      console.error('Error saat debugging route:', e);
+    }
+    
+    // Tambahkan listener untuk route change
+    router.on('before', () => {
+      // Kosongkan selectedUser saat navigasi
+      selectedUser.value = null;
+      // Reset dialog
+      showActivationDialog.value = false;
+      showBlockDialog.value = false;
+      showDeleteDialog.value = false;
+    });
+});
+
+onUnmounted(() => {
+    document.removeEventListener('click', handleStatusClickOutside);
+    document.removeEventListener('click', handleRoleClickOutside);
+});
+
+// Definisi props dari controller
+const props = defineProps<{
+    users: {
+        data: Array<{
+            id: number;
+            name: string;
+            email: string;
+            status: string;
+            created_at: string;
+            roles: Array<{
+                id: number;
+                name: string;
+            }>;
+            whatsapp?: string;
+        }>;
+        meta?: {
+            total?: number;
+            current_page?: number;
+            last_page?: number;
+        };
+        links?: Array<{
+            url: string | null;
+            label: string;
+            active: boolean;
+        }>;
+    };
+    filters?: {
+        search: string;
+        status: string;
+        role: string;
+    };
+}>();
+
+// Inisialisasi filter dari props jika tersedia
+if (props.filters) {
+    filters.value.search = props.filters.search || '';
+    filters.value.status = props.filters.status || '';
+    filters.value.role = props.filters.role || '';
+}
 </script>
 
 <template>
@@ -383,40 +462,72 @@ const toggleFilterPanel = () => {
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="space-y-2">
                   <label class="text-sm font-medium text-secondary-900 dark:text-white">Status</label>
-                  <Select v-model="filters.status">
-                    <SelectTrigger class="w-full cursor-pointer" placeholder="Pilih status">
-                      <SelectValue :placeholder="'Pilih status'" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem 
-                        v-for="option in statusOptions" 
-                        :key="option.value" 
-                        :value="option.value" 
-                        class="cursor-pointer hover:bg-secondary-100 dark:hover:bg-secondary-800"
+                  <div class="relative mt-1">
+                    <div 
+                      class="custom-select-container status-select-container" 
+                      :class="{ 'active': isStatusSelectOpen }"
+                    >
+                      <div 
+                        @click="toggleStatusSelect" 
+                        class="custom-select-trigger flex w-full items-center justify-between gap-2 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-3 py-2 text-sm shadow-sm hover:border-gray-300 dark:hover:border-gray-600 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer h-9"
                       >
-                        {{ option.label }}
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
+                        <span>{{ selectedStatusLabel }}</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-50 transition-transform" :class="{ 'rotate-180': isStatusSelectOpen }">
+                          <path d="m6 9 6 6 6-6"></path>
+                        </svg>
+                      </div>
+                      
+                      <div 
+                        v-if="isStatusSelectOpen" 
+                        class="custom-select-dropdown bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg mt-1 overflow-hidden z-50"
+                      >
+                        <div 
+                          v-for="option in statusOptions" 
+                          :key="option.value"
+                          @click="selectStatus(option.value)"
+                          class="custom-select-option py-2 px-3 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer text-sm"
+                          :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': filters.status === option.value }"
+                        >
+                          {{ option.label }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 
                 <div class="space-y-2">
                   <label class="text-sm font-medium text-secondary-900 dark:text-white">Peran</label>
-                  <Select v-model="filters.role">
-                    <SelectTrigger class="w-full cursor-pointer" placeholder="Pilih peran">
-                      <SelectValue :placeholder="'Pilih peran'" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem 
-                        v-for="option in roleOptions" 
-                        :key="option.value" 
-                        :value="option.value" 
-                        class="cursor-pointer hover:bg-secondary-100 dark:hover:bg-secondary-800"
+                  <div class="relative mt-1">
+                    <div 
+                      class="custom-select-container role-select-container" 
+                      :class="{ 'active': isRoleSelectOpen }"
+                    >
+                      <div 
+                        @click="toggleRoleSelect" 
+                        class="custom-select-trigger flex w-full items-center justify-between gap-2 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-3 py-2 text-sm shadow-sm hover:border-gray-300 dark:hover:border-gray-600 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer h-9"
                       >
-                        {{ option.label }}
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
+                        <span>{{ selectedRoleLabel }}</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-50 transition-transform" :class="{ 'rotate-180': isRoleSelectOpen }">
+                          <path d="m6 9 6 6 6-6"></path>
+                        </svg>
+                      </div>
+                      
+                      <div 
+                        v-if="isRoleSelectOpen" 
+                        class="custom-select-dropdown bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg mt-1 overflow-hidden z-50"
+                      >
+                        <div 
+                          v-for="option in roleOptions" 
+                          :key="option.value"
+                          @click="selectRole(option.value)"
+                          class="custom-select-option py-2 px-3 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer text-sm"
+                          :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': filters.role === option.value }"
+                        >
+                          {{ option.label }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </CardContent>
@@ -606,4 +717,72 @@ const toggleFilterPanel = () => {
       <p>Apakah Anda yakin ingin menghapus pengguna <span class="font-semibold">{{ selectedUser ? selectedUser.name : '' }}</span>?</p>
     </ConfirmationDialog>
   </AppLayout>
-</template> 
+</template>
+
+<style>
+/* Custom select styling */
+.custom-select-container {
+  position: relative;
+  width: 100%;
+  -webkit-tap-highlight-color: transparent;
+  border-radius: 0.375rem;
+}
+
+.custom-select-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  animation: slideDown 0.15s ease-out;
+  z-index: 50;
+}
+
+.custom-select-option:first-child {
+  border-top-left-radius: 0.375rem;
+  border-top-right-radius: 0.375rem;
+}
+
+.custom-select-option:last-child {
+  border-bottom-left-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Perbaikan outline saat fokus */
+.custom-select-trigger {
+  outline: none !important;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.custom-select-trigger:focus,
+.custom-select-trigger:focus-visible,
+.custom-select-trigger:active,
+.custom-select-trigger:hover,
+.custom-select-trigger:-moz-focusring {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: hsl(var(--primary)) !important;
+}
+
+/* Fix untuk Firefox */
+.custom-select-trigger:-moz-focusring {
+  outline: none !important;
+}
+
+/* Fix untuk Safari dan Chrome */
+.custom-select-trigger::-webkit-focus-inner {
+  border: 0;
+}
+
+/* Fix tambahan untuk Chrome */
+*:focus {
+  outline-color: transparent !important;
+}
+</style> 

@@ -22,15 +22,19 @@
                     </div>
                 </div>
                 <div class="p-6">
-                    <form @submit.prevent="submit">
+                    <form @submit.prevent="submit" enctype="multipart/form-data">
+                        <!-- Hidden method field for Laravel method spoofing -->
+                        <input type="hidden" name="_method" value="PUT">
+                        
                         <div class="space-y-4">
                             <div>
-                                <Label for="name">Nama</Label>
+                                <Label for="name">Nama {{ form.name }}</Label>
                                 <Input
                                     id="name"
                                     v-model="form.name"
                                     type="text"
                                     class="mt-1 block w-full"
+                                    :value="form.name"
                                     required
                                 />
                                 <InputError :message="form.errors.name" class="mt-2" />
@@ -56,7 +60,7 @@
                             </div>
 
                             <div class="flex items-center space-x-2">
-                                <Toggle v-model="form.is_active" label="Status Aktif" />
+                                <Toggle v-model="form.is_active" id="is_active" />
                                 <Label for="is_active">Status Aktif</Label>
                                 <Badge variant="outline" :class="form.is_active ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'">
                                     {{ form.is_active ? 'Aktif' : 'Tidak Aktif' }}
@@ -65,12 +69,18 @@
                         </div>
 
                         <div class="mt-6 flex justify-end">
-                            <Button type="submit" :disabled="form.processing">
-                                <Loader2 v-if="form.processing" class="mr-2 h-4 w-4 animate-spin" />
+                            <Button type="submit" :disabled="loading || form.processing">
+                                <Loader2 v-if="loading || form.processing" class="mr-2 h-4 w-4 animate-spin" />
                                 Perbarui Kategori
                             </Button>
                         </div>
                     </form>
+                    
+                    <!-- Debug info -->
+                    <div class="mt-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-md">
+                        <p class="text-xs">Debug: Nama kategori: {{ category.name }} ({{ typeof category.name }})</p>
+                        <p class="text-xs">Debug: Form name: {{ form.name }} ({{ typeof form.name }})</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -78,7 +88,7 @@
 </template>
 
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import { ref, onMounted } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { ArrowLeft, Loader2 } from 'lucide-vue-next';
@@ -89,6 +99,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import Toggle from '@/components/ui/Toggle.vue';
 import InputError from '@/components/InputError.vue';
 import { Badge } from '@/components/ui/badge';
+import { toast } from 'vue-sonner';
+import axios from 'axios';
 
 // Breadcrumbs untuk navigasi
 const breadcrumbs = [
@@ -121,23 +133,70 @@ const categoryIsActive =
     props.category.is_active === 'true';
 
 const form = useForm({
-    name: props.category.name,
+    // Pastikan nama kategori tidak undefined/null
+    name: props.category.name || '',
     icon: null,
     is_active: categoryIsActive
 });
 
+// Inisialisasi lagi form name pada mounted untuk memastikan
 onMounted(() => {
     console.log('Form is_active pada mount:', form.is_active, typeof form.is_active);
+    console.log('Category name pada mount:', props.category.name, typeof props.category.name);
+    
+    // Jaga-jaga, atur ulang nama
+    form.name = props.category.name || '';
 });
 
-const submit = () => {
-    console.log('Mengirim form dengan is_active:', form.is_active, typeof form.is_active);
+const loading = ref(false);
+
+// Metode submit alternatif menggunakan axios jika Inertia.js tetap bermasalah
+const submitAlternative = () => {
+    if (!form.name || form.name.trim() === '') {
+        form.name = props.category.name || 'Kategori';
+    }
     
-    form.put(route('admin.categories.update', props.category.id), {
-        preserveScroll: true,
-        onSuccess: () => {
-            form.reset('icon');
-        }
-    });
+    loading.value = true;
+    
+    const formData = new FormData();
+    formData.append('_method', 'PUT');
+    formData.append('name', form.name);
+    formData.append('is_active', form.is_active ? 1 : 0);
+    
+    if (form.icon) {
+        formData.append('icon', form.icon);
+    }
+    
+    axios.post(route('admin.categories.update', props.category.id), formData)
+        .then(response => {
+            toast.success('Berhasil', {
+                description: 'Kategori berhasil diperbarui',
+            });
+            
+            // Redirect ke halaman index setelah sukses
+            setTimeout(() => {
+                router.visit(route('admin.categories.index'));
+            }, 1500);
+        })
+        .catch(error => {
+            console.error('Error update kategori:', error.response?.data);
+            
+            if (error.response?.data?.errors) {
+                // Hubungkan error ke form
+                Object.keys(error.response.data.errors).forEach(key => {
+                    form.setError(key, error.response.data.errors[key][0]);
+                });
+            } else {
+                toast.error('Gagal', {
+                    description: 'Terjadi kesalahan saat memperbarui kategori',
+                });
+            }
+        })
+        .finally(() => {
+            loading.value = false;
+        });
 };
+
+// Ganti fungsi submit agar menggunakan metode alternatif
+const submit = submitAlternative;
 </script> 

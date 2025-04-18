@@ -9,9 +9,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Checkbox } from '@/components/ui/checkbox';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ref, onMounted, watch } from 'vue';
-import { ArrowLeft } from 'lucide-vue-next';
+import { ref, onMounted, watch, computed, onUnmounted } from 'vue';
+import { ArrowLeft, User, Loader2, X, AlertTriangle } from 'lucide-vue-next';
 import { Teleport } from 'vue';
+import InputError from '@/components/InputError.vue';
 
 // Breadcrumbs untuk navigasi
 const breadcrumbs: BreadcrumbItem[] = [
@@ -112,6 +113,45 @@ onMounted(() => {
         form.role_ids.push(Number(userRole.id));
     }
 });
+
+// State untuk custom select dropdown
+const isSelectOpen = ref(false);
+const selectRef = ref(null);
+
+// Computed property untuk label status terpilih
+const selectedStatusLabel = computed(() => {
+    if (!form.status) return 'Pilih status pengguna';
+    const status = statusOptions.find(option => option.value === form.status);
+    return status ? status.label : 'Pilih status pengguna';
+});
+
+// Toggle dropdown
+const toggleSelect = () => {
+    isSelectOpen.value = !isSelectOpen.value;
+};
+
+// Pilih status
+const selectStatus = (statusValue) => {
+    form.status = statusValue;
+    isSelectOpen.value = false;
+};
+
+// Handle click outside
+const handleClickOutside = (evt) => {
+    if (selectRef.value && !selectRef.value.contains(evt.target)) {
+        isSelectOpen.value = false;
+    }
+};
+
+// Lifecycle hooks untuk select
+onMounted(() => {
+    document.addEventListener('click', handleClickOutside);
+    selectRef.value = document.querySelector('.custom-select-container');
+});
+
+onUnmounted(() => {
+    document.removeEventListener('click', handleClickOutside);
+});
 </script>
 
 <template>
@@ -202,24 +242,37 @@ onMounted(() => {
 
                             <div class="space-y-2">
                                 <Label for="status">Status</Label>
-                                <div class="relative">
-                                    <Select v-model="form.status">
-                                        <SelectTrigger class="cursor-pointer" :class="form.errors.status ? 'border-red-500' : ''">
-                                            <SelectValue placeholder="Pilih status pengguna" />
-                                        </SelectTrigger>
-                                        <Teleport to="body">
-                                            <SelectContent class="z-[9999]">
-                                                <SelectItem 
-                                                    v-for="option in statusOptions" 
-                                                    :key="option.value" 
-                                                    :value="option.value"
-                                                    class="cursor-pointer"
-                                                >
-                                                    {{ option.label }}
-                                                </SelectItem>
-                                            </SelectContent>
-                                        </Teleport>
-                                    </Select>
+                                <div class="relative mt-1">
+                                    <div 
+                                        class="custom-select-container" 
+                                        :class="{ 'active': isSelectOpen }"
+                                    >
+                                        <div 
+                                            @click="toggleSelect" 
+                                            class="custom-select-trigger flex w-full items-center justify-between gap-2 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-3 py-2 text-sm shadow-sm hover:border-gray-300 dark:hover:border-gray-600 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer h-9"
+                                            :class="{ 'border-red-500': form.errors.status }"
+                                        >
+                                            <span>{{ selectedStatusLabel }}</span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-50 transition-transform" :class="{ 'rotate-180': isSelectOpen }">
+                                                <path d="m6 9 6 6 6-6"></path>
+                                            </svg>
+                                        </div>
+                                        
+                                        <div 
+                                            v-if="isSelectOpen" 
+                                            class="custom-select-dropdown bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg mt-1 overflow-hidden z-50"
+                                        >
+                                            <div 
+                                                v-for="option in statusOptions" 
+                                                :key="option.value"
+                                                @click="selectStatus(option.value)"
+                                                class="custom-select-option py-2 px-3 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer text-sm"
+                                                :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': form.status === option.value }"
+                                            >
+                                                {{ option.label }}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <p v-if="form.errors.status" class="text-sm text-red-500">{{ form.errors.status }}</p>
                             </div>
@@ -286,4 +339,72 @@ onMounted(() => {
             </form>
         </div>
     </AppLayout>
-</template> 
+</template>
+
+<style>
+/* Custom select styling */
+.custom-select-container {
+  position: relative;
+  width: 100%;
+  -webkit-tap-highlight-color: transparent;
+  border-radius: 0.375rem;
+}
+
+.custom-select-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  animation: slideDown 0.15s ease-out;
+  z-index: 50;
+}
+
+.custom-select-option:first-child {
+  border-top-left-radius: 0.375rem;
+  border-top-right-radius: 0.375rem;
+}
+
+.custom-select-option:last-child {
+  border-bottom-left-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Perbaikan outline saat fokus */
+.custom-select-trigger {
+  outline: none !important;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.custom-select-trigger:focus,
+.custom-select-trigger:focus-visible,
+.custom-select-trigger:active,
+.custom-select-trigger:hover,
+.custom-select-trigger:-moz-focusring {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: hsl(var(--primary)) !important;
+}
+
+/* Fix untuk Firefox */
+.custom-select-trigger:-moz-focusring {
+  outline: none !important;
+}
+
+/* Fix untuk Safari dan Chrome */
+.custom-select-trigger::-webkit-focus-inner {
+  border: 0;
+}
+
+/* Fix tambahan untuk Chrome */
+*:focus {
+  outline-color: transparent !important;
+}
+</style> 

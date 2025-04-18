@@ -6,9 +6,11 @@
             <!-- Header dengan judul dan tombol tambah -->
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <h1 class="text-2xl font-bold">Produk</h1>
-                <Link :href="route('admin.products.create')" class="flex items-center gap-2 bg-primary hover:bg-primary/90 transition-all text-white px-4 py-2 rounded-md">
-                    <PlusCircleIcon class="w-5 h-5" />
-                    <span>Tambah Produk</span>
+                <Link :href="route('admin.products.create')" class="cursor-pointer">
+                    <Button class="flex items-center gap-1.5 w-full sm:w-auto cursor-pointer">
+                        <PlusIcon class="h-4 w-4" />
+                        Tambah Produk
+                    </Button>
                 </Link>
             </div>
                 
@@ -102,7 +104,6 @@
                                                 <Pencil class="h-4 w-4" />
                                                 <span>Edit</span>
                                             </DropdownMenuItem>
-                                            <DropdownMenuSeparator />
                                             <DropdownMenuItem @click="showHapusDialog(product)" class="flex items-center gap-2 cursor-pointer py-1.5 text-red-600">
                                                 <Trash class="h-4 w-4" />
                                                 <span>Hapus</span>
