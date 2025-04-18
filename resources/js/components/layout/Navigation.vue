@@ -32,8 +32,22 @@
             </Link>
           </nav>
 
-          <!-- Auth Navigation -->
-          <div class="flex items-center">
+          <!-- Cart and Auth Navigation -->
+          <div class="flex items-center space-x-4">
+            <!-- Shopping Cart -->
+            <Link 
+              :href="route('cart.index')" 
+              class="text-[#FCFDFD] hover:text-white relative"
+            >
+              <ShoppingCartIcon class="h-6 w-6" />
+              <span 
+                v-if="cartCount > 0" 
+                class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold"
+              >
+                {{ cartCount }}
+              </span>
+            </Link>
+            
             <Link 
               :href="route('login')"
               class="text-base font-medium text-[#FCFDFD] hover:text-[#3B8BEE] transition-colors px-4 py-2 rounded-lg border border-[#FCFDFD] hover:bg-[#FCFDFD] hover:text-[#3B8BEE]"
@@ -44,7 +58,21 @@
         </div>
 
         <!-- Mobile Menu Button -->
-        <div class="flex md:hidden">
+        <div class="flex md:hidden items-center space-x-4">
+          <!-- Mobile Cart Icon -->
+          <Link 
+            :href="route('cart.index')" 
+            class="text-[#FCFDFD] hover:text-white relative mr-2"
+          >
+            <ShoppingCartIcon class="h-6 w-6" />
+            <span 
+              v-if="cartCount > 0" 
+              class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold"
+            >
+              {{ cartCount }}
+            </span>
+          </Link>
+          
           <button 
             @click="isOpen = !isOpen" 
             type="button" 
@@ -113,11 +141,13 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { usePage, Link } from '@inertiajs/vue3'
+import { ShoppingCartIcon } from 'lucide-vue-next'
 
 const page = usePage()
 const isOpen = ref(false)
+const cartCount = ref(0)
 
 // Mengambil websiteSettings dari props Inertia
 const websiteSettings = computed(() => page.props.websiteSettings)
@@ -130,4 +160,20 @@ const mainNavigation = computed(() => [
   { name: 'Services', route: 'services', current: page.url === '/services' },
   { name: 'Contact', route: 'contact', current: page.url === '/contact' }
 ])
+
+// Fungsi untuk memperbarui jumlah keranjang
+const updateCartCount = (count) => {
+  cartCount.value = count
+}
+
+// Mendapatkan jumlah keranjang saat komponen dimuat
+onMounted(() => {
+  // Expose updateCartCount function globally
+  window.updateCartCount = updateCartCount
+  
+  // Get initial cart count
+  if (page.props.cartCount !== undefined) {
+    cartCount.value = page.props.cartCount
+  }
+})
 </script> 

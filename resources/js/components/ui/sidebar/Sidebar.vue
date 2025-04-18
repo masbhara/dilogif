@@ -63,31 +63,31 @@ const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
     <!-- This is what handles the sidebar gap on desktop  -->
     <div
       :class="cn(
-        'relative w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-linear',
+        'relative w-64 bg-transparent transition-[width] duration-200 ease-linear',
         'group-data-[collapsible=offcanvas]:w-0',
         'group-data-[side=right]:rotate-180',
         variant === 'floating' || variant === 'inset'
-          ? 'group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4)))]'
-          : 'group-data-[collapsible=icon]:w-(--sidebar-width-icon)',
+          ? 'group-data-[collapsible=icon]:w-[calc(3.5rem+1rem)]'
+          : 'group-data-[collapsible=icon]:w-14',
       )"
     />
     <div
       :class="cn(
-        'fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex',
+        'fixed inset-y-0 z-10 hidden h-svh w-64 transition-[left,right,width] duration-200 ease-linear md:flex',
         side === 'left'
-          ? 'left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]'
-          : 'right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]',
+          ? 'left-0 group-data-[collapsible=offcanvas]:left-[-16rem]'
+          : 'right-0 group-data-[collapsible=offcanvas]:right-[-16rem]',
         // Adjust the padding for floating and inset variants.
         variant === 'floating' || variant === 'inset'
-          ? 'p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]'
-          : 'group-data-[collapsible=icon]:w-(--sidebar-width-icon) group-data-[side=left]:border-r group-data-[side=right]:border-l',
+          ? 'p-2 group-data-[collapsible=icon]:w-[calc(3.5rem+1rem+0.5rem)]'
+          : 'group-data-[collapsible=icon]:w-14 group-data-[side=left]:border-r group-data-[side=right]:border-l',
         props.class,
       )"
       v-bind="$attrs"
     >
       <div
         data-sidebar="sidebar"
-        class="bg-sidebar group-data-[variant=floating]:border-sidebar-border flex h-full w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm"
+        class="bg-gray-50 dark:bg-gray-900 flex h-full w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-gray-200 dark:group-data-[variant=floating]:border-gray-700 group-data-[variant=floating]:shadow-sm"
       >
         <slot />
       </div>

@@ -107,38 +107,43 @@
             </div>
             
             <!-- Fitur Produk -->
-            <div v-if="hasProductFeatures" class="mb-8 bg-gray-50 rounded-lg p-5">
-              <h3 class="text-lg font-medium mb-4 flex items-center">
-                <CheckCircleIcon class="w-5 h-5 mr-2 text-gray-700" />
-                Fitur Produk
+            <div v-if="hasProductFeatures" class="mb-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-5 border border-gray-200">
+              <h3 class="text-lg font-medium mb-4 flex items-center text-gray-800">
+                <CheckCircleIcon class="w-5 h-5 mr-2 text-primary-600" />
+                Spesifikasi Produk
               </h3>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
+              <div class="grid grid-cols-1 gap-y-3">
                 <div v-for="(feature, index) in product.product_features" :key="index" class="flex items-start">
-                  <CheckIcon class="w-4 h-4 text-primary-600 mr-2 mt-1 flex-shrink-0" />
-                  <span>{{ feature }}</span>
+                  <CheckIcon class="w-5 h-5 text-primary-600 mr-2.5 mt-0.5 flex-shrink-0" />
+                  <span class="text-gray-700">{{ feature }}</span>
                 </div>
               </div>
             </div>
             
             <!-- Nilai/Keunggulan Produk -->
-            <div v-if="hasProductValues" class="mb-8 bg-gray-50 rounded-lg p-5">
-              <h3 class="text-lg font-medium mb-4 flex items-center">
+            <div v-if="hasProductValues" class="mb-8 bg-gradient-to-br from-amber-50 to-amber-100/50 rounded-lg p-5 border border-amber-200/50">
+              <h3 class="text-lg font-medium mb-4 flex items-center text-gray-800">
                 <StarIcon class="w-5 h-5 mr-2 text-amber-500" /> 
-                Keunggulan Produk
+                Keunggulan & Manfaat
               </h3>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
+              <div class="grid grid-cols-1 gap-y-3">
                 <div v-for="(value, index) in product.product_values" :key="index" class="flex items-start">
-                  <ArrowRightIcon class="w-4 h-4 text-amber-500 mr-2 mt-1 flex-shrink-0" />
-                  <span>{{ value }}</span>
+                  <ArrowRightIcon class="w-5 h-5 text-amber-500 mr-2.5 mt-0.5 flex-shrink-0" />
+                  <span class="text-gray-700">{{ value }}</span>
                 </div>
               </div>
             </div>
             
            <!-- Tombol: Keranjang & Demo -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8">
-              <Button class="bg-red-500 hover:bg-red-600 text-white h-12 flex items-center justify-center">
-                <ShoppingCartIcon class="w-5 h-5 mr-2" />
-                Tambah ke Keranjang
+              <Button 
+                class="bg-red-500 hover:bg-red-600 text-white h-12 flex items-center justify-center"
+                :disabled="isAddingToCart" 
+                @click="addToCart"
+              >
+                <ShoppingCartIcon v-if="!isAddingToCart" class="w-5 h-5 mr-2" />
+                <span v-if="isAddingToCart" class="w-5 h-5 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+                {{ isAddingToCart ? 'Menambahkan...' : 'Tambah ke Keranjang' }}
               </Button>
               
               <Button 
@@ -267,7 +272,7 @@
 </template>
 
 <script setup>
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Breadcrumb from '@/components/ui/breadcrumb.vue';
@@ -292,6 +297,7 @@ import {
   TagIcon
 } from 'lucide-vue-next';
 import { toast } from 'vue-sonner';
+import axios from 'axios';
 
 const props = defineProps({
   product: Object,
@@ -477,6 +483,44 @@ const shareOnWhatsApp = () => {
 const copyLink = () => {
   navigator.clipboard.writeText(window.location.href).then(() => {
     toast.success('Link berhasil disalin!');
+  });
+};
+
+// Cart state
+const isAddingToCart = ref(false);
+const quantity = ref(1);
+
+// Add to cart function
+const addToCart = () => {
+  isAddingToCart.value = true;
+  
+  axios.post(route('cart.add'), {
+    product_id: props.product.id,
+    quantity: quantity.value
+  })
+  .then(response => {
+    if (response.data.success) {
+      toast.success(response.data.message);
+      
+      // Update cart count in the header
+      if (window.updateCartCount && typeof window.updateCartCount === 'function') {
+        window.updateCartCount(response.data.cart_count);
+      }
+    } else {
+      toast.error(response.data.message);
+    }
+  })
+  .catch(error => {
+    let errorMessage = 'Terjadi kesalahan saat menambahkan produk ke keranjang';
+    
+    if (error.response && error.response.data && error.response.data.message) {
+      errorMessage = error.response.data.message;
+    }
+    
+    toast.error(errorMessage);
+  })
+  .finally(() => {
+    isAddingToCart.value = false;
   });
 };
 </script>

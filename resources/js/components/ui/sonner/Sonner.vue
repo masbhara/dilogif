@@ -6,13 +6,7 @@ const props = defineProps<ToasterProps>()
 
 <template>
   <Sonner
-    class="toaster group"
+    class="toaster group bg-white text-gray-900 border-gray-200 dark:bg-gray-900 dark:text-white dark:border-gray-700"
     v-bind="props"
-    :style="{
-      '--normal-bg': 'var(--popover)',
-      '--normal-text': 'var(--popover-foreground)',
-      '--normal-border': 'var(--border)',
-
-    }"
   />
 </template>

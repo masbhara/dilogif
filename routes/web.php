@@ -8,7 +8,10 @@ use App\Http\Controllers\TeamMemberController;
 use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
 
 Route::middleware(['auth'])->group(function () {
     // Dashboard Route
@@ -57,6 +60,20 @@ Route::post('/contact', [ContactMessageController::class, 'store'])->name('conta
 Route::get('/products', [ProductsController::class, 'index'])->name('products.index');
 Route::get('/products/{slug}', [ProductsController::class, 'show'])->name('products.show');
 
+// Cart Routes
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+Route::patch('/cart/{id}', [CartController::class, 'updateQuantity'])->name('cart.update');
+Route::delete('/cart/{id}', [CartController::class, 'removeFromCart'])->name('cart.remove');
+Route::delete('/cart', [CartController::class, 'clearCart'])->name('cart.clear');
+Route::get('/cart/count', [CartController::class, 'getCartCount'])->name('cart.count');
+
+// Order Routes
+Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
+Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+Route::get('/orders/thankyou/{order}', [OrderController::class, 'thankYou'])->name('orders.thankyou');
+Route::get('/track-order', [OrderController::class, 'trackOrder'])->name('orders.track');
+
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
     // Products
     Route::resource('products', ProductController::class);
@@ -65,6 +82,13 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
 
     // Categories
     Route::resource('categories', CategoryController::class);
+    
+    // Orders
+    Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
+    Route::get('orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
+    Route::patch('orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.status.update');
+    Route::get('orders/{order}/pdf', [AdminOrderController::class, 'exportPdf'])->name('orders.pdf');
+    Route::get('orders-statistics', [AdminOrderController::class, 'statistics'])->name('orders.statistics');
 });
 
 require __DIR__.'/settings.php';

@@ -176,6 +176,17 @@ class HandleInertiaRequests extends Middleware
             }
         }
         
+        // Ambil jumlah item keranjang
+        $cartCount = 0;
+        try {
+            $sessionId = \App\Models\Cart::getSessionId();
+            $cartCount = \App\Models\Cart::where('session_id', $sessionId)->sum('quantity');
+        } catch (\Exception $e) {
+            Log::warning('Error saat mengambil jumlah keranjang', [
+                'message' => $e->getMessage()
+            ]);
+        }
+        
         return array_merge(parent::share($request), [
             'csrf_token' => $csrfToken,
             'name' => $websiteSettings['siteName'] ?? config('app.name'),  // Untuk compatibility
@@ -195,6 +206,7 @@ class HandleInertiaRequests extends Middleware
             'websiteSettings' => $websiteSettings,
             'quotes' => $quote,
             'componentPath' => $component,
+            'cartCount' => $cartCount,
         ]);
     }
     
