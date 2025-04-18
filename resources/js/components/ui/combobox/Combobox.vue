@@ -7,15 +7,18 @@
         <input
           type="text"
           :placeholder="placeholder"
-          class="w-full bg-background py-2 pl-3 pr-10 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          class="w-full bg-background py-2 pl-3 pr-10 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
           :value="inputValue"
           @input="filterOptions"
           @focus="open = true"
+          @click="open = true"
+          @mousedown.prevent
         />
         <button
           type="button"
-          class="absolute inset-y-0 right-0 flex h-full items-center pr-3"
-          @click="toggleOpen"
+          class="absolute inset-y-0 right-0 flex h-full items-center pr-3 cursor-pointer"
+          @click.stop="toggleOpen"
+          @mousedown.prevent
         >
           <ChevronDown v-if="!open" class="h-4 w-4 opacity-60" />
           <ChevronUp v-else class="h-4 w-4 opacity-60" />
@@ -37,6 +40,7 @@
           class="relative flex cursor-pointer select-none items-center rounded-sm px-3 py-2 text-sm hover:bg-muted"
           :class="{ 'bg-muted': option.value === modelValue }"
           @click="selectOption(option)"
+          @mousedown.prevent
         >
           {{ option.label }}
           <Check 
@@ -81,7 +85,7 @@ const searchQuery = ref('');
 const filteredOptions = ref([...props.options]);
 
 const inputValue = computed(() => {
-  if (!props.modelValue) return '';
+  if (!props.modelValue && props.modelValue !== 0) return '';
   const option = props.options.find(opt => opt.value === props.modelValue);
   return option ? option.label : '';
 });
@@ -114,8 +118,7 @@ function toggleOpen() {
 
 // Close dropdown when clicking outside
 function handleClickOutside(event) {
-  const combobox = event.target.closest('.relative.w-full');
-  if (!combobox) {
+  if (event.target.closest('.relative.w-full') !== event.currentTarget) {
     open.value = false;
     searchQuery.value = '';
     filteredOptions.value = [...props.options];

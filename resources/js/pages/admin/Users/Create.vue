@@ -11,6 +11,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ref, onMounted, watch } from 'vue';
 import { ArrowLeft } from 'lucide-vue-next';
+import { Teleport } from 'vue';
 
 // Breadcrumbs untuk navigasi
 const breadcrumbs: BreadcrumbItem[] = [
@@ -201,21 +202,25 @@ onMounted(() => {
 
                             <div class="space-y-2">
                                 <Label for="status">Status</Label>
-                                <Select v-model="form.status">
-                                    <SelectTrigger :class="{ 'border-red-500': form.errors.status, 'cursor-pointer': true }">
-                                        <SelectValue placeholder="Pilih status pengguna" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem 
-                                            v-for="option in statusOptions" 
-                                            :key="option.value" 
-                                            :value="option.value"
-                                            class="cursor-pointer"
-                                        >
-                                            {{ option.label }}
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                <div class="relative">
+                                    <Select v-model="form.status">
+                                        <SelectTrigger class="cursor-pointer" :class="form.errors.status ? 'border-red-500' : ''">
+                                            <SelectValue placeholder="Pilih status pengguna" />
+                                        </SelectTrigger>
+                                        <Teleport to="body">
+                                            <SelectContent class="z-[9999]">
+                                                <SelectItem 
+                                                    v-for="option in statusOptions" 
+                                                    :key="option.value" 
+                                                    :value="option.value"
+                                                    class="cursor-pointer"
+                                                >
+                                                    {{ option.label }}
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Teleport>
+                                    </Select>
+                                </div>
                                 <p v-if="form.errors.status" class="text-sm text-red-500">{{ form.errors.status }}</p>
                             </div>
                         </CardContent>

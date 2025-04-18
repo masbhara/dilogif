@@ -185,7 +185,7 @@
 
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
-import AppLayout from '@/components/layout/AppLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 

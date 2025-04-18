@@ -1,55 +1,52 @@
 <script setup lang="ts">
 import { cn } from '@/lib/utils'
-import {
-  SelectContent,
-  type SelectContentEmits,
-  type SelectContentProps,
-  SelectPortal,
-  SelectViewport,
-  useForwardPropsEmits,
-} from 'reka-ui'
-import { computed, type HTMLAttributes } from 'vue'
-import { SelectScrollDownButton, SelectScrollUpButton } from '.'
+import { ref, inject, onMounted, onUnmounted } from 'vue'
 
-defineOptions({
-  inheritAttrs: false,
+const props = defineProps({
+  class: {
+    type: String,
+    default: ''
+  }
 })
 
-const props = withDefaults(
-  defineProps<SelectContentProps & { class?: HTMLAttributes['class'] }>(),
-  {
-    position: 'popper',
-  },
-)
-const emits = defineEmits<SelectContentEmits>()
+// Mendapatkan state isOpen dari SelectTrigger
+const isOpen = inject('select-is-open', ref(false))
 
-const delegatedProps = computed(() => {
-  const { class: _, ...delegated } = props
+// Ref untuk elemen dropdown
+const contentRef = ref<HTMLElement | null>(null)
 
-  return delegated
+// Close dropdown ketika klik di luar
+const handleClickOutside = (event: MouseEvent) => {
+  if (!isOpen.value) return
+  
+  if (contentRef.value && !contentRef.value.contains(event.target as Node)) {
+    // Pastikan klik diluar SelectTrigger dan SelectContent
+    isOpen.value = false
+  }
+}
+
+// Setup event listener
+onMounted(() => {
+  document.addEventListener('mousedown', handleClickOutside)
 })
 
-const forwarded = useForwardPropsEmits(delegatedProps, emits)
+onUnmounted(() => {
+  document.removeEventListener('mousedown', handleClickOutside)
+})
 </script>
 
 <template>
-  <SelectPortal>
-    <SelectContent
-      data-slot="select-content"
-      v-bind="{ ...forwarded, ...$attrs }"
-      :class="cn(
-        'bg-white dark:bg-gray-900 text-gray-900 dark:text-white data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 relative z-50 max-h-72 min-w-[8rem] overflow-x-hidden overflow-y-auto rounded-md border shadow-md',
-        position === 'popper'
-          && 'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
-        props.class,
-      )
-      "
+  <Teleport to="body">
+    <div 
+      v-if="isOpen" 
+      ref="contentRef" 
+      class="fixed z-[9999] w-[var(--radix-select-trigger-width)] max-h-[var(--radix-select-content-available-height)] min-w-[8rem] overflow-hidden rounded-md border border-input bg-white dark:bg-gray-900 text-gray-900 dark:text-white shadow-md animate-in fade-in-0 zoom-in-95 slide-in-from-top-2"
+      :class="props.class"
+      style="--radix-select-trigger-width: var(--trigger-width, 12rem); --radix-select-content-available-height: var(--available-height, 16rem); top: var(--content-top, 0); left: var(--content-left, 0);"
     >
-      <SelectScrollUpButton />
-      <SelectViewport :class="cn('p-1', position === 'popper' && 'h-10 w-full min-w-[8rem] scroll-my-1')">
+      <div class="p-1 overflow-y-auto max-h-[var(--radix-select-content-available-height)]">
         <slot />
-      </SelectViewport>
-      <SelectScrollDownButton />
-    </SelectContent>
-  </SelectPortal>
+      </div>
+    </div>
+  </Teleport>
 </template>

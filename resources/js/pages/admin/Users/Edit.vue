@@ -14,6 +14,7 @@ import { ArrowLeft, Mail, CheckCircle } from 'lucide-vue-next';
 import { onMounted, nextTick, ref, watch } from 'vue';
 import axios from 'axios';
 import { toast } from 'vue-sonner';
+import { Teleport } from 'vue';
 
 // Breadcrumbs untuk navigasi
 const breadcrumbs: BreadcrumbItem[] = [
@@ -258,16 +259,21 @@ onMounted(() => {
                             <div class="mt-4 pt-4 border-t">
                                 <p class="text-sm font-medium mb-3">Status Verifikasi Email</p>
                                 <div class="flex items-center gap-2">
-                                    <Switch
-                                        :id="'verification'"
-                                        :disabled="true"
-                                        :checked="isEmailVerified"
-                                    />
+                                    <div
+                                        class="peer data-[checked=true]:bg-primary-600 dark:data-[checked=true]:bg-primary-700 data-[checked=false]:bg-secondary-200 dark:data-[checked=false]:bg-secondary-800 inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full border border-transparent shadow-xs transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                                        :data-checked="isEmailVerified"
+                                    >
+                                        <span
+                                            class="bg-white dark:data-[checked=false]:bg-secondary-300 dark:data-[checked=true]:bg-white pointer-events-none block size-4 rounded-full ring-0 transition-transform"
+                                            :class="isEmailVerified ? 'translate-x-[calc(100%-2px)]' : 'translate-x-0'"
+                                            :data-checked="isEmailVerified"
+                                        ></span>
+                                    </div>
                                     <Label for="verification" class="cursor-pointer">
                                         {{ isEmailVerified ? 'Email Terverifikasi' : 'Email Belum Terverifikasi' }}
                                     </Label>
                                 </div>
-
+                                
                                 <div class="flex gap-2 mt-3" v-if="!isEmailVerified">
                                     <Button 
                                         type="button" 
@@ -341,21 +347,25 @@ onMounted(() => {
 
                             <div class="space-y-2">
                                 <Label for="status">Status</Label>
-                                <Select v-model="form.status">
-                                    <SelectTrigger :class="{ 'border-red-500': form.errors.status, 'cursor-pointer': true }">
-                                        <SelectValue placeholder="Pilih status pengguna" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem 
-                                            v-for="option in statusOptions" 
-                                            :key="option.value" 
-                                            :value="option.value"
-                                            class="cursor-pointer"
-                                        >
-                                            {{ option.label }}
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                <div class="relative">
+                                    <Select v-model="form.status">
+                                        <SelectTrigger :class="form.errors.status ? 'border-red-500 cursor-pointer' : 'cursor-pointer'">
+                                            <SelectValue placeholder="Pilih status pengguna" />
+                                        </SelectTrigger>
+                                        <Teleport to="body">
+                                            <SelectContent class="z-[9999]">
+                                                <SelectItem 
+                                                    v-for="option in statusOptions" 
+                                                    :key="option.value" 
+                                                    :value="option.value"
+                                                    class="cursor-pointer"
+                                                >
+                                                    {{ option.label }}
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Teleport>
+                                    </Select>
+                                </div>
                                 <p v-if="form.errors.status" class="text-sm text-red-500">{{ form.errors.status }}</p>
                             </div>
                         </CardContent>

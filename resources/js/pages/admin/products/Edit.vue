@@ -55,12 +55,38 @@
 
                                 <div>
                                     <Label for="category">Kategori</Label>
-                                    <Combobox
-                                        v-model="form.category_id"
-                                        :options="categoryOptions"
-                                        placeholder="Pilih kategori..."
-                                    />
-                                    <InputError :message="form.errors.category_id" />
+                                    <div class="relative mt-1">
+                                        <div 
+                                            class="custom-select-container" 
+                                            :class="{ 'active': isSelectOpen }"
+                                        >
+                                            <div 
+                                                @click="toggleSelect" 
+                                                class="custom-select-trigger flex w-full items-center justify-between gap-2 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-3 py-2 text-sm shadow-sm hover:border-gray-300 dark:hover:border-gray-600 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer h-9"
+                                            >
+                                                <span>{{ selectedCategoryLabel }}</span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-50 transition-transform" :class="{ 'rotate-180': isSelectOpen }">
+                                                    <path d="m6 9 6 6 6-6"></path>
+                                                </svg>
+                                            </div>
+                                            
+                                            <div 
+                                                v-if="isSelectOpen" 
+                                                class="custom-select-dropdown bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg mt-1 overflow-hidden z-50"
+                                            >
+                                                <div 
+                                                    v-for="category in props.categories" 
+                                                    :key="category.id"
+                                                    @click="selectCategory(category.id)"
+                                                    class="custom-select-option py-2 px-3 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer text-sm"
+                                                    :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': form.category_id === category.id }"
+                                                >
+                                                    {{ category.name }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <InputError :message="form.errors.category_id" class="mt-2" />
                                 </div>
 
                                 <div>
@@ -303,12 +329,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import Combobox from '@/components/ui/combobox/Combobox.vue';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import InputError from '@/components/InputError.vue';
 import { router } from '@inertiajs/vue3';
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import ConfirmationDialog from '@/components/ui/ConfirmationDialog.vue';
 import { toast } from 'vue-sonner';
+import { Teleport } from 'vue';
 
 // Breadcrumbs untuk navigasi yang digunakan di AppLayout
 const breadcrumbs = [
@@ -368,6 +395,45 @@ const featuredImagePreview = ref(null);
 
 // Tambahkan array untuk menangani gambar galeri baru
 const newGalleryImages = ref([]);
+
+// State untuk custom select dropdown
+const isSelectOpen = ref(false);
+const selectRef = ref(null);
+
+// Computed property untuk label kategori terpilih
+const selectedCategoryLabel = computed(() => {
+    if (!props.categories || !form.category_id) return 'Pilih kategori...';
+    const category = props.categories.find(c => c.id === form.category_id);
+    return category ? category.name : 'Pilih kategori...';
+});
+
+// Toggle dropdown
+const toggleSelect = () => {
+    isSelectOpen.value = !isSelectOpen.value;
+};
+
+// Pilih kategori
+const selectCategory = (categoryId) => {
+    form.category_id = categoryId;
+    isSelectOpen.value = false;
+};
+
+// Handle click outside
+const handleClickOutside = (event) => {
+    if (selectRef.value && !selectRef.value.contains(event.target)) {
+        isSelectOpen.value = false;
+    }
+};
+
+// Lifecycle hooks
+onMounted(() => {
+    document.addEventListener('click', handleClickOutside);
+    selectRef.value = document.querySelector('.custom-select-container');
+});
+
+onUnmounted(() => {
+    document.removeEventListener('click', handleClickOutside);
+});
 
 // Inisialisasi fitur dan nilai produk
 const initProductFeatures = () => {
@@ -468,19 +534,6 @@ const handleGalleryImagesChange = (event) => {
 // URLs untuk gambar yang ada
 const featuredImageUrl = computed(() => {
     return `/storage/${props.product.featured_image}`;
-});
-
-// Transform categories for Combobox component
-const categories = computed(() => {
-    return props.categories.map(category => ({
-        label: category.name,
-        value: category.id
-    }));
-});
-
-// Pass categories directly to the Combobox
-const categoryOptions = computed(() => {
-    return categories.value;
 });
 
 // Fungsi untuk mengelola fitur produk
@@ -596,4 +649,42 @@ const deleteGalleryImage = () => {
         }
     });
 };
-</script> 
+</script>
+
+<style>
+/* Reset previous select styling */
+.select-wrapper, select {
+  display: none;
+}
+
+/* Custom select styling */
+.custom-select-container {
+  position: relative;
+  width: 100%;
+}
+
+.custom-select-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  animation: slideDown 0.15s ease-out;
+}
+
+.custom-select-option:first-child {
+  border-top-left-radius: 0.375rem;
+  border-top-right-radius: 0.375rem;
+}
+
+.custom-select-option:last-child {
+  border-bottom-left-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style> 

@@ -2,7 +2,7 @@
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/vue3';
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, defineProps } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Table, TableHeader, TableHead, TableBody, TableRow, TableCell } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
@@ -13,10 +13,11 @@ import { toast } from 'vue-sonner';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
+// @ts-ignore
 import debounce from 'lodash/debounce';
 
 // Referensi pengguna yang sedang diproses
-const processingUser = ref(null);
+const processingUser = ref<number | null>(null);
 // State untuk menampilkan loading
 const loading = ref(false);
 const isFiltering = ref(false);
@@ -29,11 +30,20 @@ const filters = ref({
 });
 
 // State untuk dialog konfirmasi
-const selectedUser = ref(null);
+const selectedUser = ref<{
+  id: number;
+  name: string;
+  email: string;
+  status: string;
+} | null>(null);
 const showActivationDialog = ref(false);
 const showBlockDialog = ref(false);
 const showDeleteDialog = ref(false);
 const showFilterPanel = ref(false);
+
+// State untuk dropdown
+const statusDropdownOpen = ref(false)
+const roleDropdownOpen = ref(false)
 
 // Breadcrumbs untuk navigasi
 const breadcrumbs: BreadcrumbItem[] = [
@@ -67,6 +77,16 @@ onMounted(() => {
   } catch(e) {
     console.error('Error saat debugging route:', e);
   }
+  
+  // Tambahkan listener untuk route change
+  router.on('before', () => {
+    // Kosongkan selectedUser saat navigasi
+    selectedUser.value = null;
+    // Reset dialog
+    showActivationDialog.value = false;
+    showBlockDialog.value = false;
+    showDeleteDialog.value = false;
+  });
 });
 
 // Definisi props dari controller
@@ -116,10 +136,10 @@ const roleOptions = ref([
 
 // Ambil semua peran unik dari data pengguna
 onMounted(() => {
-  const uniqueRoles = new Set();
+  const uniqueRoles = new Set<string>();
   props.users.data.forEach(user => {
     user.roles.forEach(role => {
-      uniqueRoles.add(role.name);
+      uniqueRoles.add(role.name as string);
     });
   });
   
@@ -188,7 +208,7 @@ watch(() => filters.value.status, applyFilters);
 watch(() => filters.value.role, applyFilters);
 
 // Fungsi untuk menampilkan dialog aktivasi
-const showAktivasiDialog = (user) => {
+const showAktivasiDialog = (user: any) => {
   selectedUser.value = user;
   showActivationDialog.value = true;
 };
@@ -200,18 +220,16 @@ const aktivasiUser = () => {
   loading.value = true;
   processingUser.value = selectedUser.value.id;
   
-  console.log('Mengirim request aktivasi ke:', route('admin.users.update-status', selectedUser.value.id));
-  
-  // Format data sesuai dokumentasi Inertia.js
   router.patch(route('admin.users.update-status', selectedUser.value.id), {
     status: 'active'
   }, {
     preserveScroll: true,
     onSuccess: () => {
       toast.success('Berhasil', {
-        description: `Pengguna ${selectedUser.value.name} berhasil diaktifkan`,
+        description: selectedUser.value ? `Pengguna ${selectedUser.value.name} berhasil diaktifkan` : 'Pengguna berhasil diaktifkan',
       });
       showActivationDialog.value = false;
+      selectedUser.value = null; // Clear selected user
     },
     onError: (errors) => {
       toast.error('Gagal', {
@@ -227,7 +245,7 @@ const aktivasiUser = () => {
 };
 
 // Fungsi untuk menampilkan dialog blokir
-const showBlokirDialog = (user) => {
+const showBlokirDialog = (user: any) => {
   selectedUser.value = user;
   showBlockDialog.value = true;
 };
@@ -239,18 +257,16 @@ const blokirUser = () => {
   loading.value = true;
   processingUser.value = selectedUser.value.id;
   
-  console.log('Mengirim request blokir ke:', route('admin.users.update-status', selectedUser.value.id));
-  
-  // Format data sesuai dokumentasi Inertia.js
   router.patch(route('admin.users.update-status', selectedUser.value.id), {
     status: 'blocked'
   }, {
     preserveScroll: true,
     onSuccess: () => {
       toast.success('Berhasil', {
-        description: `Pengguna ${selectedUser.value.name} berhasil diblokir`,
+        description: selectedUser.value ? `Pengguna ${selectedUser.value.name} berhasil diblokir` : 'Pengguna berhasil diblokir',
       });
       showBlockDialog.value = false;
+      selectedUser.value = null; // Clear selected user
     },
     onError: (errors) => {
       toast.error('Gagal', {
@@ -266,8 +282,9 @@ const blokirUser = () => {
 };
 
 // Fungsi untuk menampilkan dialog hapus
-const showHapusDialog = (user) => {
+const showHapusDialog = (user: any) => {
   selectedUser.value = user;
+  showBlockDialog.value = false; // Tutup dialog lain jika masih terbuka
   showDeleteDialog.value = true;
 };
 
@@ -281,9 +298,10 @@ const hapusUser = () => {
   router.delete(route('admin.users.destroy', selectedUser.value.id), {
     onSuccess: () => {
       toast.success('Berhasil', {
-        description: `Pengguna ${selectedUser.value.name} berhasil dihapus`,
+        description: selectedUser.value ? `Pengguna ${selectedUser.value.name} berhasil dihapus` : 'Pengguna berhasil dihapus',
       });
       showDeleteDialog.value = false;
+      selectedUser.value = null; // Clear selected user
     },
     onError: (errors) => {
       toast.error('Gagal', {
@@ -366,11 +384,16 @@ const toggleFilterPanel = () => {
                 <div class="space-y-2">
                   <label class="text-sm font-medium text-secondary-900 dark:text-white">Status</label>
                   <Select v-model="filters.status">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Pilih status" />
+                    <SelectTrigger class="w-full cursor-pointer" placeholder="Pilih status">
+                      <SelectValue :placeholder="'Pilih status'" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem v-for="option in statusOptions" :key="option.value" :value="option.value">
+                      <SelectItem 
+                        v-for="option in statusOptions" 
+                        :key="option.value" 
+                        :value="option.value" 
+                        class="cursor-pointer hover:bg-secondary-100 dark:hover:bg-secondary-800"
+                      >
                         {{ option.label }}
                       </SelectItem>
                     </SelectContent>
@@ -380,11 +403,16 @@ const toggleFilterPanel = () => {
                 <div class="space-y-2">
                   <label class="text-sm font-medium text-secondary-900 dark:text-white">Peran</label>
                   <Select v-model="filters.role">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Pilih peran" />
+                    <SelectTrigger class="w-full cursor-pointer" placeholder="Pilih peran">
+                      <SelectValue :placeholder="'Pilih peran'" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem v-for="option in roleOptions" :key="option.value" :value="option.value">
+                      <SelectItem 
+                        v-for="option in roleOptions" 
+                        :key="option.value" 
+                        :value="option.value" 
+                        class="cursor-pointer hover:bg-secondary-100 dark:hover:bg-secondary-800"
+                      >
                         {{ option.label }}
                       </SelectItem>
                     </SelectContent>
@@ -520,11 +548,12 @@ const toggleFilterPanel = () => {
             <Link 
               v-for="(link, i) in props.users.links.slice(1, -1)" 
               :key="i"
-              :href="link.url"
+              :href="link.url || '#'"
               class="px-3 py-1 rounded text-sm border border-secondary-200 dark:border-secondary-700"
               :class="{ 
                 'bg-primary text-white border-primary': link.active,
-                'cursor-pointer hover:bg-secondary-100 dark:hover:bg-secondary-800': !link.active && link.url
+                'cursor-pointer hover:bg-secondary-100 dark:hover:bg-secondary-800': !link.active && link.url,
+                'opacity-50 cursor-not-allowed': !link.url
               }"
               v-html="link.label"
             />
@@ -538,7 +567,7 @@ const toggleFilterPanel = () => {
       :open="showActivationDialog"
       @update:open="showActivationDialog = $event"
       title="Konfirmasi Aktivasi"
-      :description="`Apakah Anda yakin ingin mengaktifkan pengguna ${selectedUser?.name}?`"
+      :description="selectedUser ? `Apakah Anda yakin ingin mengaktifkan pengguna ${selectedUser.name}?` : 'Apakah Anda yakin ingin mengaktifkan pengguna ini?'"
       confirmLabel="Aktifkan"
       :loading="loading"
       :icon="Check"
@@ -556,13 +585,16 @@ const toggleFilterPanel = () => {
       confirmLabel="Blokir"
       @confirm="blokirUser()"
     >
-      Apakah Anda yakin ingin memblokir pengguna <span class="font-semibold">{{ selectedUser?.name }}</span>? Pengguna tidak akan bisa login.
+      Apakah Anda yakin ingin memblokir pengguna <span class="font-semibold">{{ selectedUser ? selectedUser.name : '' }}</span>? Pengguna tidak akan bisa login.
     </ConfirmationDialog>
 
     <!-- Dialog Konfirmasi Hapus -->
     <ConfirmationDialog
       :open="showDeleteDialog"
-      @update:open="showDeleteDialog = $event"
+      @update:open="(value) => { 
+        showDeleteDialog = value;
+        if (!value) selectedUser = null;  // Reset selectedUser saat dialog ditutup
+      }"
       title="Konfirmasi Penghapusan"
       dangerMode
       :icon="Trash2"
@@ -571,7 +603,7 @@ const toggleFilterPanel = () => {
       @confirm="hapusUser()"
     >
       <p class="mb-2">PERHATIAN: Tindakan ini tidak dapat dibatalkan!</p>
-      <p>Apakah Anda yakin ingin menghapus pengguna <span class="font-semibold">{{ selectedUser?.name }}</span>?</p>
+      <p>Apakah Anda yakin ingin menghapus pengguna <span class="font-semibold">{{ selectedUser ? selectedUser.name : '' }}</span>?</p>
     </ConfirmationDialog>
   </AppLayout>
 </template> 

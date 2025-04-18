@@ -56,13 +56,13 @@
                                 <div>
                                     <Label for="category">Kategori</Label>
                                     <Select v-model="selectedCategory">
-                                        <SelectTrigger class="w-full">
-                                            <SelectValue placeholder="Pilih kategori" class="truncate text-start" />
+                                        <SelectTrigger class="w-full cursor-pointer">
+                                            <SelectValue placeholder="Pilih kategori" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem
                                                 :value="null"
-                                                class="text-amber-600 font-medium"
+                                                class="text-amber-600 font-medium cursor-pointer"
                                             >
                                                 -- Tanpa Kategori --
                                             </SelectItem>
@@ -70,6 +70,7 @@
                                                 v-for="category in categories"
                                                 :key="category.id"
                                                 :value="category.id"
+                                                class="cursor-pointer"
                                             >
                                                 {{ category.name }}
                                             </SelectItem>
