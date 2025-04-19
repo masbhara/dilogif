@@ -6,6 +6,8 @@ import { computed, type HTMLAttributes } from 'vue'
 const props = defineProps<{
   showIcon?: boolean
   class?: HTMLAttributes['class']
+  width?: string
+  icon?: string
 }>()
 
 const width = computed(() => {
@@ -17,18 +19,16 @@ const width = computed(() => {
   <div
     data-slot="sidebar-menu-skeleton"
     data-sidebar="menu-skeleton"
-    :class="cn('flex h-8 items-center gap-2 rounded-md px-2', props.class)"
+    :class="cn('flex h-9 w-full items-center gap-2 px-2 py-1', props.class)"
   >
-    <Skeleton
-      v-if="showIcon"
-      class="size-4 rounded-md"
-      data-sidebar="menu-skeleton-icon"
-    />
+    <div :class="props.icon">
+      <div class="h-4 w-4 animate-pulse rounded-md bg-secondary-200 dark:bg-secondary-700" />
+    </div>
 
     <Skeleton
-      class="h-4 max-w-(--skeleton-width) flex-1"
+      class="h-4 flex-1"
       data-sidebar="menu-skeleton-text"
-      :style="{ '--skeleton-width': width }"
+      :style="{ maxWidth: width }"
     />
   </div>
 </template>

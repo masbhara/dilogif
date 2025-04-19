@@ -47,6 +47,11 @@ const mainNavItems: NavItem[] = [
         title: 'Dashboard',
         href: '/dashboard',
         icon: LayoutGrid,
+    },
+    {
+        title: 'Pesanan Saya',
+        href: route('orders.index'),
+        icon: ShoppingBag,
     }
 ];
 

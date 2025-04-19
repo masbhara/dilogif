@@ -35,6 +35,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('messages/{message}', [ContactMessageController::class, 'show'])->name('messages.show');
         Route::delete('messages/{message}', [ContactMessageController::class, 'destroy'])->name('messages.destroy');
     });
+    
+    // User Orders - daftar pesanan pengguna
+    Route::get('/orders', [OrderController::class, 'userOrders'])->name('orders.index');
 });
 
 // Public Routes

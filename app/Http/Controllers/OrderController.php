@@ -170,4 +170,43 @@ class OrderController extends Controller
             'found' => null
         ]);
     }
+
+    /**
+     * Display a listing of the user's orders.
+     */
+    public function userOrders(Request $request)
+    {
+        $query = Order::query()
+            ->with('items.product')
+            ->where('user_id', auth()->id())
+            ->latest();
+            
+        // Filter by status
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('status', $request->status);
+        }
+        
+        // Filter by order number
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('order_number', 'like', "%{$search}%");
+            });
+        }
+        
+        $orders = $query->paginate(10)
+            ->withQueryString();
+            
+        return Inertia::render('user/orders/Index', [
+            'orders' => $orders,
+            'filters' => $request->only(['status', 'search']),
+            'statuses' => [
+                Order::STATUS_PENDING => 'Menunggu Konfirmasi',
+                Order::STATUS_PROCESSING => 'Sedang Diproses',
+                Order::STATUS_REVIEW => 'Review',
+                Order::STATUS_COMPLETED => 'Selesai',
+                Order::STATUS_CANCELLED => 'Dibatalkan',
+            ]
+        ]);
+    }
 }

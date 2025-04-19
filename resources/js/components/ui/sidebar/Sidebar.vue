@@ -24,7 +24,7 @@ const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
   <div
     v-if="collapsible === 'none'"
     data-slot="sidebar"
-    :class="cn('bg-white dark:bg-secondary-900 text-secondary-900 dark:text-white flex h-full w-(--sidebar-width) flex-col', props.class)"
+    :class="cn('bg-white dark:bg-secondary-900 text-secondary-900 dark:text-white flex h-full w-64 flex-col', props.class)"
     v-bind="$attrs"
   >
     <slot />
@@ -36,10 +36,7 @@ const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
       data-slot="sidebar"
       data-mobile="true"
       :side="side"
-      class="bg-white dark:bg-secondary-900 text-secondary-900 dark:text-white w-(--sidebar-width) p-0 [&>button]:hidden"
-      :style="{
-        '--sidebar-width': SIDEBAR_WIDTH_MOBILE,
-      }"
+      class="bg-white dark:bg-secondary-900 text-secondary-900 dark:text-white w-72 p-0 [&>button]:hidden"
     >
       <SheetHeader class="sr-only">
         <SheetTitle>Sidebar</SheetTitle>

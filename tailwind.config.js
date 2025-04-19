@@ -76,8 +76,22 @@ export default {
           900: "#78350f",
           950: "#451a03",
         },
+        // Tambahan untuk komponen UI
+        border: "rgb(229 231 235)", // secondary-200 untuk light mode
+        input: "rgb(229 231 235)", // secondary-200 untuk light mode
+        muted: {
+          DEFAULT: "rgb(243 244 246)", // secondary-100
+          foreground: "rgb(107 114 128)" // secondary-500
+        },
+        card: {
+          DEFAULT: "rgb(249 250 251)", // secondary-50
+          foreground: "rgb(17 24 39)" // secondary-900
+        },
       },
     },
   },
-  plugins: [],
+  darkMode: "class",
+  plugins: [
+    require('./tailwind.plugins.js'),
+  ],
 } 

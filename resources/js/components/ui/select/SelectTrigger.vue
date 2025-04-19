@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { inject, computed, ref, onMounted, onBeforeUnmount } from 'vue'
-import { ChevronDown } from 'lucide-vue-next'
-import { cn } from '@/lib/utils'
+import { ref, inject, provide, onMounted, onBeforeUnmount, computed } from 'vue';
+import { ChevronDown } from 'lucide-vue-next';
+import { cn } from '@/lib/utils';
 
 const props = defineProps({
   placeholder: {
     type: String,
-    default: 'Select an option'
+    default: 'Pilih opsi'
   },
   disabled: {
     type: Boolean,
@@ -16,135 +16,124 @@ const props = defineProps({
     type: String,
     default: ''
   }
-})
+});
 
-// Mendapatkan state dari parent Select
-const selectValue: any = inject('select-value', { value: ref(''), update: (val: any) => {} })
-const isOpen: any = inject('select-is-open', ref(false))
-const selectedLabel: any = inject('select-selected-label', ref(''))
+// Inject from parent Select component
+const selectValue = inject('select-value', ref(null));
+const isOpen = inject('select-is-open', ref(false));
+const selectedLabel = inject('select-selected-label', ref(''));
 
-// Toggle dropdown
+// References for positioning
+const triggerRef = ref<HTMLElement | null>(null);
+const triggerWidth = ref('12rem');
+const contentTop = ref('0px');
+const contentLeft = ref('0px');
+const availableHeight = ref('16rem');
+
+// Provide positioning values for SelectContent
+provide('select-trigger-width', triggerWidth);
+provide('select-content-top', contentTop);
+provide('select-content-left', contentLeft);
+provide('select-available-height', availableHeight);
+
+// Toggle the dropdown
 const toggleSelect = () => {
-  if (props.disabled) return
-  isOpen.value = !isOpen.value
-}
-
-// Ref untuk elemen trigger
-const triggerRef = ref<HTMLElement | null>(null)
-
-// Menghitung posisi dan ukuran dropdown
-const updatePosition = () => {
-  if (!triggerRef.value) return
+  if (props.disabled) return;
   
-  const rect = triggerRef.value.getBoundingClientRect()
-  document.documentElement.style.setProperty('--trigger-width', `${rect.width}px`)
-  document.documentElement.style.setProperty('--content-top', `${rect.bottom + window.scrollY}px`)
-  document.documentElement.style.setProperty('--content-left', `${rect.left + window.scrollX}px`)
+  isOpen.value = !isOpen.value;
   
-  // Hitung ruang yang tersedia di bawah
-  const availableHeight = window.innerHeight - rect.bottom - 10
-  document.documentElement.style.setProperty('--available-height', `${Math.min(availableHeight, 300)}px`)
-}
-
-// Update posisi saat dropdown dibuka
-const watchOpen = (val: boolean) => {
-  if (val) {
-    updatePosition()
-    window.addEventListener('resize', updatePosition)
-    window.addEventListener('scroll', updatePosition)
-  } else {
-    window.removeEventListener('resize', updatePosition)
-    window.removeEventListener('scroll', updatePosition)
+  if (isOpen.value) {
+    updatePosition();
   }
-}
+};
 
-// Watch untuk isOpen
+// Function to update dropdown position
+const updatePosition = () => {
+  if (!triggerRef.value) return;
+  
+  const rect = triggerRef.value.getBoundingClientRect();
+  triggerWidth.value = `${rect.width}px`;
+  contentTop.value = `${rect.bottom + window.scrollY}px`;
+  contentLeft.value = `${rect.left + window.scrollX}px`;
+  
+  // Calculate available height (viewport height - trigger bottom position - padding)
+  const availableBottomSpace = window.innerHeight - rect.bottom - 10;
+  availableHeight.value = `${Math.min(availableBottomSpace, 300)}px`;
+};
+
+// Provide the update function
+provide('select-update-position', updatePosition);
+
+// Setup event listeners
 onMounted(() => {
-  watchOpen(isOpen.value)
-})
+  window.addEventListener('resize', updatePosition);
+  window.addEventListener('scroll', updatePosition);
+});
 
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', updatePosition)
-  window.removeEventListener('scroll', updatePosition)
-})
+  window.removeEventListener('resize', updatePosition);
+  window.removeEventListener('scroll', updatePosition);
+});
+
+// Display values
+const displayValue = computed(() => {
+  return selectedLabel.value || props.placeholder;
+});
+
+const isPlaceholderShown = computed(() => {
+  return !selectedLabel.value;
+});
 </script>
 
 <template>
-  <div ref="triggerRef">
-    <div 
-      @click="toggleSelect" 
-      class="flex w-full items-center justify-between gap-2 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-3 py-2 text-sm shadow-sm hover:border-gray-300 dark:hover:border-gray-600 focus:outline-none focus-visible:outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer h-9 select-trigger"
-      :class="[
-        props.class,
-        props.disabled ? 'opacity-50 cursor-not-allowed' : '',
-        isOpen.value ? 'border-primary dark:border-primary' : ''
-      ]"
-      tabindex="0"
+  <div
+    ref="triggerRef"
+    :class="[
+      'flex h-10 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-secondary-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+      'dark:border-secondary-700 dark:ring-offset-secondary-900 dark:placeholder:text-secondary-500 dark:focus-visible:ring-primary-400',
+      'min-h-10',
+      props.class,
+      props.disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
+    ]"
+    @click="toggleSelect"
+    :tabindex="props.disabled ? -1 : 0"
+    :data-state="isOpen ? 'open' : 'closed'"
+    role="combobox"
+    aria-haspopup="listbox"
+    :aria-expanded="isOpen"
+    :aria-disabled="props.disabled || undefined"
+  >
+    <span class="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-left" :class="{ 'text-secondary-400 dark:text-secondary-500': isPlaceholderShown }">
+      {{ displayValue }}
+    </span>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class="h-4 w-4 opacity-50 transition-transform"
+      :class="{ 'rotate-180': isOpen }"
     >
-      <span class="truncate" :class="{ 'text-muted-foreground': !selectValue.value.value }">
-        {{ selectedLabel.value || props.placeholder }}
-      </span>
-      <ChevronDown 
-        class="h-4 w-4 opacity-50 transition-transform" 
-        :class="{ 'rotate-180': isOpen.value }" 
-      />
-    </div>
+      <path d="m6 9 6 6 6-6" />
+    </svg>
   </div>
 </template>
 
 <style scoped>
-/* Atasi outline browser secara global */
-*:focus {
-  outline: none !important;
-  outline-color: transparent !important;
-  outline-style: none !important;
-  outline-width: 0 !important;
-  box-shadow: none !important;
-  -webkit-tap-highlight-color: transparent !important;
-  -webkit-focus-ring-color: transparent !important;
+/* Focus visible styling sudah didefinisikan dalam CSS global */
+.focus-visible:focus {
+  outline: none;
+  ring-width: 2px;
+  ring-offset-width: 2px;
+  ring-color: var(--color-primary-500);
 }
-
-/* Untuk semua browser */
-div:focus,
-div:focus-visible,
-div:focus-within,
-div:active {
-  outline: none !important;
-  outline-color: transparent !important;
-  box-shadow: none !important;
-  border-color: var(--primary) !important;
-}
-
-/* Fix untuk Firefox */
-div:-moz-focusring {
-  outline: none !important;
-  outline-color: transparent !important;
-}
-
-/* Atasi semua warna outlines */
-.select-trigger {
-  -webkit-tap-highlight-color: transparent !important;
-  outline: none !important;
-  user-select: none !important;
-}
-
-.select-trigger:focus,
-.select-trigger:focus-visible,
-.select-trigger:focus-within,
-.select-trigger:active {
-  outline: none !important;
-  outline-color: transparent !important;
-  box-shadow: none !important;
-  border-color: var(--primary) !important;
-}
-
-/* Fix Safari fokus */
-.select-trigger::-webkit-focus-inner {
-  border: 0 !important;
-}
-
-/* Fix Chrome dan Safari */
-.select-trigger {
-  -webkit-appearance: none !important;
+.dark .focus-visible:focus {
+  ring-color: var(--color-primary-400);
+  ring-offset-color: var(--color-secondary-900);
 }
 </style>

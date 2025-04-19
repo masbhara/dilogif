@@ -1,8 +1,11 @@
 <template>
   <button
     type="button"
-    class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-secondary-900"
-    :class="modelValue ? 'bg-primary-600 dark:bg-primary-700' : 'bg-secondary-200 dark:bg-secondary-800'"
+    class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2"
+    :class="[
+      modelValue ? 'bg-primary-600 dark:bg-primary-700' : 'bg-secondary-200 dark:bg-secondary-800',
+      { 'dark:focus:ring-offset-white/10': true }
+    ]"
     @click="$emit('update:modelValue', !modelValue)"
   >
     <span class="sr-only">{{ label }}</span>
@@ -42,13 +45,20 @@
 defineProps({
   modelValue: {
     type: Boolean,
-    required: true
+    default: false
   },
   label: {
     type: String,
-    default: 'Toggle'
+    default: "Toggle"
   }
 });
 
 defineEmits(['update:modelValue']);
-</script> 
+</script>
+
+<style>
+/* Styling khusus untuk ring-offset di dark mode */
+.dark button:focus {
+  --tw-ring-offset-color: rgba(255, 255, 255, 0.1);
+}
+</style> 
