@@ -1,10 +1,16 @@
 /**
  * Tailwind Theme CSS Variables
- * File ini berisi definisi variable CSS untuk semua warna dan properti desain
- * yang digunakan di seluruh aplikasi sebagai pengganti theme()
+ * File ini berisi definisi variable CSS untuk tema gelap dan terang
  */
 
 :root {
+  /* Warna dasar untuk tema terang */
+  --bg-page: white;
+  --bg-card: #f9fafb;
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  
   /* Primary Colors */
   --color-primary-50: #f0f9ff;
   --color-primary-100: #e0f2fe;
@@ -17,32 +23,6 @@
   --color-primary-800: #075985;
   --color-primary-900: #0c4a6e;
   --color-primary-950: #082f49;
-  
-  /* Secondary Colors */
-  --color-secondary-50: #f9fafb;
-  --color-secondary-100: #f3f4f6;
-  --color-secondary-200: #e5e7eb;
-  --color-secondary-300: #d1d5db;
-  --color-secondary-400: #9ca3af;
-  --color-secondary-500: #6b7280;
-  --color-secondary-600: #4b5563;
-  --color-secondary-700: #374151;
-  --color-secondary-800: #1f2937;
-  --color-secondary-900: #111827;
-  --color-secondary-950: #030712;
-  
-  /* Danger Colors */
-  --color-danger-50: #fef2f2;
-  --color-danger-100: #fee2e2;
-  --color-danger-200: #fecaca;
-  --color-danger-300: #fca5a5;
-  --color-danger-400: #f87171;
-  --color-danger-500: #ef4444;
-  --color-danger-600: #dc2626;
-  --color-danger-700: #b91c1c;
-  --color-danger-800: #991b1b;
-  --color-danger-900: #7f1d1d;
-  --color-danger-950: #450a0a;
   
   /* Success Colors */
   --color-success-50: #f0fdf4;
@@ -57,6 +37,19 @@
   --color-success-900: #14532d;
   --color-success-950: #052e16;
   
+  /* Danger Colors */
+  --color-danger-50: #fef2f2;
+  --color-danger-100: #fee2e2;
+  --color-danger-200: #fecaca;
+  --color-danger-300: #fca5a5;
+  --color-danger-400: #f87171;
+  --color-danger-500: #ef4444;
+  --color-danger-600: #dc2626;
+  --color-danger-700: #b91c1c;
+  --color-danger-800: #991b1b;
+  --color-danger-900: #7f1d1d;
+  --color-danger-950: #450a0a;
+  
   /* Warning Colors */
   --color-warning-50: #fffbeb;
   --color-warning-100: #fef3c7;
@@ -70,15 +63,7 @@
   --color-warning-900: #78350f;
   --color-warning-950: #451a03;
   
-  /* Tambahan untuk komponen UI */
-  --color-border: rgb(229 231 235);
-  --color-input: rgb(229 231 235);
-  --color-muted: rgb(243 244 246);
-  --color-muted-foreground: rgb(107 114 128);
-  --color-card: rgb(249 250 251);
-  --color-card-foreground: rgb(17 24 39);
-  
-  /* RGB Values for opacity modifiers */
+  /* RGB Values untuk opacity */
   --rgb-primary-500: 14 165 233;
   --rgb-primary-600: 2 132 199;
   --rgb-primary-700: 3 105 161;
@@ -89,24 +74,13 @@
   --rgb-danger-500: 239 68 68;
   --rgb-danger-700: 185 28 28;
   
-  /* Ring styling yang sebelumnya menggunakan utility class */
+  /* Ring styling */
   --ring-width: 2px;
   --ring-color: var(--color-primary-500);
   --ring-offset-width: 2px;
   --ring-offset-color: white;
   
-  /* Ring utility class untuk setiap variant */
-  --ring-primary: var(--color-primary-500);
-  --ring-secondary: var(--color-secondary-500);
-  --ring-danger: var(--color-danger-500);
-  --ring-success: var(--color-success-500);
-  --ring-warning: var(--color-warning-500);
-  
-  /* Background utama untuk komponen */
-  --background: white;
-  --foreground: var(--color-secondary-900);
-  
-  /* Elevation/Shadow */
+  /* Shadow */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
@@ -116,22 +90,18 @@
 
 /* Dark mode overrides */
 .dark {
-  --color-border: rgb(31 41 55);
-  --color-input: rgb(31 41 55);
-  --color-muted: rgb(31 41 55);
-  --color-muted-foreground: rgb(156 163 175);
-  --color-card: rgb(17 24 39);
-  --color-card-foreground: rgb(249 250 251);
+  /* Warna dasar untuk tema gelap */
+  --bg-page: #1e293b;
+  --bg-card: #0f172a;
+  --text: #f8fafc;
+  --text-muted: #94a3b8;
+  --border: #334155;
   
-  /* Ring styling untuk dark mode */
+  /* Ring styling */
   --ring-color: var(--color-primary-400);
-  --ring-offset-color: var(--color-secondary-900);
+  --ring-offset-color: var(--bg-page);
   
-  /* Background untuk dark mode */
-  --background: var(--color-secondary-950);
-  --foreground: white;
-  
-  /* UI Component specific overrides for dark mode */
+  /* Shadow dengan kontras lebih tinggi untuk dark mode */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
   --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.4);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);

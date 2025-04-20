@@ -24,7 +24,7 @@ const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
   <div
     v-if="collapsible === 'none'"
     data-slot="sidebar"
-    :class="cn('bg-white dark:bg-secondary-900 text-secondary-900 dark:text-white flex h-full w-64 flex-col', props.class)"
+    :class="cn('bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-50 flex h-full w-64 flex-col', props.class)"
     v-bind="$attrs"
   >
     <slot />
@@ -36,7 +36,7 @@ const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
       data-slot="sidebar"
       data-mobile="true"
       :side="side"
-      class="bg-white dark:bg-secondary-900 text-secondary-900 dark:text-white w-72 p-0 [&>button]:hidden"
+      class="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-50 w-72 p-0 [&>button]:hidden"
     >
       <SheetHeader class="sr-only">
         <SheetTitle>Sidebar</SheetTitle>
@@ -50,7 +50,7 @@ const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
 
   <div
     v-else
-    class="group peer text-secondary-900 dark:text-white hidden md:block"
+    class="group peer text-slate-900 dark:text-slate-50 hidden md:block"
     data-slot="sidebar"
     :data-state="state"
     :data-collapsible="state === 'collapsed' ? collapsible : ''"
@@ -84,7 +84,7 @@ const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
     >
       <div
         data-sidebar="sidebar"
-        class="bg-white dark:bg-secondary-900 flex h-full w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-secondary-200 dark:group-data-[variant=floating]:border-secondary-800 group-data-[variant=floating]:shadow-sm"
+        class="bg-white dark:bg-slate-800 flex h-full w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-slate-200 dark:group-data-[variant=floating]:border-slate-700 group-data-[variant=floating]:shadow-sm"
       >
         <slot />
       </div>

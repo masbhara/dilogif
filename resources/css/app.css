@@ -12,9 +12,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
-  The default border color has changed to `currentColor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
+  Default border color untuk konsistensi
 */
 @layer base {
   *,
@@ -22,7 +20,7 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-secondary-200, currentColor);
+    border-color: var(--border, currentColor);
   }
   
   body,
@@ -36,29 +34,29 @@
   .dark .aktif,
   .dark .active,
   .dark .sukses {
-    background-color: rgb(var(--rgb-success-700)); /* Menggunakan variable CSS */
-    color: white;
+    background-color: rgb(var(--rgb-success-700));
+    color: var(--text);
   }
   
   .dark .tidak-aktif,
   .dark .inactive,
   .dark .gagal {
-    background-color: rgb(var(--rgb-danger-700)); /* Menggunakan variable CSS */
-    color: white;
+    background-color: rgb(var(--rgb-danger-700));
+    color: var(--text);
   }
   
   /* Light mode styling for badges */
   .aktif,
   .active,
   .sukses {
-    background-color: rgb(var(--rgb-success-500)); /* Menggunakan variable CSS */
+    background-color: rgb(var(--rgb-success-500));
     color: white;
   }
   
   .tidak-aktif,
   .inactive,
   .gagal {
-    background-color: rgb(var(--rgb-danger-500)); /* Menggunakan variable CSS */
+    background-color: rgb(var(--rgb-danger-500));
     color: white;
   }
   
@@ -74,7 +72,7 @@
   }
   
   .dark .focus-ring:focus-visible {
-    --ring-offset-color: var(--color-secondary-900);
+    --ring-offset-color: var(--bg-page);
     --ring-color: var(--color-primary-400);
   }
   
@@ -111,7 +109,7 @@
 
 .dark *:focus-visible {
   ring-color: var(--color-primary-400);
-  ring-offset-color: var(--color-secondary-900);
+  ring-offset-color: var(--bg-page);
 }
 
 /* Fix untuk halaman admin yang masih menggunakan fokus styling */
