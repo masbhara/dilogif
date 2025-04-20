@@ -91,17 +91,17 @@ const closeLightbox = () => {
                         <Button 
                             variant="outline" 
                             size="icon" 
-                            class="h-8 w-8 cursor-pointer"
+                            class="h-8 w-8 cursor-pointer dark:border-secondary-700 dark:bg-secondary-800 dark:hover:bg-secondary-700 dark:text-white"
                         >
                             <ArrowLeft class="h-4 w-4" />
                         </Button>
                     </Link>
-                    <h1 class="text-2xl font-bold">Detail Produk</h1>
+                    <h1 class="text-2xl font-bold text-secondary-900 dark:text-white">Detail Produk</h1>
                 </div>
                 <Link :href="route('admin.products.edit', props.product.id)">
                     <Button 
                         variant="outline"
-                        class="cursor-pointer flex items-center gap-1.5 w-full sm:w-auto"
+                        class="cursor-pointer flex items-center gap-1.5 w-full sm:w-auto dark:border-secondary-700 dark:bg-secondary-800 dark:hover:bg-secondary-700 dark:text-white"
                     >
                         <PencilLine class="h-4 w-4" />
                         Edit Produk
@@ -111,33 +111,33 @@ const closeLightbox = () => {
 
             <div class="grid gap-4 md:grid-cols-2">
                 <!-- Informasi Dasar -->
-                <Card>
+                <Card class="dark:bg-secondary-900 dark:border-secondary-800">
                     <CardHeader>
-                        <CardTitle>Informasi Dasar</CardTitle>
-                        <CardDescription>Detail data produk</CardDescription>
+                        <CardTitle class="text-secondary-900 dark:text-white">Informasi Dasar</CardTitle>
+                        <CardDescription class="text-secondary-600 dark:text-secondary-400">Detail data produk</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div class="space-y-4">
                             <div class="flex items-start gap-3">
-                                <ShoppingBag class="h-5 w-5 mt-0.5 text-gray-500" />
+                                <ShoppingBag class="h-5 w-5 mt-0.5 text-secondary-500 dark:text-secondary-400" />
                                 <div class="flex-1">
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">Nama Produk</p>
-                                    <p class="font-medium">{{ props.product.name }}</p>
+                                    <p class="text-sm text-secondary-500 dark:text-secondary-400">Nama Produk</p>
+                                    <p class="font-medium text-secondary-900 dark:text-white">{{ props.product.name }}</p>
                                 </div>
                             </div>
 
                             <div class="flex items-start gap-3" v-if="props.product.product_code">
-                                <ShoppingBag class="h-5 w-5 mt-0.5 text-gray-500" />
+                                <ShoppingBag class="h-5 w-5 mt-0.5 text-secondary-500 dark:text-secondary-400" />
                                 <div class="flex-1">
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">Kode Produk</p>
-                                    <p class="font-medium">{{ props.product.product_code }}</p>
+                                    <p class="text-sm text-secondary-500 dark:text-secondary-400">Kode Produk</p>
+                                    <p class="font-medium text-secondary-900 dark:text-white">{{ props.product.product_code }}</p>
                                 </div>
                             </div>
 
                             <div class="flex items-start gap-3">
-                                <Tag class="h-5 w-5 mt-0.5 text-gray-500" />
+                                <Tag class="h-5 w-5 mt-0.5 text-secondary-500 dark:text-secondary-400" />
                                 <div class="flex-1">
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">Kategori</p>
+                                    <p class="text-sm text-secondary-500 dark:text-secondary-400">Kategori</p>
                                     <Badge v-if="props.product.category" variant="outline" class="px-2.5 py-0.5 text-xs font-medium mt-1">
                                         {{ props.product.category.name }}
                                     </Badge>
@@ -148,17 +148,17 @@ const closeLightbox = () => {
                             </div>
 
                             <div class="flex items-start gap-3">
-                                <CircleDollarSign class="h-5 w-5 mt-0.5 text-gray-500" />
+                                <CircleDollarSign class="h-5 w-5 mt-0.5 text-secondary-500 dark:text-secondary-400" />
                                 <div class="flex-1">
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">Harga</p>
-                                    <p class="font-medium">{{ formatPrice(props.product.price) }}</p>
+                                    <p class="text-sm text-secondary-500 dark:text-secondary-400">Harga</p>
+                                    <p class="font-medium text-secondary-900 dark:text-white">{{ formatPrice(props.product.price) }}</p>
                                 </div>
                             </div>
 
                             <div class="flex items-start gap-3" v-if="props.product.demo_url">
-                                <ExternalLink class="h-5 w-5 mt-0.5 text-gray-500" />
+                                <ExternalLink class="h-5 w-5 mt-0.5 text-secondary-500 dark:text-secondary-400" />
                                 <div class="flex-1">
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">URL Demo</p>
+                                    <p class="text-sm text-secondary-500 dark:text-secondary-400">URL Demo</p>
                                     <a 
                                         :href="props.product.demo_url" 
                                         target="_blank"
@@ -177,25 +177,25 @@ const closeLightbox = () => {
                                     <CircleX class="h-5 w-5 mt-0.5 text-red-500" />
                                 </div>
                                 <div class="flex-1">
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">Status</p>
-                                    <p class="font-medium">
+                                    <p class="text-sm text-secondary-500 dark:text-secondary-400">Status</p>
+                                    <p class="font-medium text-secondary-900 dark:text-white">
                                         {{ props.product.is_active ? 'Produk Aktif' : 'Produk Tidak Aktif' }}
                                     </p>
                                 </div>
                             </div>
 
                             <div class="flex items-start gap-3">
-                                <Calendar class="h-5 w-5 mt-0.5 text-gray-500" />
+                                <Calendar class="h-5 w-5 mt-0.5 text-secondary-500 dark:text-secondary-400" />
                                 <div class="flex-1">
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">Informasi Waktu</p>
+                                    <p class="text-sm text-secondary-500 dark:text-secondary-400">Informasi Waktu</p>
                                     <div class="grid grid-cols-2 gap-x-4 gap-y-2 mt-1.5">
                                         <div>
-                                            <p class="text-xs text-gray-500">Dibuat</p>
-                                            <p class="text-sm">{{ formatDate(props.product.created_at) }}</p>
+                                            <p class="text-xs text-secondary-500">Dibuat</p>
+                                            <p class="text-sm text-secondary-900 dark:text-white">{{ formatDate(props.product.created_at) }}</p>
                                         </div>
                                         <div>
-                                            <p class="text-xs text-gray-500">Diperbarui</p>
-                                            <p class="text-sm">{{ formatDate(props.product.updated_at) }}</p>
+                                            <p class="text-xs text-secondary-500">Diperbarui</p>
+                                            <p class="text-sm text-secondary-900 dark:text-white">{{ formatDate(props.product.updated_at) }}</p>
                                         </div>
                                     </div>
                                 </div>

@@ -5,38 +5,38 @@
         <div class="flex h-full flex-1 flex-col gap-4 p-4 md:p-6">
             <!-- Header dengan judul dan tombol tambah -->
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <h1 class="text-2xl font-bold">Produk</h1>
+                <h1 class="text-2xl font-bold text-secondary-900 dark:text-white">Produk</h1>
                 <Link :href="route('admin.products.create')" class="cursor-pointer">
-                    <Button class="flex items-center gap-1.5 w-full sm:w-auto cursor-pointer">
+                    <Button colorScheme="primary" class="flex items-center gap-1.5 w-full sm:w-auto cursor-pointer">
                         <PlusIcon class="h-4 w-4" />
                         Tambah Produk
                     </Button>
                 </Link>
             </div>
                 
-            <div class="bg-card text-card-foreground rounded-xl shadow border border-sidebar-border/70 dark:border-sidebar-border overflow-hidden">
-                <div class="p-6 border-b">
+            <div class="bg-card text-card-foreground dark:bg-secondary-900 dark:text-white rounded-xl shadow border border-sidebar-border/70 dark:border-secondary-800 overflow-hidden">
+                <div class="p-6 border-b border-secondary-200 dark:border-secondary-800">
                     <div>
-                        <h2 class="text-lg font-medium">Daftar Produk</h2>
-                        <p class="text-muted-foreground mt-1">Kelola semua produk yang tersedia di situs Anda</p>
+                        <h2 class="text-lg font-medium text-secondary-900 dark:text-white">Daftar Produk</h2>
+                        <p class="text-secondary-600 dark:text-secondary-400 mt-1">Kelola semua produk yang tersedia di situs Anda</p>
                     </div>
                 </div>
                 
                 <div class="overflow-x-auto">
                     <Table>
                         <TableHeader>
-                            <TableRow class="hover:bg-transparent border-b border-border">
-                                <TableHead class="py-3 px-6 font-medium text-muted-foreground">Gambar</TableHead>
-                                <TableHead class="py-3 px-6 font-medium text-muted-foreground">Nama</TableHead>
-                                <TableHead class="py-3 px-6 font-medium text-muted-foreground">Kategori</TableHead>
-                                <TableHead class="py-3 px-6 font-medium text-muted-foreground">Harga</TableHead>
-                                <TableHead class="py-3 px-6 font-medium text-muted-foreground">URL</TableHead>
-                                <TableHead class="py-3 px-6 font-medium text-muted-foreground">Status</TableHead>
-                                <TableHead class="py-3 px-6 font-medium text-muted-foreground text-right">Tindakan</TableHead>
+                            <TableRow class="hover:bg-transparent border-b border-secondary-200 dark:border-secondary-800">
+                                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Gambar</TableHead>
+                                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Nama</TableHead>
+                                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Kategori</TableHead>
+                                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Harga</TableHead>
+                                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">URL</TableHead>
+                                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Status</TableHead>
+                                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400 text-right">Tindakan</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            <TableRow v-for="product in products.data" :key="product.id" class="border-b border-border/60 hover:bg-muted/20">
+                            <TableRow v-for="product in products.data" :key="product.id" class="border-b border-secondary-200/60 dark:border-secondary-800/60 hover:bg-secondary-100/50 dark:hover:bg-secondary-800/50">
                                 <TableCell class="py-3.5 px-6 align-middle">
                                     <img
                                         :src="'/storage/' + product.featured_image"
@@ -44,7 +44,7 @@
                                         class="w-16 h-16 object-cover rounded-md"
                                     />
                                 </TableCell>
-                                <TableCell class="py-3.5 px-6 align-middle font-medium">{{ product.name }}</TableCell>
+                                <TableCell class="py-3.5 px-6 align-middle font-medium text-secondary-900 dark:text-white">{{ product.name }}</TableCell>
                                 <TableCell class="py-3.5 px-6 align-middle">
                                     <Badge v-if="product.category" variant="outline" class="px-2.5 py-0.5 text-xs font-medium">
                                         {{ product.category.name }}
@@ -88,38 +88,37 @@
                                     </Badge>
                                 </TableCell>
                                 <TableCell class="py-3.5 px-6 align-middle text-right">
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button variant="ghost" size="icon" class="h-8 w-8 cursor-pointer">
-                                                <MoreHorizontal class="h-4 w-4" />
-                                                <span class="sr-only">Menu</span>
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end" class="w-[160px]">
-                                            <DropdownMenuItem @click="viewProduct(product)" class="flex items-center gap-2 cursor-pointer py-1.5">
-                                                <Eye class="h-4 w-4" />
-                                                <span>Lihat</span>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem @click="editProduct(product)" class="flex items-center gap-2 cursor-pointer py-1.5">
-                                                <Pencil class="h-4 w-4" />
-                                                <span>Edit</span>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem 
-                                                @click="showHapusDialog(product)" 
-                                                variant="destructive" 
-                                                class="flex items-center gap-2 cursor-pointer py-1.5">
-                                                <Trash class="h-4 w-4" />
-                                                <span>Hapus</span>
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
+                                    <div class="flex justify-end">
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <MenuTriggerButton />
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end" class="w-[160px]">
+                                                <DropdownMenuItem @click="viewProduct(product)" class="flex items-center gap-2 cursor-pointer py-1.5">
+                                                    <Eye class="h-4 w-4" />
+                                                    <span>Lihat</span>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem @click="editProduct(product)" class="flex items-center gap-2 cursor-pointer py-1.5">
+                                                    <Pencil class="h-4 w-4" />
+                                                    <span>Edit</span>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem 
+                                                    @click="showHapusDialog(product)" 
+                                                    variant="destructive" 
+                                                    class="flex items-center gap-2 cursor-pointer py-1.5">
+                                                    <Trash class="h-4 w-4" />
+                                                    <span>Hapus</span>
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </div>
                                 </TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>
                 </div>
                 
-                <div v-if="products.links && products.links.length > 0" class="py-4 px-6 flex items-center justify-between border-t">
+                <div v-if="products.links && products.links.length > 0" class="py-4 px-6 flex items-center justify-between border-t border-secondary-200 dark:border-secondary-800">
                     <Pagination :links="products.links" />
                 </div>
             </div>
@@ -136,7 +135,7 @@
             confirmLabel="Hapus"
             @confirm="hapusProduct()"
         >
-            <p class="mb-2">Apakah Anda yakin ingin menghapus {{ selectedProduct?.name }}?</p>
+            <p class="mb-2 text-secondary-900 dark:text-secondary-200">Apakah Anda yakin ingin menghapus {{ selectedProduct?.name }}?</p>
         </ConfirmationDialog>
     </AppLayout>
 </template>
@@ -156,6 +155,7 @@ import ConfirmationDialog from '@/components/ui/ConfirmationDialog.vue';
 import { router } from '@inertiajs/vue3';
 import { toast } from 'vue-sonner';
 import { PlusCircleIcon, TrashIcon, PencilSquareIcon, EyeIcon } from '@heroicons/vue/24/outline';
+import { MenuTriggerButton } from '@/components/ui/menu';
 
 // Breadcrumbs untuk AppLayout
 const breadcrumbs = [

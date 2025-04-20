@@ -6,13 +6,13 @@
 export const buttonTheme = {
   // Warna utama (primary)
   primary: {
-    bg: 'bg-primary-600',
-    hover: 'hover:bg-primary-700',
+    bg: 'bg-blue-700',
+    hover: 'hover:bg-blue-700',
     text: 'text-white',
-    border: 'border-primary-600',
-    focusRing: 'focus:ring-primary-500',
-    disabled: 'disabled:bg-primary-400 disabled:cursor-not-allowed',
-    loading: 'bg-primary-500',
+    border: 'border-blue-600',
+    focusRing: 'focus:ring-blue-500',
+    disabled: 'disabled:bg-blue-400 disabled:cursor-not-allowed',
+    loading: 'bg-blue-500',
     spinner: 'border-white border-t-transparent'
   },
   
@@ -79,13 +79,13 @@ export const buttonTheme = {
   // Ghost (transparan tanpa border)
   ghost: {
     bg: 'bg-transparent',
-    hover: 'hover:bg-primary-100',
-    text: 'text-primary-600',
+    hover: 'hover:bg-gray-100 dark:hover:bg-gray-800',
+    text: 'text-gray-700 dark:text-gray-300',
     border: 'border-transparent',
-    focusRing: 'focus:ring-primary-200',
-    disabled: 'disabled:bg-transparent disabled:text-primary-300 disabled:cursor-not-allowed',
-    loading: 'bg-primary-50',
-    spinner: 'border-primary-400 border-t-transparent'
+    focusRing: 'focus:ring-gray-300 dark:focus:ring-gray-700',
+    disabled: 'disabled:bg-transparent disabled:text-gray-400 dark:disabled:text-gray-600 disabled:cursor-not-allowed',
+    loading: 'bg-gray-100 dark:bg-gray-800',
+    spinner: 'border-gray-700 border-t-transparent dark:border-gray-300'
   },
   
   // Link style
@@ -114,4 +114,4 @@ export function getSpinnerClasses(variant: keyof typeof buttonTheme = 'primary')
 }
 
 // Export default primary variant
-export default buttonTheme.primary; 
+export default buttonTheme.primary;

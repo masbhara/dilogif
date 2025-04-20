@@ -20,22 +20,47 @@ const props = withDefaults(defineProps<Props>(), {
 
 // Mengkombinasikan kelas dari buttonVariants dan buttonTheme
 const buttonClass = computed(() => {
-  // Jika colorScheme diisi, gunakan tema dari buttonTheme
-  if (props.colorScheme && props.colorScheme in buttonTheme) {
-    const theme = buttonTheme[props.colorScheme];
+  // Mendapatkan tema warna dari buttonTheme
+  const themeKey = props.colorScheme && props.colorScheme in buttonTheme 
+                  ? props.colorScheme 
+                  : 'primary'; // Selalu fallback ke primary jika tidak valid
+  
+  const theme = buttonTheme[themeKey];
+  
+  // Jika variant selain 'default', gunakan struktur dari buttonVariants
+  // tapi tetap gunakan warna dari theme.ts
+  if (props.variant && props.variant !== 'default') {
+    // Hanya ambil sizing dan positioning dari buttonVariants
+    const baseClasses = buttonVariants({ 
+      variant: undefined, // Tidak menggunakan variant styles
+      size: props.size 
+    });
     
-    // Gabungkan dengan buttonVariants untuk size/layout
+    // Gunakan warna dari theme
     return cn(
-      buttonVariants({ variant: undefined, size: props.size }),  // Tidak menyertakan variant
+      baseClasses,
       theme.bg,
       theme.hover,
       theme.text,
+      theme.focusRing,
+      theme.disabled,
       props.class
     );
   }
   
-  // Fallback ke style asli jika colorScheme tidak ada
-  return cn(buttonVariants({ variant: props.variant, size: props.size }), props.class);
+  // Untuk variant default atau tidak ada variant, tetap gunakan warna dari theme
+  return cn(
+    buttonVariants({ 
+      variant: undefined, // Tidak menggunakan variant styles
+      size: props.size 
+    }),
+    theme.bg,
+    theme.hover,
+    theme.text,
+    theme.focusRing,
+    theme.disabled,
+    props.class
+  );
 });
 </script>
 

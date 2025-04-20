@@ -10,15 +10,15 @@ export const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          'bg-primary-600 text-white shadow-xs hover:bg-primary-700 focus-visible:ring-primary-500/50',
+          'shadow-xs focus-visible:ring-primary-500/50',
         destructive:
           'bg-danger-600 text-white shadow-xs hover:bg-danger-700 focus-visible:ring-danger-500/50',
         outline:
-          'border border-primary-300 bg-transparent shadow-xs hover:bg-primary-50 hover:text-primary-700 focus-visible:ring-primary-300/50 dark:border-primary-700 dark:hover:bg-primary-950/50',
+          'border border-primary-300 bg-transparent shadow-xs hover:bg-primary-50 hover:text-primary-700 focus-visible:ring-primary-300/50 dark:border-secondary-700 dark:text-secondary-300 dark:bg-secondary-800 dark:hover:bg-secondary-700 dark:hover:text-white',
         secondary:
           'bg-secondary-600 text-white shadow-xs hover:bg-secondary-700 focus-visible:ring-secondary-500/50',
         ghost:
-          'hover:bg-primary-100 text-primary-600 hover:text-primary-700 focus-visible:ring-primary-200/50',
+          'hover:bg-primary-100 text-primary-600 hover:text-primary-700 focus-visible:ring-primary-200/50 dark:text-primary-400 dark:hover:bg-primary-950/50 dark:hover:text-primary-300 dark:focus-visible:ring-primary-800/50',
         link: 'text-primary-600 underline-offset-4 hover:underline focus-visible:ring-primary-200/50',
         success:
           'bg-success-600 text-white shadow-xs hover:bg-success-700 focus-visible:ring-success-500/50',

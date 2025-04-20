@@ -130,13 +130,24 @@
                   </td>
                   
                   <!-- Actions -->
-                  <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500">
-                    <Link :href="route('admin.orders.show', order.id)" class="text-primary-600 hover:text-primary-900">
-                      <Button size="sm" variant="ghost" class="h-8 px-2">
-                        <EyeIcon class="h-4 w-4" />
-                        <span class="sr-only">Lihat</span>
-                      </Button>
-                    </Link>
+                  <td class="py-4 px-4 text-right">
+                    <div class="flex items-center justify-end gap-1">
+                      <Link :href="route('admin.orders.show', order.id)" class="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400">
+                        Lihat
+                      </Link>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger as-child>
+                          <MenuTriggerButton />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>
+                            <Link :href="route('admin.orders.show', order.id)" class="flex w-full">
+                              Lihat detail
+                            </Link>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                   </td>
                 </tr>
               </tbody>
@@ -168,7 +179,10 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Pagination from '@/components/Pagination.vue';
-import { SearchIcon, EyeIcon, BarChart3Icon } from 'lucide-vue-next';
+import { SearchIcon, EyeIcon, BarChart3Icon, MoreHorizontal } from 'lucide-vue-next';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItem } from '@/components/ui/dropdown-menu';
+import { MenuTriggerButton } from '@/components/ui/menu';
+import currencies from "@/lib/currency.js";
 
 const props = defineProps({
   orders: Object,

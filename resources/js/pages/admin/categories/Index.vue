@@ -56,7 +56,7 @@
                                 <TableCell class="py-3.5 px-6 align-middle text-right">
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
-                                            <Button variant="ghost" size="icon" class="h-8 w-8 cursor-pointer">
+                                            <Button variant="ghost" size="icon" class="h-8 w-8 cursor-pointer text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
                                                 <MoreHorizontal class="h-4 w-4" />
                                                 <span class="sr-only">Menu</span>
                                             </Button>
