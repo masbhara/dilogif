@@ -554,7 +554,7 @@ onUnmounted(() => {
 .custom-select-trigger:-moz-focusring {
   outline: none;
   box-shadow: none;
-  border-color: var(--color-primary-500);
+  border-color: #0ea5e9;
 }
 
 /* Fix untuk Firefox */

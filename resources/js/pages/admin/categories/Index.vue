@@ -26,15 +26,14 @@
                     <Table>
                         <TableHeader>
                             <TableRow class="hover:bg-transparent border-b border-secondary-200 dark:border-secondary-800">
-                                <TableHead class="py-3 px-6 font-medium">Ikon</TableHead>
-                                <TableHead class="py-3 px-6 font-medium">Nama</TableHead>
-                                <TableHead class="py-3 px-6 font-medium">Produk</TableHead>
-                                <TableHead class="py-3 px-6 font-medium">Status</TableHead>
-                                <TableHead class="py-3 px-6 font-medium text-right">Tindakan</TableHead>
+                                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Nama</TableHead>
+                                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Slug</TableHead>
+                                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Status</TableHead>
+                                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400 text-right">Tindakan</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            <TableRow v-for="category in categories.data" :key="category.id">
+                            <TableRow v-for="category in categories.data" :key="category.id" class="border-b border-secondary-200/60 dark:border-secondary-800/60 hover:bg-secondary-100/50 dark:hover:bg-secondary-800/50">
                                 <TableCell class="py-3.5 px-6 align-middle">
                                     <img
                                         v-if="category.icon"

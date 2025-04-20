@@ -1,5 +1,6 @@
-/* Import theme variables first */
+/* Import theme variables first - DISABLED
 @import "./tailwind-theme.css";
+*/
 
 @import "tailwindcss";
 
@@ -20,7 +21,7 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--border, currentColor);
+    border-color: #e2e8f0;
   }
   
   body,
@@ -34,29 +35,29 @@
   .dark .aktif,
   .dark .active,
   .dark .sukses {
-    background-color: rgb(var(--rgb-success-700));
-    color: var(--text);
+    background-color: #15803d;
+    color: white;
   }
   
   .dark .tidak-aktif,
   .dark .inactive,
   .dark .gagal {
-    background-color: rgb(var(--rgb-danger-700));
-    color: var(--text);
+    background-color: #b91c1c;
+    color: white;
   }
   
   /* Light mode styling for badges */
   .aktif,
   .active,
   .sukses {
-    background-color: rgb(var(--rgb-success-500));
+    background-color: #22c55e;
     color: white;
   }
   
   .tidak-aktif,
   .inactive,
   .gagal {
-    background-color: rgb(var(--rgb-danger-500));
+    background-color: #ef4444;
     color: white;
   }
   
@@ -67,60 +68,30 @@
   }
   
   .focus-ring:focus-visible {
-    box-shadow: 0 0 0 var(--ring-offset-width, 2px) var(--ring-offset-color, white), 
-                0 0 0 calc(var(--ring-width, 2px) + var(--ring-offset-width, 2px)) var(--ring-color, var(--color-primary-500));
+    box-shadow: 0 0 0 2px white, 
+                0 0 0 4px #0ea5e9;
   }
   
   .dark .focus-ring:focus-visible {
-    --ring-offset-color: var(--bg-page);
-    --ring-color: var(--color-primary-400);
+    box-shadow: 0 0 0 2px #0f172a, 
+                0 0 0 4px #38bdf8;
   }
   
   /* Variant utilities */
   .focus-ring-primary:focus-visible {
-    --ring-color: var(--ring-primary);
-  }
-  
-  .focus-ring-secondary:focus-visible {
-    --ring-color: var(--ring-secondary);
-  }
-  
-  .focus-ring-danger:focus-visible {
-    --ring-color: var(--ring-danger);
-  }
-  
-  .focus-ring-success:focus-visible {
-    --ring-color: var(--ring-success);
-  }
-  
-  .focus-ring-warning:focus-visible {
-    --ring-color: var(--ring-warning);
+    box-shadow: 0 0 0 2px white, 
+                0 0 0 4px #0ea5e9;
   }
 }
 
 /* Global focus styles */
 *:focus-visible {
   outline: none;
-  ring-width: 2px;
-  ring-offset-width: 2px;
-  ring-color: var(--color-primary-500);
-  ring-offset-color: white;
 }
 
-.dark *:focus-visible {
-  ring-color: var(--color-primary-400);
-  ring-offset-color: var(--bg-page);
-}
-
-/* Fix untuk halaman admin yang masih menggunakan fokus styling */
+/* Fix untuk halaman admin */
 div:focus-visible,
 div:focus-within,
 div:active {
   outline: none;
-}
-
-div:focus-visible,
-div:focus-within:not(:has(input:focus)),
-div:active:not(:has(input:active)) {
-  border-color: var(--color-primary-500);
 }

@@ -5,7 +5,8 @@
 </template>
 
 <script setup>
-// Script kosong karena hanya berisi style global
+// Komponen tambahan untuk memperbaiki styling form admin panel
+// Meminimalisir pengulangan kode CSS di banyak halaman
 </script>
 
 <style>
@@ -54,5 +55,35 @@ div:-moz-focusring,
 .dark div:focus,
 .dark div:active {
   border-color: var(--color-primary-400) !important;
+}
+
+/* Styles untuk form element focus */
+.form-control:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: #0ea5e9 !important;
+}
+
+/* Styles untuk Multiselect dropdown */
+.multiselect.is-active {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: #0ea5e9 !important;
+}
+
+/* Styles untuk date picker */
+input[type="date"]:focus,
+input[type="datetime-local"]:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: #0ea5e9 !important;
+}
+
+/* Styles untuk dark mode */
+.dark .form-control:focus,
+.dark .multiselect.is-active,
+.dark input[type="date"]:focus,
+.dark input[type="datetime-local"]:focus {
+  border-color: #38bdf8 !important;
 }
 </style> 

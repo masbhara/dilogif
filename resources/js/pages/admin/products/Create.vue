@@ -547,7 +547,7 @@ const removeValue = (index) => {
 .custom-select-trigger:-moz-focusring {
   outline: none !important;
   box-shadow: none !important;
-  border-color: hsl(var(--primary)) !important;
+  border-color: #0ea5e9 !important;
 }
 
 /* Fix untuk Firefox */

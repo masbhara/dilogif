@@ -5,6 +5,33 @@ export default {
     "./resources/**/*.js",
     "./resources/**/*.vue",
   ],
+  safelist: [
+    // Safelist untuk background colors table
+    'bg-white',
+    'bg-transparent',
+    'dark:bg-secondary-900',
+    'dark:bg-secondary-800',
+    'bg-secondary-900',
+    'bg-primary-900',
+    'dark:bg-primary-900',
+    // Tambahan safelist untuk warna-warna kustom
+    'bg-secondary-50', 'bg-secondary-100', 'bg-secondary-200', 'bg-secondary-300', 'bg-secondary-400',
+    'bg-secondary-500', 'bg-secondary-600', 'bg-secondary-700', 'bg-secondary-800', 'bg-secondary-900', 'bg-secondary-950',
+    'dark:bg-secondary-50', 'dark:bg-secondary-100', 'dark:bg-secondary-200', 'dark:bg-secondary-300', 'dark:bg-secondary-400',
+    'dark:bg-secondary-500', 'dark:bg-secondary-600', 'dark:bg-secondary-700', 'dark:bg-secondary-800', 'dark:bg-secondary-900', 'dark:bg-secondary-950',
+    'text-secondary-50', 'text-secondary-100', 'text-secondary-200', 'text-secondary-300', 'text-secondary-400',
+    'text-secondary-500', 'text-secondary-600', 'text-secondary-700', 'text-secondary-800', 'text-secondary-900', 'text-secondary-950',
+    'dark:text-secondary-50', 'dark:text-secondary-100', 'dark:text-secondary-200', 'dark:text-secondary-300', 'dark:text-secondary-400',
+    'dark:text-secondary-500', 'dark:text-secondary-600', 'dark:text-secondary-700', 'dark:text-secondary-800', 'dark:text-secondary-900', 'dark:text-secondary-950',
+    'border-secondary-50', 'border-secondary-100', 'border-secondary-200', 'border-secondary-300', 'border-secondary-400',
+    'border-secondary-500', 'border-secondary-600', 'border-secondary-700', 'border-secondary-800', 'border-secondary-900', 'border-secondary-950',
+    'dark:border-secondary-50', 'dark:border-secondary-100', 'dark:border-secondary-200', 'dark:border-secondary-300', 'dark:border-secondary-400',
+    'dark:border-secondary-500', 'dark:border-secondary-600', 'dark:border-secondary-700', 'dark:border-secondary-800', 'dark:border-secondary-900', 'dark:border-secondary-950',
+    'hover:bg-secondary-50', 'hover:bg-secondary-100', 'hover:bg-secondary-200', 'hover:bg-secondary-300', 'hover:bg-secondary-400',
+    'hover:bg-secondary-500', 'hover:bg-secondary-600', 'hover:bg-secondary-700', 'hover:bg-secondary-800', 'hover:bg-secondary-900', 'hover:bg-secondary-950',
+    'dark:hover:bg-secondary-50', 'dark:hover:bg-secondary-100', 'dark:hover:bg-secondary-200', 'dark:hover:bg-secondary-300', 'dark:hover:bg-secondary-400',
+    'dark:hover:bg-secondary-500', 'dark:hover:bg-secondary-600', 'dark:hover:bg-secondary-700', 'dark:hover:bg-secondary-800', 'dark:hover:bg-secondary-900', 'dark:hover:bg-secondary-950'
+  ],
   theme: {
     extend: {
       fontFamily: {
@@ -24,6 +51,20 @@ export default {
           800: "#075985",
           900: "#0c4a6e",
           950: "#082f49",
+        },
+        // Palette warna sekunder
+        secondary: {
+          50: "#f8fafc",
+          100: "#f1f5f9",
+          200: "#e2e8f0",
+          300: "#cbd5e1",
+          400: "#94a3b8",
+          500: "#64748b",
+          600: "#475569",
+          700: "#334155",
+          800: "#1e293b",
+          900: "#0f172a",
+          950: "#020617",
         },
         // Palette warna sukses
         success: {

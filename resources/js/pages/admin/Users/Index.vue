@@ -746,7 +746,7 @@ if (props.filters) {
 .custom-select-trigger:-moz-focusring {
   outline: none !important;
   box-shadow: none !important;
-  border-color: var(--color-primary-500) !important;
+  border-color: #0ea5e9 !important;
 }
 
 /* Fix untuk Firefox */

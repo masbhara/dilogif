@@ -130,10 +130,10 @@ const isPlaceholderShown = computed(() => {
   outline: none;
   ring-width: 2px;
   ring-offset-width: 2px;
-  ring-color: var(--color-primary-500);
+  ring-color: #0ea5e9;
 }
 .dark .focus-visible:focus {
-  ring-color: var(--color-primary-400);
-  ring-offset-color: var(--color-secondary-900);
+  ring-color: #38bdf8;
+  ring-offset-color: #0f172a;
 }
 </style>
