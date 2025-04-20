@@ -147,7 +147,7 @@ const sendTestEmail = () => {
             <!-- Pengaturan Driver -->
             <div class="mb-6">
               <Label for="mail_driver">Driver Email</Label>
-              <select v-model="form.mail_driver" id="mail_driver" class="flex h-10 mt-1.5 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+              <select v-model="form.mail_driver" id="mail_driver" class="flex h-10 mt-1.5 w-full rounded-md border border-slate-200 dark:border-slate-700 bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
                 <option value="smtp">SMTP</option>
                 <option value="mailgun">Mailgun</option>
                 <option value="ses">Amazon SES</option>
@@ -160,28 +160,28 @@ const sendTestEmail = () => {
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label for="mail_host">SMTP Host</Label>
-                  <Input v-model="form.mail_host" id="mail_host" type="text" class="mt-1.5" />
+                  <Input v-model="form.mail_host" id="mail_host" type="text" class="mt-1.5 border border-slate-200 dark:border-slate-700" />
                 </div>
                 <div>
                   <Label for="mail_port">SMTP Port</Label>
-                  <Input v-model="form.mail_port" id="mail_port" type="text" class="mt-1.5" />
+                  <Input v-model="form.mail_port" id="mail_port" type="text" class="mt-1.5 border border-slate-200 dark:border-slate-700" />
                 </div>
               </div>
               
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label for="mail_username">SMTP Username</Label>
-                  <Input v-model="form.mail_username" id="mail_username" type="text" class="mt-1.5" />
+                  <Input v-model="form.mail_username" id="mail_username" type="text" class="mt-1.5 border border-slate-200 dark:border-slate-700" />
                 </div>
                 <div>
                   <Label for="mail_password">SMTP Password</Label>
-                  <Input v-model="form.mail_password" id="mail_password" type="password" class="mt-1.5" />
+                  <Input v-model="form.mail_password" id="mail_password" type="password" class="mt-1.5 border border-slate-200 dark:border-slate-700" />
                 </div>
               </div>
               
               <div>
                 <Label for="mail_encryption">Enkripsi</Label>
-                <select v-model="form.mail_encryption" id="mail_encryption" class="flex h-10 mt-1.5 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                <select v-model="form.mail_encryption" id="mail_encryption" class="flex h-10 mt-1.5 w-full rounded-md border border-slate-200 dark:border-slate-700 bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
                   <option value="tls">TLS</option>
                   <option value="ssl">SSL</option>
                   <option value="">Tidak Ada</option>
@@ -193,11 +193,11 @@ const sendTestEmail = () => {
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
               <div>
                 <Label for="mail_from_address">Alamat Email Pengirim</Label>
-                <Input v-model="form.mail_from_address" id="mail_from_address" type="email" class="mt-1.5" />
+                <Input v-model="form.mail_from_address" id="mail_from_address" type="email" class="mt-1.5 border border-slate-200 dark:border-slate-700" />
               </div>
               <div>
                 <Label for="mail_from_name">Nama Pengirim</Label>
-                <Input v-model="form.mail_from_name" id="mail_from_name" type="text" class="mt-1.5" />
+                <Input v-model="form.mail_from_name" id="mail_from_name" type="text" class="mt-1.5 border border-slate-200 dark:border-slate-700" />
               </div>
             </div>
             
@@ -228,7 +228,7 @@ const sendTestEmail = () => {
                 v-model="form.verification_template" 
                 id="verification_template" 
                 rows="10" 
-                class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none mt-1.5 font-mono text-sm"
+                class="flex min-h-[80px] w-full rounded-md border border-slate-200 dark:border-slate-700 bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none mt-1.5 font-mono text-sm"
                 placeholder="Template HTML dengan variabel: {name}, {verification_url}"
               ></textarea>
               <p class="text-xs text-muted-foreground mt-1">
@@ -262,7 +262,7 @@ const sendTestEmail = () => {
           id="test_email" 
           type="email" 
           placeholder="Masukkan alamat email untuk pengujian"
-          class="mt-1.5" 
+          class="mt-1.5 border border-slate-200 dark:border-slate-700" 
         />
       </div>
       <p class="text-sm text-muted-foreground mt-2">
