@@ -190,6 +190,7 @@ class HandleInertiaRequests extends Middleware
         return array_merge(parent::share($request), [
             'csrf_token' => $csrfToken,
             'name' => $websiteSettings['siteName'] ?? config('app.name'),  // Untuk compatibility
+            'appearance' => $request->cookie('appearance', 'system'),
             'ziggy' => function () use ($request) {
                 return array_merge((new Ziggy)->toArray(), [
                     'location' => $request->url(),

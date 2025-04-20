@@ -130,35 +130,35 @@ const hapusPermission = () => {
         </Link>
       </div>
 
-      <div class="bg-card text-card-foreground rounded-xl shadow border border-sidebar-border/70 dark:border-sidebar-border overflow-hidden">
-        <div class="p-6">
+      <div class="bg-white dark:bg-slate-800 text-secondary-900 dark:text-white rounded-xl shadow border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div class="p-6 border-b border-slate-200 dark:border-slate-700">
           <h2 class="text-lg font-medium">Daftar Izin</h2>
-          <p class="text-muted-foreground mt-1">Kelola izin yang akan diberikan kepada peran.</p>
+          <p class="text-secondary-600 dark:text-secondary-400 mt-1">Kelola izin yang akan diberikan kepada peran.</p>
         </div>
         
-        <div class="border-t overflow-x-auto">
+        <div class="border-t border-slate-200 dark:border-slate-700 overflow-x-auto">
           <Table class="w-full">
             <TableHeader>
-              <TableRow class="hover:bg-transparent border-b border-border">
-                <TableHead class="py-3 px-6 font-medium text-muted-foreground">Nama</TableHead>
-                <TableHead class="py-3 px-6 font-medium text-muted-foreground">Digunakan Oleh</TableHead>
-                <TableHead class="py-3 px-6 font-medium text-muted-foreground hidden md:table-cell">Tanggal Dibuat</TableHead>
-                <TableHead class="py-3 px-6 font-medium text-muted-foreground w-[60px]"></TableHead>
+              <TableRow class="hover:bg-transparent border-b border-slate-200 dark:border-slate-700">
+                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Nama</TableHead>
+                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Digunakan Oleh</TableHead>
+                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400 hidden md:table-cell">Tanggal Dibuat</TableHead>
+                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400 w-[60px]"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              <TableRow v-for="permission in permissions" :key="permission.id" class="border-b border-border/60 hover:bg-muted/20">
+              <TableRow v-for="permission in permissions" :key="permission.id" class="border-b border-secondary-200/60 dark:border-slate-700/60 hover:bg-secondary-100/50 dark:hover:bg-slate-900/90">
                 <TableCell class="py-3.5 px-6 align-middle font-medium">{{ permission.name }}</TableCell>
                 <TableCell class="py-3.5 px-6 align-middle">
                   <Badge class="text-xs px-2.5 py-0.5">
                     {{ permission.roles_count }} peran
                   </Badge>
                 </TableCell>
-                <TableCell class="py-3.5 px-6 align-middle hidden md:table-cell text-sm text-muted-foreground">{{ formatDate(permission.created_at) }}</TableCell>
+                <TableCell class="py-3.5 px-6 align-middle hidden md:table-cell text-sm text-secondary-500 dark:text-secondary-400">{{ formatDate(permission.created_at) }}</TableCell>
                 <TableCell class="py-3.5 px-6 align-middle text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" class="h-8 w-8 cursor-pointer">
+                      <Button variant="primary" size="icon" class="h-8 w-8 rounded-md bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white">
                         <MoreHorizontal class="h-4 w-4" />
                         <span class="sr-only">Menu</span>
                       </Button>

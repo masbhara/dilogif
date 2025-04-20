@@ -14,8 +14,8 @@
                 </Link>
             </div>
                 
-            <div class="bg-card text-card-foreground dark:bg-secondary-900 dark:text-white rounded-xl shadow border border-sidebar-border/70 dark:border-secondary-800 overflow-hidden">
-                <div class="p-6 border-b border-secondary-200 dark:border-secondary-800">
+            <div class="bg-white dark:bg-slate-800 text-secondary-900 dark:text-white rounded-xl shadow border border-slate-200 dark:border-slate-700 overflow-hidden">
+                <div class="p-6 border-b border-slate-200 dark:border-slate-700">
                     <div>
                         <h2 class="text-lg font-medium text-secondary-900 dark:text-white">Daftar Produk</h2>
                         <p class="text-secondary-600 dark:text-secondary-400 mt-1">Kelola semua produk yang tersedia di situs Anda</p>
@@ -25,7 +25,7 @@
                 <div class="overflow-x-auto">
                     <Table>
                         <TableHeader>
-                            <TableRow class="hover:bg-transparent border-b border-secondary-200 dark:border-secondary-800">
+                            <TableRow class="hover:bg-transparent border-b border-secondary-200 dark:border-slate-700">
                                 <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Gambar</TableHead>
                                 <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Nama</TableHead>
                                 <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Kategori</TableHead>
@@ -36,7 +36,7 @@
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            <TableRow v-for="product in products.data" :key="product.id" class="border-b border-secondary-200/60 dark:border-secondary-800/60 hover:bg-secondary-100/50 dark:hover:bg-secondary-800/50">
+                            <TableRow v-for="product in products.data" :key="product.id" class="border-b border-secondary-200/60 dark:border-slate-700/60 hover:bg-secondary-100/50 dark:hover:bg-slate-900/90">
                                 <TableCell class="py-3.5 px-6 align-middle">
                                     <img
                                         :src="'/storage/' + product.featured_image"
@@ -91,7 +91,10 @@
                                     <div class="flex justify-end">
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
-                                                <MenuTriggerButton />
+                                                <Button variant="primary" size="icon" class="h-8 w-8 rounded-md bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white">
+                                                    <MoreHorizontal class="h-4 w-4" />
+                                                    <span class="sr-only">Menu</span>
+                                                </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end" class="w-[160px]">
                                                 <DropdownMenuItem @click="viewProduct(product)" class="flex items-center gap-2 cursor-pointer py-1.5">
@@ -118,7 +121,7 @@
                     </Table>
                 </div>
                 
-                <div v-if="products.links && products.links.length > 0" class="py-4 px-6 flex items-center justify-between border-t border-secondary-200 dark:border-secondary-800">
+                <div v-if="products.links && products.links.length > 0" class="py-4 px-6 flex items-center justify-between border-t border-secondary-200 dark:border-slate-700">
                     <Pagination :links="products.links" />
                 </div>
             </div>
@@ -148,14 +151,11 @@ import { PlusIcon, MoreHorizontal, Eye, Pencil, Trash, Trash2, ClipboardIcon } f
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import Pagination from '@/components/ui/pagination/Pagination.vue';
 import ConfirmationDialog from '@/components/ui/ConfirmationDialog.vue';
 import { router } from '@inertiajs/vue3';
 import { toast } from 'vue-sonner';
-import { PlusCircleIcon, TrashIcon, PencilSquareIcon, EyeIcon } from '@heroicons/vue/24/outline';
-import { MenuTriggerButton } from '@/components/ui/menu';
 
 // Breadcrumbs untuk AppLayout
 const breadcrumbs = [
@@ -229,4 +229,5 @@ const copyToClipboard = (url) => {
         toast.success('URL berhasil disalin!');
     });
 };
-</script> 
+</script>
+

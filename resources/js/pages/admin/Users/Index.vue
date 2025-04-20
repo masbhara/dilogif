@@ -391,8 +391,8 @@ if (props.filters) {
           </Link>
         </div>
 
-        <div class="bg-secondary-50 dark:bg-secondary-900 text-secondary-900 dark:text-white rounded-xl shadow border border-secondary-200 dark:border-secondary-800 overflow-hidden">
-          <div class="p-6 border-b border-secondary-200 dark:border-secondary-800">
+        <div class="bg-white dark:bg-slate-800 text-secondary-900 dark:text-white rounded-xl shadow border border-slate-200 dark:border-slate-700 overflow-hidden">
+          <div class="p-6 border-b border-secondary-200 dark:border-slate-700">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
                 <h2 class="text-lg font-medium text-secondary-900 dark:text-white">Daftar Pengguna</h2>
@@ -512,7 +512,7 @@ if (props.filters) {
           <div class="overflow-x-auto">
             <Table class="w-full">
               <TableHeader>
-                <TableRow class="hover:bg-transparent border-b border-secondary-200 dark:border-secondary-800">
+                <TableRow class="hover:bg-transparent border-b border-slate-200 dark:border-slate-700">
                   <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Nama</TableHead>
                   <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Email</TableHead>
                   <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400 hidden md:table-cell">WhatsApp</TableHead>
@@ -523,7 +523,7 @@ if (props.filters) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                <TableRow v-if="isFiltering" class="border-b border-secondary-200 dark:border-secondary-800">
+                <TableRow v-if="isFiltering" class="border-b border-secondary-200 dark:border-slate-700">
                   <TableCell colspan="7" class="py-12 text-center">
                     <div class="flex flex-col items-center justify-center gap-2">
                       <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
@@ -532,10 +532,10 @@ if (props.filters) {
                   </TableCell>
                 </TableRow>
                 
-                <TableRow v-else-if="props.users.data.length === 0" class="border-b border-secondary-200 dark:border-secondary-800">
+                <TableRow v-else-if="props.users.data.length === 0" class="border-b border-secondary-200 dark:border-slate-700">
                   <TableCell colspan="7" class="py-12 text-center">
                     <div class="flex flex-col items-center justify-center gap-2">
-                      <div class="bg-secondary-100 dark:bg-secondary-800 rounded-full p-3">
+                      <div class="bg-secondary-100 dark:bg-slate-800 rounded-full p-3">
                         <Search class="h-6 w-6 text-secondary-500 dark:text-secondary-400" />
                       </div>
                       <span class="text-lg font-medium text-secondary-900 dark:text-white">Tidak ada pengguna ditemukan</span>
@@ -545,7 +545,7 @@ if (props.filters) {
                 </TableRow>
                 
                 <template v-else>
-                  <TableRow v-for="user in props.users.data" :key="user.id" class="border-b border-secondary-200 dark:border-secondary-800 hover:bg-secondary-100 dark:hover:bg-secondary-800">
+                  <TableRow v-for="user in props.users.data" :key="user.id" class="border-b border-secondary-200/60 dark:border-slate-700/60 hover:bg-secondary-100/50 dark:hover:bg-slate-900/90">
                     <TableCell class="py-3.5 px-6 align-middle font-medium text-secondary-900 dark:text-white">{{ user.name }}</TableCell>
                     <TableCell class="py-3.5 px-6 align-middle text-sm text-secondary-900 dark:text-white">{{ user.email }}</TableCell>
                     <TableCell class="py-3.5 px-6 align-middle text-sm text-secondary-900 dark:text-white hidden md:table-cell">{{ user.whatsapp || '-' }}</TableCell>
@@ -567,7 +567,7 @@ if (props.filters) {
                     <TableCell class="py-3.5 px-6 align-middle text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" class="h-8 w-8 cursor-pointer text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                          <Button variant="primary" size="icon" class="h-8 w-8 rounded-md bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white">
                             <MoreHorizontal class="h-4 w-4" />
                             <span class="sr-only">Menu</span>
                           </Button>
@@ -623,7 +623,7 @@ if (props.filters) {
           </div>
           
           <!-- Pagination -->
-          <div v-if="props.users.data && props.users.data.length > 0" class="py-4 px-6 flex items-center justify-between border-t border-secondary-200 dark:border-secondary-800">
+          <div v-if="props.users.data && props.users.data.length > 0" class="py-4 px-6 flex items-center justify-between border-t border-secondary-200 dark:border-slate-700">
             <div class="text-sm text-secondary-500 dark:text-secondary-400">
               <span v-if="props.users.meta && props.users.meta.total">
                 Menampilkan {{ props.users.data.length }} dari {{ props.users.meta.total }} pengguna
@@ -637,10 +637,10 @@ if (props.filters) {
                 v-for="(link, i) in props.users.links.slice(1, -1)" 
                 :key="i"
                 :href="link.url || '#'"
-                class="px-3 py-1 rounded text-sm border border-secondary-200 dark:border-secondary-700"
+                class="px-3 py-1 rounded text-sm border border-slate-200 dark:border-slate-700"
                 :class="{ 
                   'bg-primary text-white border-primary': link.active,
-                  'cursor-pointer hover:bg-secondary-100 dark:hover:bg-secondary-800': !link.active && link.url,
+                  'cursor-pointer hover:bg-slate-100/50 dark:hover:bg-slate-800/50': !link.active && link.url,
                   'opacity-50 cursor-not-allowed': !link.url
                 }"
                 v-html="link.label"

@@ -14,6 +14,12 @@ export default {
     'bg-secondary-900',
     'bg-primary-900',
     'dark:bg-primary-900',
+    // Tambahan untuk table row dan cell
+    'tr-bg-white', 'tr-dark:bg-secondary-900',
+    'td-bg-white', 'td-dark:bg-secondary-900',
+    'tbody-bg-white', 'tbody-dark:bg-secondary-900',
+    'table-bg-white', 'table-dark:bg-secondary-900',
+    'dark:hover:bg-secondary-800',
     // Tambahan safelist untuk warna-warna kustom
     'bg-secondary-50', 'bg-secondary-100', 'bg-secondary-200', 'bg-secondary-300', 'bg-secondary-400',
     'bg-secondary-500', 'bg-secondary-600', 'bg-secondary-700', 'bg-secondary-800', 'bg-secondary-900', 'bg-secondary-950',

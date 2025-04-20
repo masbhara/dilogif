@@ -121,25 +121,25 @@ const hapusRole = () => {
         </Link>
       </div>
 
-      <div class="bg-card text-card-foreground rounded-xl shadow border border-sidebar-border/70 dark:border-sidebar-border overflow-hidden">
-        <div class="p-6">
+      <div class="bg-white dark:bg-slate-800 text-secondary-900 dark:text-white rounded-xl shadow border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div class="p-6 border-b border-secondary-200 dark:border-slate-700">
           <h2 class="text-lg font-medium">Daftar Peran</h2>
           <p class="text-muted-foreground mt-1">Kelola peran dan izin yang terkait dengannya.</p>
         </div>
         
-        <div class="border-t overflow-x-auto">
+        <div class="border-t overflow-x-auto border-slate-200 dark:border-slate-700">
           <Table class="w-full">
             <TableHeader>
-              <TableRow class="hover:bg-transparent border-b border-border">
-                <TableHead class="py-3 px-6 font-medium text-muted-foreground">Nama</TableHead>
-                <TableHead class="py-3 px-6 font-medium text-muted-foreground">Izin</TableHead>
-                <TableHead class="py-3 px-6 font-medium text-muted-foreground hidden md:table-cell">Jumlah Pengguna</TableHead>
-                <TableHead class="py-3 px-6 font-medium text-muted-foreground hidden md:table-cell">Tanggal Dibuat</TableHead>
-                <TableHead class="py-3 px-6 font-medium text-muted-foreground w-[60px]"></TableHead>
+              <TableRow class="hover:bg-transparent border-b border-secondary-200 dark:border-slate-700">
+                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Nama</TableHead>
+                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Izin</TableHead>
+                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400 hidden md:table-cell">Jumlah Pengguna</TableHead>
+                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400 hidden md:table-cell">Tanggal Dibuat</TableHead>
+                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400 w-[60px]"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              <TableRow v-for="role in filteredRoles" :key="role.id" class="border-b border-border/60 hover:bg-muted/20">
+              <TableRow v-for="role in filteredRoles" :key="role.id" class="border-b border-secondary-200/60 dark:border-slate-700/60 hover:bg-secondary-100/50 dark:hover:bg-slate-900/90">
                 <TableCell class="py-3.5 px-6 align-middle font-medium capitalize">{{ role.name }}</TableCell>
                 <TableCell class="py-3.5 px-6 align-middle">
                   <div class="flex gap-1.5 flex-wrap">
@@ -170,7 +170,7 @@ const hapusRole = () => {
                 <TableCell class="py-3.5 px-6 align-middle text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" class="h-8 w-8 cursor-pointer">
+                      <Button variant="primary" size="icon" class="h-8 w-8 rounded-md bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white">
                         <MoreHorizontal class="h-4 w-4" />
                         <span class="sr-only">Menu</span>
                       </Button>
@@ -210,8 +210,8 @@ const hapusRole = () => {
         </div>
         
         <!-- Pagination -->
-        <div v-if="filteredRoles.length > 0" class="py-4 px-6 flex items-center justify-between border-t">
-          <div class="text-sm text-muted-foreground">
+        <div v-if="filteredRoles.length > 0" class="py-4 px-6 flex items-center justify-between border-t border-secondary-200 dark:border-slate-700">
+          <div class="text-sm text-secondary-500 dark:text-secondary-400">
             <span v-if="props.roles.meta && props.roles.meta.total">
               Menampilkan {{ filteredRoles.length }} dari {{ props.roles.meta.total - 1 }} peran
             </span>
@@ -224,10 +224,10 @@ const hapusRole = () => {
               v-for="(link, i) in props.roles.links.slice(1, -1)" 
               :key="i"
               :href="link.url"
-              class="px-3 py-1 rounded text-sm border border-input"
+              class="px-3 py-1 rounded text-sm border border-slate-200 dark:border-slate-700"
               :class="{ 
-                'bg-primary text-primary-foreground border-primary': link.active,
-                'cursor-pointer hover:bg-accent': !link.active && link.url
+                'bg-primary text-white border-primary': link.active,
+                'cursor-pointer hover:bg-slate-100/50 dark:hover:bg-slate-800/50': !link.active && link.url
               }"
               v-html="link.label"
             />

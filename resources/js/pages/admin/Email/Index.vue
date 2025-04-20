@@ -136,13 +136,13 @@ const sendTestEmail = () => {
         <h1 class="text-2xl font-bold">Pengaturan Email</h1>
       </div>
 
-      <div class="bg-card text-card-foreground rounded-xl shadow border border-sidebar-border/70 dark:border-sidebar-border overflow-hidden">
-        <div class="p-6">
+      <div class="bg-white dark:bg-slate-800 text-secondary-900 dark:text-white rounded-xl shadow border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div class="p-6 border-b border-secondary-200 dark:border-slate-700">
           <h2 class="text-lg font-medium">Konfigurasi SMTP</h2>
           <p class="text-muted-foreground mt-1">Atur konfigurasi email server untuk notifikasi dan verifikasi.</p>
         </div>
         
-        <div class="p-6 border-t">
+        <div class="p-6">
           <form @submit.prevent="updateEmailSettings">
             <!-- Pengaturan Driver -->
             <div class="mb-6">

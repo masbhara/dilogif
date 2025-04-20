@@ -13,7 +13,7 @@ const copyright = computed(() => websiteSettings.value.copyright || `© ${new Da
 </script>
 
 <template>
-  <footer class="mt-auto border-t border-border py-4 px-6">
+  <footer class="mt-auto border-t border-slate-200 dark:border-slate-600/70 py-4 px-6">
     <div class="container flex flex-col sm:flex-row justify-between items-center gap-2">
       <!-- Informasi copyright -->
       <div class="text-sm text-muted-foreground">

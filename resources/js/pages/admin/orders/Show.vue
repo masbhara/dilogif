@@ -51,7 +51,7 @@
                 <div class="flex items-center gap-2">
                   <select 
                     v-model="form.status" 
-                    class="h-9 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    class="h-9 px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
                   >
                     <option v-for="(label, status) in statuses" :key="status" :value="status">
                       {{ label }}
@@ -75,27 +75,27 @@
         <!-- Order Details -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           <!-- Order Information -->
-          <div class="bg-white rounded-lg shadow-sm p-6">
-            <h3 class="text-lg font-medium mb-4">Informasi Pesanan</h3>
+          <div class="bg-white dark:bg-slate-800 rounded-lg shadow-sm p-6 border border-slate-200 dark:border-slate-700">
+            <h3 class="text-lg font-medium mb-4 text-slate-900 dark:text-white">Informasi Pesanan</h3>
             <div class="space-y-3">
               <div>
-                <p class="text-sm text-gray-500">Nomor Pesanan</p>
-                <p class="font-medium">{{ order.order_number }}</p>
+                <p class="text-sm text-slate-500 dark:text-slate-400">Nomor Pesanan</p>
+                <p class="font-medium text-slate-900 dark:text-white">{{ order.order_number }}</p>
               </div>
               <div>
-                <p class="text-sm text-gray-500">Tanggal Pesanan</p>
-                <p class="font-medium">{{ formatDate(order.created_at) }}</p>
+                <p class="text-sm text-slate-500 dark:text-slate-400">Tanggal Pesanan</p>
+                <p class="font-medium text-slate-900 dark:text-white">{{ formatDate(order.created_at) }}</p>
               </div>
               <div>
-                <p class="text-sm text-gray-500">Status</p>
+                <p class="text-sm text-slate-500 dark:text-slate-400">Status</p>
                 <Badge 
                   variant="outline" 
                   :class="{
-                    'border-yellow-400 text-yellow-600 bg-yellow-50': order.status === 'pending',
-                    'border-blue-400 text-blue-600 bg-blue-50': order.status === 'processing',
-                    'border-purple-400 text-purple-600 bg-purple-50': order.status === 'review',
-                    'border-green-400 text-green-600 bg-green-50': order.status === 'completed',
-                    'border-red-400 text-red-600 bg-red-50': order.status === 'cancelled'
+                    'border-yellow-400 text-yellow-600 bg-yellow-50 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-700': order.status === 'pending',
+                    'border-blue-400 text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700': order.status === 'processing',
+                    'border-purple-400 text-purple-600 bg-purple-50 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-700': order.status === 'review',
+                    'border-green-400 text-green-600 bg-green-50 dark:bg-green-900/30 dark:text-green-300 dark:border-green-700': order.status === 'completed',
+                    'border-red-400 text-red-600 bg-red-50 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700': order.status === 'cancelled'
                   }"
                 >
                   {{ getStatusLabel(order.status) }}

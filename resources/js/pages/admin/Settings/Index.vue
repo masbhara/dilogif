@@ -235,7 +235,7 @@ const uploadOgImage = () => {
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="flex h-full flex-1 flex-col gap-4 p-4 md:p-6">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h1 class="text-2xl font-bold">Pengaturan Website</h1>
+        <h1 class="text-2xl font-bold text-secondary-900 dark:text-white">Pengaturan Website</h1>
       </div>
 
       <!-- Tab Navigation dengan Komponen Shadcn UI -->
@@ -259,10 +259,10 @@ const uploadOgImage = () => {
         <!-- Tab Pengaturan Umum -->
         <TabsContent value="general" class="space-y-4">
           <!-- Pengaturan Umum -->
-          <Card>
-            <CardHeader>
+          <Card class="bg-white dark:bg-slate-800 text-secondary-900 dark:text-white border border-slate-200 dark:border-slate-700">
+            <CardHeader class="border-b border-secondary-200 dark:border-slate-700">
               <CardTitle>Informasi Website</CardTitle>
-              <CardDescription>Pengaturan dasar untuk website Anda</CardDescription>
+              <CardDescription class="text-secondary-600 dark:text-secondary-400">Pengaturan dasar untuk website Anda</CardDescription>
             </CardHeader>
             <CardContent>
               <form @submit.prevent="submitGeneral" class="space-y-4">
@@ -341,10 +341,10 @@ const uploadOgImage = () => {
           </Card>
 
           <!-- Pengaturan Footer -->
-          <Card>
-            <CardHeader>
+          <Card class="bg-white dark:bg-slate-800 text-secondary-900 dark:text-white border border-slate-200 dark:border-slate-700">
+            <CardHeader class="border-b border-secondary-200 dark:border-slate-700">
               <CardTitle>Pengaturan Footer</CardTitle>
-              <CardDescription>Pengaturan untuk bagian footer website</CardDescription>
+              <CardDescription class="text-secondary-600 dark:text-secondary-400">Pengaturan untuk bagian footer website</CardDescription>
             </CardHeader>
             <CardContent>
               <form @submit.prevent="submitFooter" class="space-y-4">
@@ -388,10 +388,10 @@ const uploadOgImage = () => {
 
         <!-- Tab Media -->
         <TabsContent value="media" class="space-y-4">
-          <Card>
-            <CardHeader>
+          <Card class="bg-white dark:bg-slate-800 text-secondary-900 dark:text-white border border-slate-200 dark:border-slate-700">
+            <CardHeader class="border-b border-secondary-200 dark:border-slate-700">
               <CardTitle>Logo Website</CardTitle>
-              <CardDescription>Upload logo untuk website Anda</CardDescription>
+              <CardDescription class="text-secondary-600 dark:text-secondary-400">Upload logo untuk website Anda</CardDescription>
             </CardHeader>
             <CardContent>
               <form @submit.prevent="uploadLogo" class="space-y-4">
@@ -430,10 +430,10 @@ const uploadOgImage = () => {
             </CardContent>
           </Card>
           
-          <Card>
-            <CardHeader>
+          <Card class="bg-white dark:bg-slate-800 text-secondary-900 dark:text-white border border-slate-200 dark:border-slate-700">
+            <CardHeader class="border-b border-secondary-200 dark:border-slate-700">
               <CardTitle>Favicon</CardTitle>
-              <CardDescription>Upload favicon untuk website Anda</CardDescription>
+              <CardDescription class="text-secondary-600 dark:text-secondary-400">Upload favicon untuk website Anda</CardDescription>
             </CardHeader>
             <CardContent>
               <form @submit.prevent="uploadFavicon" class="space-y-4">
@@ -472,10 +472,10 @@ const uploadOgImage = () => {
             </CardContent>
           </Card>
           
-          <Card>
-            <CardHeader>
+          <Card class="bg-white dark:bg-slate-800 text-secondary-900 dark:text-white border border-slate-200 dark:border-slate-700">
+            <CardHeader class="border-b border-secondary-200 dark:border-slate-700">
               <CardTitle>Gambar OG Default</CardTitle>
-              <CardDescription>Upload gambar untuk Open Graph (OG) metadata yang akan ditampilkan saat website Anda dibagikan di media sosial</CardDescription>
+              <CardDescription class="text-secondary-600 dark:text-secondary-400">Upload gambar untuk Open Graph (OG) metadata yang akan ditampilkan saat website Anda dibagikan di media sosial</CardDescription>
             </CardHeader>
             <CardContent>
               <form @submit.prevent="uploadOgImage" class="space-y-4">
@@ -517,10 +517,10 @@ const uploadOgImage = () => {
         
         <!-- Tab Skrip -->
         <TabsContent value="scripts" class="space-y-4">
-          <Card>
-            <CardHeader>
+          <Card class="bg-white dark:bg-slate-800 text-secondary-900 dark:text-white border border-slate-200 dark:border-slate-700">
+            <CardHeader class="border-b border-secondary-200 dark:border-slate-700">
               <CardTitle>Skrip Tracking dan Analytics</CardTitle>
-              <CardDescription>Tambahkan skrip untuk pelacakan dan analitik website</CardDescription>
+              <CardDescription class="text-secondary-600 dark:text-secondary-400">Tambahkan skrip untuk pelacakan dan analitik website</CardDescription>
             </CardHeader>
             <CardContent>
               <form @submit.prevent="submitScripts" class="space-y-6">

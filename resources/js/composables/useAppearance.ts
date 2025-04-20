@@ -7,14 +7,23 @@ export function updateTheme(value: Appearance) {
         return;
     }
 
+    console.log('Updating theme to:', value);
+    
     if (value === 'system') {
         const mediaQueryList = window.matchMedia('(prefers-color-scheme: dark)');
         const systemTheme = mediaQueryList.matches ? 'dark' : 'light';
 
+        console.log('System preference is:', systemTheme);
         document.documentElement.classList.toggle('dark', systemTheme === 'dark');
     } else {
+        console.log('Setting explicit theme:', value);
         document.documentElement.classList.toggle('dark', value === 'dark');
     }
+    
+    // Force repaint untuk memastikan perubahan diterapkan
+    document.body.style.display = 'none';
+    document.body.offsetHeight; // Trigger reflow
+    document.body.style.display = '';
 }
 
 const setCookie = (name: string, value: string, days = 365) => {
@@ -54,8 +63,12 @@ export function initializeTheme() {
         return;
     }
 
+    console.log('Initializing theme...');
+    
     // Initialize theme from saved preference or default to system...
     const savedAppearance = getStoredAppearance();
+    console.log('Saved appearance:', savedAppearance);
+    
     updateTheme(savedAppearance || 'system');
 
     // Set up system theme change listener...

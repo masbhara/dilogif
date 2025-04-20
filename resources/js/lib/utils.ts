@@ -5,7 +5,10 @@ import { twMerge } from 'tailwind-merge';
  * Combine multiple class names with clsx and tailwind-merge
  */
 export function cn(...inputs: ClassValue[]) {
-    return twMerge(clsx(inputs));
+    console.log("Inputs to cn():", inputs);
+    const result = twMerge(clsx(inputs));
+    console.log("Result from cn():", result);
+    return result;
 }
 
 /**

@@ -129,4 +129,28 @@ createInertiaApp({
 });
 
 // This will set light / dark mode on page load...
+console.log('Calling initializeTheme from app.ts');
 initializeTheme();
+
+// Tambahkan listener saat DOM dimuat untuk memastikan tema diterapkan
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM loaded, reinitializing theme');
+    initializeTheme();
+    
+    // Fungsi untuk memastikan kelas dark sudah benar
+    const checkDarkMode = () => {
+        const savedAppearance = localStorage.getItem('appearance') as 'light' | 'dark' | 'system' | null;
+        console.log('Checking dark mode, saved appearance:', savedAppearance);
+        
+        if (savedAppearance === 'dark' || 
+            (savedAppearance === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            if (!document.documentElement.classList.contains('dark')) {
+                console.log('Adding missing dark class to HTML');
+                document.documentElement.classList.add('dark');
+            }
+        }
+    };
+    
+    // Jalankan untuk memastikan kelas dark sudah benar
+    checkDarkMode();
+});
