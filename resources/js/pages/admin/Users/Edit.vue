@@ -180,7 +180,7 @@ const statusOptions = [
 
 // State untuk custom select dropdown
 const isSelectOpen = ref(false);
-const selectRef = ref(null);
+const selectRef = ref<Element | null>(null);
 
 // Computed property untuk label status terpilih
 const selectedStatusLabel = computed(() => {
@@ -195,14 +195,14 @@ const toggleSelect = () => {
 };
 
 // Pilih status
-const selectStatus = (statusValue) => {
+const selectStatus = (statusValue: string) => {
     form.status = statusValue;
     isSelectOpen.value = false;
 };
 
 // Handle click outside
-const handleClickOutside = (evt) => {
-    if (selectRef.value && !selectRef.value.contains(evt.target)) {
+const handleClickOutside = (evt: MouseEvent) => {
+    if (selectRef.value && selectRef.value.contains && !selectRef.value.contains(evt.target as Node)) {
         isSelectOpen.value = false;
     }
 };
@@ -221,7 +221,10 @@ onMounted(() => {
     });
 
     document.addEventListener('click', handleClickOutside);
-    selectRef.value = document.querySelector('.custom-select-container');
+    const element = document.querySelector('.custom-select-container');
+    if (element) {
+        selectRef.value = element;
+    }
 });
 
 onUnmounted(() => {
@@ -233,7 +236,7 @@ onUnmounted(() => {
   <AppLayout :breadcrumbs="[
     { title: 'Dashboard', href: route('admin.dashboard') },
     { title: 'Pengguna', href: route('admin.users.index') },
-    { title: 'Edit Pengguna' }
+    { title: 'Edit Pengguna', href: '#' }
   ]">
     <div>
       <Head title="Edit Pengguna" />
@@ -255,7 +258,7 @@ onUnmounted(() => {
         <form @submit.prevent="submit">
           <div class="grid gap-4 md:grid-cols-2">
             <!-- Informasi Pengguna -->
-            <Card>
+            <Card class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
               <CardHeader>
                 <CardTitle>Informasi Pengguna</CardTitle>
                 <CardDescription>Ubah informasi dasar pengguna</CardDescription>
@@ -298,7 +301,7 @@ onUnmounted(() => {
                 </div>
 
                 <!-- Email Verification Status -->
-                <div class="mt-4 pt-4 border-t">
+                <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
                   <p class="text-sm font-medium mb-3">Status Verifikasi Email</p>
                   <div class="flex items-center gap-2">
                     <div
@@ -341,7 +344,7 @@ onUnmounted(() => {
                   </div>
                 </div>
 
-                <div class="pt-4 border-t">
+                <div class="pt-4 border-t border-slate-200 dark:border-slate-700">
                   <p class="text-sm font-medium mb-2">Ganti Kata Sandi (opsional)</p>
                   <div class="space-y-2 mb-2">
                     <p class="text-xs text-gray-500 font-medium">
@@ -396,7 +399,7 @@ onUnmounted(() => {
                     >
                       <div 
                         @click="toggleSelect" 
-                        class="custom-select-trigger flex w-full items-center justify-between gap-2 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-3 py-2 text-sm shadow-sm hover:border-gray-300 dark:hover:border-gray-600 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer h-9"
+                        class="custom-select-trigger flex w-full items-center justify-between gap-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-2 text-sm shadow-sm hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer h-9"
                         :class="{ 'border-red-500': form.errors.status }"
                       >
                         <span>{{ selectedStatusLabel }}</span>
@@ -407,13 +410,13 @@ onUnmounted(() => {
                       
                       <div 
                         v-if="isSelectOpen" 
-                        class="custom-select-dropdown bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg mt-1 overflow-hidden z-50"
+                        class="custom-select-dropdown bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-lg mt-1 overflow-hidden z-50"
                       >
                         <div 
                           v-for="option in statusOptions" 
                           :key="option.value"
                           @click="selectStatus(option.value)"
-                          class="custom-select-option py-2 px-3 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer text-sm"
+                          class="custom-select-option py-2 px-3 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm"
                           :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': form.status === option.value }"
                         >
                           {{ option.label }}
@@ -427,7 +430,7 @@ onUnmounted(() => {
             </Card>
 
             <!-- Peran Pengguna -->
-            <Card>
+            <Card class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
               <CardHeader>
                 <CardTitle>Peran Pengguna</CardTitle>
                 <CardDescription>

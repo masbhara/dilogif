@@ -111,7 +111,7 @@ const closeLightbox = () => {
 
             <div class="grid gap-4 md:grid-cols-2">
                 <!-- Informasi Dasar -->
-                <Card class="dark:bg-secondary-900 dark:border-secondary-800">
+                <Card class="dark:bg-slate-800 dark:border-slate-700">
                     <CardHeader>
                         <CardTitle class="text-secondary-900 dark:text-white">Informasi Dasar</CardTitle>
                         <CardDescription class="text-secondary-600 dark:text-secondary-400">Detail data produk</CardDescription>
@@ -205,56 +205,56 @@ const closeLightbox = () => {
                 </Card>
 
                 <!-- Gambar Produk -->
-                <Card>
+                <Card class="dark:bg-slate-800 dark:border-slate-700">
                     <CardHeader>
                         <CardTitle>Gambar Produk</CardTitle>
                         <CardDescription>Foto utama produk</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div class="mb-6">
-                            <p class="text-sm text-gray-500 mb-2">Gambar Utama</p>
+                            <p class="text-sm text-gray-500 dark:text-slate-400 mb-2">Gambar Utama</p>
                             <div 
-                                class="border rounded-md overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
+                                class="border border-slate-200 dark:border-slate-700 rounded-md overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
                                 @click="openLightbox(props.product.featured_image)"
                             >
                                 <img 
                                     :src="'/storage/' + props.product.featured_image" 
                                     :alt="props.product.name"
-                                    class="w-full h-64 object-contain"
+                                    class="w-full h-64 object-contain bg-white dark:bg-slate-800"
                                 />
                             </div>
-                            <p class="text-xs text-center mt-1 text-muted-foreground">Klik pada gambar untuk melihat ukuran penuh</p>
+                            <p class="text-xs text-center mt-1 text-muted-foreground dark:text-slate-400">Klik pada gambar untuk melihat ukuran penuh</p>
                         </div>
                         
                         <div v-if="props.product.gallery && props.product.gallery.length > 0">
-                            <p class="text-sm text-gray-500 mb-2">Galeri Produk</p>
+                            <p class="text-sm text-gray-500 dark:text-slate-400 mb-2">Galeri Produk</p>
                             <div class="grid grid-cols-3 gap-2">
                                 <div 
                                     v-for="image in props.product.gallery" 
                                     :key="image.id"
-                                    class="border rounded-md overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
+                                    class="border border-slate-200 dark:border-slate-700 rounded-md overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
                                     @click="openLightbox(image.image)"
                                 >
                                     <img 
                                         :src="'/storage/' + image.image" 
                                         :alt="props.product.name"
-                                        class="w-full h-24 object-cover"
+                                        class="w-full h-24 object-cover bg-white dark:bg-slate-800"
                                     />
                                 </div>
                             </div>
                         </div>
                         
-                        <div v-else class="flex items-center justify-center p-6 border border-dashed rounded-md">
+                        <div v-else class="flex items-center justify-center p-6 border border-dashed border-slate-200 dark:border-slate-700 rounded-md">
                             <div class="text-center">
-                                <ImageIcon class="h-8 w-8 mx-auto text-gray-400" />
-                                <p class="mt-2 text-sm text-gray-500">Belum ada gambar galeri</p>
+                                <ImageIcon class="h-8 w-8 mx-auto text-gray-400 dark:text-slate-500" />
+                                <p class="mt-2 text-sm text-gray-500 dark:text-slate-400">Belum ada gambar galeri</p>
                             </div>
                         </div>
                     </CardContent>
                 </Card>
                 
                 <!-- Deskripsi Produk -->
-                <Card class="md:col-span-2">
+                <Card class="md:col-span-2 dark:bg-slate-800 dark:border-slate-700">
                     <CardHeader>
                         <CardTitle>Deskripsi Produk</CardTitle>
                         <CardDescription>Informasi detail tentang produk</CardDescription>
@@ -267,7 +267,7 @@ const closeLightbox = () => {
                 </Card>
 
                 <!-- Fitur Produk (jika ada) -->
-                <Card v-if="hasProductFeatures">
+                <Card v-if="hasProductFeatures" class="dark:bg-slate-800 dark:border-slate-700">
                     <CardHeader>
                         <CardTitle class="flex items-center gap-2">
                             <CheckCircle class="h-5 w-5 text-primary-600" />
@@ -286,7 +286,7 @@ const closeLightbox = () => {
                 </Card>
 
                 <!-- Nilai Produk (jika ada) -->
-                <Card v-if="hasProductValues">
+                <Card v-if="hasProductValues" class="dark:bg-slate-800 dark:border-slate-700">
                     <CardHeader>
                         <CardTitle class="flex items-center gap-2">
                             <StarIcon class="h-5 w-5 text-amber-500" />

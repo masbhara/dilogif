@@ -14,8 +14,8 @@
                 </Link>
             </div>
             
-            <div class="bg-card text-card-foreground rounded-xl shadow border border-sidebar-border/70 dark:border-sidebar-border overflow-hidden">
-                <div class="p-6 border-b">
+            <div class="bg-card text-card-foreground rounded-xl shadow border border-slate-200 dark:border-slate-700 overflow-hidden">
+                <div class="p-6 border-b border-slate-200 dark:border-slate-700">
                     <div>
                         <h2 class="text-lg font-medium">Form Edit Kategori</h2>
                         <p class="text-muted-foreground mt-1">Perbarui informasi kategori produk Anda</p>

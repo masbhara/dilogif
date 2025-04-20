@@ -14,11 +14,11 @@
                 </Link>
             </div>
             
-            <div class="bg-card text-card-foreground rounded-xl shadow border border-sidebar-border/70 dark:border-sidebar-border overflow-hidden">
-                <div class="p-6 border-b">
+            <div class="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-50 rounded-xl shadow border border-slate-200 dark:border-slate-700 overflow-hidden">
+                <div class="p-6 border-b border-slate-200 dark:border-slate-700">
                     <div>
                         <h2 class="text-lg font-medium">Form Edit Produk</h2>
-                        <p class="text-muted-foreground mt-1">Perbarui informasi produk Anda</p>
+                        <p class="text-slate-600 dark:text-slate-400 mt-1">Perbarui informasi produk Anda</p>
                     </div>
                 </div>
                 <div class="p-6">
@@ -47,7 +47,7 @@
                                         class="mt-1 block w-full opacity-60 cursor-not-allowed"
                                         disabled
                                     />
-                                    <p class="text-xs text-muted-foreground mt-1">
+                                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
                                         Kode produk digenerate otomatis oleh sistem dan tidak dapat diubah
                                     </p>
                                     <InputError :message="form.errors.product_code" class="mt-2" />
@@ -62,7 +62,7 @@
                                         >
                                             <div 
                                                 @click="toggleSelect" 
-                                                class="custom-select-trigger flex w-full items-center justify-between gap-2 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-3 py-2 text-sm shadow-sm hover:border-gray-300 dark:hover:border-gray-600 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer h-9"
+                                                class="custom-select-trigger flex w-full items-center justify-between gap-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-2 text-sm shadow-sm hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer h-9"
                                             >
                                                 <span>{{ selectedCategoryLabel }}</span>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-50 transition-transform" :class="{ 'rotate-180': isSelectOpen }">
@@ -72,13 +72,13 @@
                                             
                                             <div 
                                                 v-if="isSelectOpen" 
-                                                class="custom-select-dropdown bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg mt-1 overflow-hidden z-50"
+                                                class="custom-select-dropdown bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-lg mt-1 overflow-hidden z-50"
                                             >
                                                 <div 
                                                     v-for="category in props.categories" 
                                                     :key="category.id"
                                                     @click="selectCategory(category.id)"
-                                                    class="custom-select-option py-2 px-3 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer text-sm"
+                                                    class="custom-select-option py-2 px-3 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm"
                                                     :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': form.category_id === category.id }"
                                                 >
                                                     {{ category.name }}
@@ -104,7 +104,7 @@
                                             required
                                         />
                                     </div>
-                                    <p class="text-xs text-muted-foreground mt-1">
+                                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
                                         Masukkan harga tanpa tanda baca, contoh: 100000
                                     </p>
                                     <InputError :message="form.errors.price" class="mt-2" />
@@ -112,15 +112,22 @@
 
                                 <div>
                                     <Label for="custom_url">URL Kustom</Label>
-                                    <Input
-                                        id="custom_url"
-                                        v-model="form.custom_url"
-                                        type="text"
-                                        class="mt-1 block w-full"
-                                    />
-                                    <p class="text-xs text-muted-foreground mt-1">
-                                        Opsional: URL kustom untuk produk (tanpa spasi dan karakter khusus)
-                                    </p>
+                                    <div class="space-y-2">
+                                        <Input
+                                            id="custom_url"
+                                            v-model="form.custom_url"
+                                            type="text"
+                                            class="mt-1 block w-full"
+                                            placeholder="Gunakan URL yang sudah ada"
+                                        />
+                                        <div v-if="props.product.custom_url" class="text-xs text-slate-600 dark:text-slate-400 flex items-center gap-1">
+                                            <span>URL saat ini:</span>
+                                            <span class="font-medium">{{ props.product.custom_url }}</span>
+                                        </div>
+                                        <p class="text-xs text-slate-600 dark:text-slate-400">
+                                            Opsional: URL kustom untuk produk (tanpa spasi dan karakter khusus). Kosongkan untuk mempertahankan URL saat ini.
+                                        </p>
+                                    </div>
                                     <InputError :message="form.errors.custom_url" class="mt-2" />
                                 </div>
 
@@ -133,10 +140,30 @@
                                         class="mt-1 block w-full"
                                         placeholder="https://example.com"
                                     />
-                                    <p class="text-xs text-muted-foreground mt-1">
+                                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
                                         Opsional: Masukkan URL untuk demo produk
                                     </p>
                                     <InputError :message="form.errors.demo_url" class="mt-2" />
+                                </div>
+
+                                <div class="flex items-center gap-3 mt-6">
+                                    <div class="flex-1">
+                                        <Label for="is_active" class="mb-3">Status Produk</Label>
+                                        <div class="flex items-center gap-2">
+                                            <Switch 
+                                                id="is_active" 
+                                                v-model="form.is_active"
+                                                class="peer data-[state=checked]:bg-green-600 data-[state=unchecked]:bg-gray-200 dark:data-[state=unchecked]:bg-gray-700"
+                                            />
+                                            <Label for="is_active">{{ form.is_active ? 'Aktif' : 'Tidak Aktif' }}</Label>
+                                        </div>
+                                        <Badge 
+                                            variant="outline" 
+                                            :class="form.is_active ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 border-green-800/20 dark:border-green-300/20 mt-2' : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300 border-gray-800/20 dark:border-gray-300/20 mt-2'"
+                                        >
+                                            {{ form.is_active ? 'Produk akan ditampilkan di website' : 'Produk tidak akan ditampilkan di website' }}
+                                        </Badge>
+                                    </div>
                                 </div>
 
                                 <div>
@@ -163,7 +190,7 @@
                                         accept="image/*"
                                         class="mt-1 block w-full"
                                     />
-                                    <p class="text-xs text-muted-foreground mt-1">
+                                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
                                         Opsional: Ganti gambar utama produk. Format yang didukung: JPEG, PNG, JPG, GIF. Maksimal 2MB.
                                     </p>
                                     <InputError :message="form.errors.featured_image" class="mt-2" />
@@ -199,7 +226,7 @@
                                         multiple
                                         class="mt-4 block w-full"
                                     />
-                                    <p class="text-xs text-muted-foreground mt-1">
+                                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
                                         Opsional: Tambahkan gambar baru ke galeri produk. Format yang didukung: JPEG, PNG, JPG, GIF. Maksimal 2MB per gambar.
                                     </p>
                                     <InputError :message="form.errors.gallery" class="mt-2" />
@@ -238,7 +265,7 @@
                                             Tambah Fitur
                                         </Button>
                                     </div>
-                                    <p class="text-xs text-muted-foreground mt-1">
+                                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
                                         Opsional: Tambahkan fitur-fitur produk
                                     </p>
                                 </div>
@@ -274,7 +301,7 @@
                                             Tambah Nilai/Keunggulan
                                         </Button>
                                     </div>
-                                    <p class="text-xs text-muted-foreground mt-1">
+                                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
                                         Opsional: Tambahkan nilai/keunggulan produk
                                     </p>
                                 </div>
@@ -330,6 +357,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
 import InputError from '@/components/InputError.vue';
 import { router } from '@inertiajs/vue3';
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
@@ -502,9 +531,10 @@ const form = useForm({
     description: props.product.description,
     featured_image: null,
     gallery: props.product.gallery || [],
-    custom_url: props.product.custom_url,
-    demo_url: props.product.demo_url,
+    custom_url: props.product.custom_url || '',
+    demo_url: props.product.demo_url || '',
     product_code: props.product.product_code,
+    is_active: props.product.is_active,
     _method: 'PUT' // Metode HTTP yang benar untuk update
 });
 
@@ -565,13 +595,35 @@ const removeValue = (index) => {
 const submit = () => {
     loading.value = true;
     
+    // Debug log
+    console.log('Form is_active sebelum dikirim:', form.is_active, typeof form.is_active);
+    console.log('Form custom_url sebelum dikirim:', form.custom_url);
+    
     const formData = new FormData();
     formData.append("_method", "PUT");
     formData.append("name", form.name);
     formData.append("description", form.description);
     formData.append("price", form.price);
-    formData.append("custom_url", form.custom_url);
-    formData.append("demo_url", form.demo_url);
+    
+    // Hanya kirim custom_url jika memiliki nilai (tidak kosong)
+    // Ini akan membantu controller untuk mengetahui bahwa field memang dikirim
+    if (form.custom_url !== null && form.custom_url !== undefined && form.custom_url.trim() !== '') {
+        formData.append("custom_url", form.custom_url.trim());
+    } else {
+        // Jika kosong, kirim empty string agar controller tahu field ini dikirim tapi kosong
+        // Sehingga controller bisa mempertahankan nilai lama
+        formData.append("custom_url", '');
+    }
+    
+    // Kirim demo_url jika ada
+    if (form.demo_url) {
+        formData.append("demo_url", form.demo_url);
+    }
+    
+    // Pastikan is_active selalu disertakan dan konversi ke string "1" atau "0"
+    // FormData hanya menerima string, jadi kita perlu mengkonversi Boolean
+    const isActiveValue = form.is_active ? "1" : "0";
+    formData.append("is_active", isActiveValue);
     
     if (form.category_id) {
         formData.append("category_id", form.category_id);
@@ -602,6 +654,9 @@ const submit = () => {
         const values = productValues.value.filter(v => v.text.trim() !== '').map(v => v.text);
         formData.append("product_values", JSON.stringify(values));
     }
+    
+    // Debug log untuk memeriksa isi formData
+    console.log('Kirim nilai is_active:', isActiveValue);
     
     router.post(route("admin.products.update", props.product.id), formData, {
         onSuccess: () => {

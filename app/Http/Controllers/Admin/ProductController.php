@@ -163,6 +163,7 @@ class ProductController extends Controller
                 'demo_url' => 'nullable|url|max:255',
                 'product_features' => 'nullable|json',
                 'product_values' => 'nullable|json',
+                'is_active' => 'nullable|in:0,1,true,false',
             ]);
 
             $data = [
@@ -173,17 +174,40 @@ class ProductController extends Controller
                 'demo_url' => $request->demo_url,
                 'product_features' => $request->product_features ? json_decode($request->product_features) : null,
                 'product_values' => $request->product_values ? json_decode($request->product_values) : null,
+                'is_active' => $request->has('is_active') ? (bool)$request->is_active : $product->is_active,
             ];
             
-            // Hanya update custom_url jika dikirim dan tidak kosong
+            // Debug nilai is_active
+            \Log::info('Update produk - is_active value:', [
+                'request_value' => $request->is_active, 
+                'type' => gettype($request->is_active),
+                'processed_value' => $data['is_active']
+            ]);
+            
+            // Debug nilai custom_url saat ini dan di request
+            \Log::info('Update produk - custom_url:', [
+                'current_custom_url' => $product->custom_url,
+                'request_custom_url' => $request->custom_url,
+                'has_custom_url' => $request->has('custom_url'),
+                'is_empty' => empty($request->custom_url)
+            ]);
+            
+            // Custom URL hanya diupdate jika field ada dalam request dan memiliki nilai yang valid
             if ($request->has('custom_url')) {
-                $data['custom_url'] = $request->custom_url;
+                if (!empty($request->custom_url)) {
+                    // Jika ada nilai valid, update custom_url dan slug
+                    $data['custom_url'] = $request->custom_url;
+                    $data['slug'] = Str::slug($request->custom_url);
+                } else {
+                    // Jika field ada dalam request tapi kosong, pertahankan nilai lama
+                    // TIDAK PERLU mengupdate, karena kita ingin mempertahankan nilai yang sudah ada
+                    unset($data['custom_url']); // Pastikan custom_url tidak dimasukkan dalam update
+                }
             }
             
-            // Update slug jika custom_url diisi
-            if (!empty($request->custom_url)) {
-                $data['slug'] = Str::slug($request->custom_url);
-            } else {
+            // Update slug berdasarkan nama hanya jika tidak ada custom_url yang diisi
+            // dan jika nama produk berubah
+            if (!isset($data['slug']) && $product->name !== $request->name && empty($request->custom_url)) {
                 $data['slug'] = Str::slug($request->name);
             }
 

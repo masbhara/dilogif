@@ -14,8 +14,8 @@
                 </Link>
             </div>
             
-            <div class="bg-card text-card-foreground rounded-xl shadow border border-sidebar-border/70 dark:border-sidebar-border overflow-hidden">
-                <div class="p-6 border-b">
+            <div class="bg-card text-card-foreground rounded-xl shadow border border-slate-200 dark:border-slate-700 overflow-hidden">
+                <div class="p-6 border-b border-slate-200 dark:border-slate-700">
                     <div>
                         <h2 class="text-lg font-medium">Form Produk Baru</h2>
                         <p class="text-muted-foreground mt-1">Tambahkan produk baru ke dalam katalog Anda</p>
@@ -62,7 +62,7 @@
                                         >
                                             <div 
                                                 @click="toggleSelect" 
-                                                class="custom-select-trigger flex w-full items-center justify-between gap-2 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-3 py-2 text-sm shadow-sm hover:border-gray-300 dark:hover:border-gray-600 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer h-9"
+                                                class="custom-select-trigger flex w-full items-center justify-between gap-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-3 py-2 text-sm shadow-sm hover:border-gray-300 dark:hover:border-gray-600 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer h-9"
                                             >
                                                 <span>{{ selectedCategoryLabel }}</span>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-50 transition-transform" :class="{ 'rotate-180': isSelectOpen }">
@@ -72,7 +72,7 @@
                                             
                                             <div 
                                                 v-if="isSelectOpen" 
-                                                class="custom-select-dropdown bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg mt-1 overflow-hidden z-50"
+                                                class="custom-select-dropdown bg-white dark:bg-gray-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-lg mt-1 overflow-hidden z-50"
                                             >
                                                 <div 
                                                     class="custom-select-option py-2 px-3 text-amber-600 dark:text-amber-400 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer text-sm font-medium"
