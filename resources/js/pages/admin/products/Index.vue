@@ -104,7 +104,10 @@
                                                 <Pencil class="h-4 w-4" />
                                                 <span>Edit</span>
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem @click="showHapusDialog(product)" class="flex items-center gap-2 cursor-pointer py-1.5 text-red-600">
+                                            <DropdownMenuItem 
+                                                @click="showHapusDialog(product)" 
+                                                variant="destructive" 
+                                                class="flex items-center gap-2 cursor-pointer py-1.5">
                                                 <Trash class="h-4 w-4" />
                                                 <span>Hapus</span>
                                             </DropdownMenuItem>

@@ -67,7 +67,10 @@
                                                 <span>Edit</span>
                                             </DropdownMenuItem>
                                          
-                                            <DropdownMenuItem @click="showHapusDialog(category)" variant="destructive" class="flex items-center gap-2 cursor-pointer py-1.5">
+                                            <DropdownMenuItem 
+                                                @click="showHapusDialog(category)" 
+                                                variant="destructive" 
+                                                class="flex items-center gap-2 cursor-pointer py-1.5">
                                                 <Trash class="h-4 w-4" />
                                                 <span>Hapus</span>
                                             </DropdownMenuItem>

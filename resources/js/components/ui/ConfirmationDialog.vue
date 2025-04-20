@@ -42,13 +42,13 @@ const handleCancel = () => {
 
 <template>
   <Dialog :open="internalOpen" @update:open="internalOpen = $event">
-    <DialogContent class="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 text-gray-900 dark:text-white max-w-[400px]">
+    <DialogContent class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-50 max-w-[400px]">
       <DialogHeader>
         <DialogTitle class="text-xl flex items-center gap-2">
           <component :is="icon" v-if="icon" class="h-5 w-5" :class="{ 'text-red-500': dangerMode, 'text-green-500': !dangerMode }" />
           {{ title }}
         </DialogTitle>
-        <DialogDescription class="text-gray-500 dark:text-gray-300 mt-2">
+        <DialogDescription class="text-slate-500 dark:text-slate-400 mt-2">
           <slot>
             {{ description }}
           </slot>
@@ -59,7 +59,7 @@ const handleCancel = () => {
           variant="outline" 
           @click="handleCancel" 
           :disabled="loading" 
-          class="bg-transparent text-gray-800 dark:text-white border-gray-300 dark:border-zinc-700 hover:bg-gray-100 dark:hover:bg-zinc-800"
+          class="bg-transparent text-slate-800 dark:text-slate-50 border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
         >
           {{ cancelLabel || 'Batal' }}
         </Button>

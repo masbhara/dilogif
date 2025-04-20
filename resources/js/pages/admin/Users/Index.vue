@@ -597,7 +597,8 @@ if (props.filters) {
                           <DropdownMenuItem 
                             v-if="user.status !== 'blocked'" 
                             @click="showBlokirDialog(user)"
-                            class="flex items-center gap-2 cursor-pointer py-1.5 text-red-600"
+                            variant="destructive"
+                            class="flex items-center gap-2 cursor-pointer py-1.5"
                             :disabled="loading && processingUser === user.id"
                           >
                             <X class="h-4 w-4" />
@@ -605,7 +606,8 @@ if (props.filters) {
                           </DropdownMenuItem>
                           <DropdownMenuItem 
                             @click="showHapusDialog(user)"
-                            class="flex items-center gap-2 cursor-pointer py-1.5 text-red-600"
+                            variant="destructive"
+                            class="flex items-center gap-2 cursor-pointer py-1.5"
                             :disabled="loading && processingUser === user.id"
                           >
                             <Trash2 class="h-4 w-4" />

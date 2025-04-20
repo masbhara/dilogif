@@ -193,9 +193,10 @@ const hapusRole = () => {
                         <span>Kelola Izin</span>
                       </DropdownMenuItem>
                       <DropdownMenuItem 
-                        class="flex items-center gap-2 cursor-pointer py-1.5 text-red-600" 
+                        class="flex items-center gap-2 cursor-pointer py-1.5" 
                         :disabled="role.name === 'admin'"
                         @click="showHapusDialog(role)"
+                        variant="destructive"
                       >
                         <Trash2 class="h-4 w-4" />
                         <span>{{ loading && processingRole === role.id ? 'Memproses...' : 'Hapus' }}</span>
