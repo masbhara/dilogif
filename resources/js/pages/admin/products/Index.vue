@@ -66,7 +66,6 @@
                     
                     <!-- Filter Buttons -->
                     <div class="flex items-end gap-2">
-                        <Button @click="applyFilters" class="h-9">Filter</Button>
                         <Button @click="resetFilters" variant="outline" class="h-9">Reset</Button>
                     </div>
                 </div>
@@ -282,6 +281,7 @@ const toggleStatusSelect = () => {
 const selectStatus = (value) => {
     selectedStatus.value = value;
     isStatusSelectOpen.value = false;
+    applyFilters(); // Langsung terapkan filter ketika status dipilih
 };
 
 // Handle click outside for status dropdown
@@ -303,9 +303,17 @@ const applyFilters = () => {
 };
 
 const resetFilters = () => {
+    // Reset semua filter ke nilai default
     search.value = '';
     selectedStatus.value = '';
-    applyFilters();
+    
+    // Pastikan UI diupdate sebelum mengirim request
+    nextTick(() => {
+        // Gunakan router.visit untuk memuat ulang halaman tanpa filter
+        router.visit(route('admin.products.index'), {
+            preserveScroll: false
+        });
+    });
 };
 
 const formatPrice = (price) => {
