@@ -44,16 +44,32 @@
             <!-- Status Filter -->
             <div class="w-full md:w-64">
               <label for="status" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Status</label>
-              <select 
-                id="status"
-                v-model="selectedStatus" 
-                class="w-full h-9 px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
-              >
-                <option value="">Semua Status</option>
-                <option v-for="(label, status) in statuses" :key="status" :value="status">
-                  {{ label }}
-                </option>
-              </select>
+              <div class="relative custom-select-container status-select-container" :class="{ 'active': isStatusSelectOpen }">
+                <div 
+                  @click="toggleStatusSelect" 
+                  class="custom-select-trigger flex w-full items-center justify-between gap-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm shadow-sm hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer h-9"
+                >
+                  <span>{{ selectedStatusLabel }}</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-50 transition-transform" :class="{ 'rotate-180': isStatusSelectOpen }">
+                    <path d="m6 9 6 6 6-6"></path>
+                  </svg>
+                </div>
+                
+                <div 
+                  v-if="isStatusSelectOpen" 
+                  class="custom-select-dropdown bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-lg mt-1 overflow-hidden z-50"
+                >
+                  <div 
+                    v-for="option in statusOptions" 
+                    :key="option.value"
+                    @click="selectStatus(option.value)"
+                    class="custom-select-option py-2 px-3 text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm"
+                    :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': selectedStatus === option.value }"
+                  >
+                    {{ option.label }}
+                  </div>
+                </div>
+              </div>
             </div>
             
             <!-- Filter Buttons -->
@@ -131,10 +147,8 @@
                   
                   <!-- Actions -->
                   <td class="py-4 px-4 text-right">
-                    <div class="flex items-center justify-end gap-1">
-                      <Link :href="route('admin.orders.show', order.id)" class="text-primary-500 hover:text-primary-600 dark:text-primary-400 dark:hover:text-primary-300">
-                        Lihat
-                      </Link>
+                    <div class="flex items-center justify-center">
+                  
                       <DropdownMenu>
                         <DropdownMenuTrigger as-child>
                           <MenuTriggerButton />
@@ -173,7 +187,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, nextTick, onUnmounted, watch } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Button } from '@/components/ui/button';
@@ -193,6 +207,62 @@ const props = defineProps({
 // State
 const search = ref(props.filters?.search || '');
 const selectedStatus = ref(props.filters?.status || '');
+
+// Status dropdown state
+const isStatusSelectOpen = ref(false);
+const statusSelectRef = ref(null);
+
+// Status options
+const statusOptions = [
+  { value: '', label: 'Semua Status' }
+];
+
+// Populate status options from props
+onMounted(() => {
+  // Add status options from props
+  Object.entries(props.statuses).forEach(([value, label]) => {
+    statusOptions.push({ value, label });
+  });
+});
+
+// Toggle dropdown status
+const toggleStatusSelect = () => {
+  isStatusSelectOpen.value = !isStatusSelectOpen.value;
+};
+
+// Pilih status
+const selectStatus = (value) => {
+  selectedStatus.value = value;
+  isStatusSelectOpen.value = false;
+  applyFilters();
+};
+
+// Handle click outside untuk status
+const handleStatusClickOutside = (evt) => {
+  if (statusSelectRef.value && !statusSelectRef.value.contains(evt.target)) {
+    isStatusSelectOpen.value = false;
+  }
+};
+
+// Setup dan cleanup event listener
+onMounted(() => {
+  document.addEventListener('click', handleStatusClickOutside);
+  
+  nextTick(() => {
+    statusSelectRef.value = document.querySelector('.status-select-container');
+  });
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleStatusClickOutside);
+});
+
+// Computed property untuk label status terpilih
+const selectedStatusLabel = computed(() => {
+  if (!selectedStatus.value) return 'Semua Status';
+  const status = statusOptions.find(option => option.value === selectedStatus.value);
+  return status ? status.label : 'Semua Status';
+});
 
 // Methods
 const formatPrice = (price) => {
@@ -241,4 +311,72 @@ onMounted(() => {
     selectedStatus.value = props.filters.status || '';
   }
 });
-</script> 
+</script>
+
+<style>
+/* Custom select styling */
+.custom-select-container {
+  position: relative;
+  width: 100%;
+  -webkit-tap-highlight-color: transparent;
+  border-radius: 0.375rem;
+}
+
+.custom-select-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  animation: slideDown 0.15s ease-out;
+  z-index: 50;
+}
+
+.custom-select-option:first-child {
+  border-top-left-radius: 0.375rem;
+  border-top-right-radius: 0.375rem;
+}
+
+.custom-select-option:last-child {
+  border-bottom-left-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Perbaikan outline saat fokus */
+.custom-select-trigger {
+  outline: none !important;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.custom-select-trigger:focus,
+.custom-select-trigger:focus-visible,
+.custom-select-trigger:active,
+.custom-select-trigger:hover,
+.custom-select-trigger:-moz-focusring {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: #0ea5e9 !important;
+}
+
+/* Fix untuk Firefox */
+.custom-select-trigger:-moz-focusring {
+  outline: none !important;
+}
+
+/* Fix untuk Safari dan Chrome */
+.custom-select-trigger::-webkit-focus-inner {
+  border: 0;
+}
+
+/* Fix tambahan untuk Chrome */
+*:focus {
+  outline-color: transparent !important;
+}
+</style> 

@@ -13,13 +13,69 @@
                     </Button>
                 </Link>
             </div>
+            
+            <!-- Filters Card -->
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <!-- Search Filter -->
+                    <div class="flex-1">
+                        <label for="search" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Cari</label>
+                        <div class="relative">
+                            <input 
+                                id="search"
+                                v-model="search" 
+                                type="text" 
+                                placeholder="Cari nama produk..." 
+                                class="w-full h-9 pl-10 px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+                                @keyup.enter="applyFilters"
+                            />
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <SearchIcon class="h-4 w-4 text-slate-400" />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Status Filter -->
+                    <div class="w-full md:w-64">
+                        <label for="status" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Status</label>
+                        <div class="relative custom-select-container status-select-container" :class="{ 'active': isStatusSelectOpen }">
+                            <div 
+                                @click="toggleStatusSelect" 
+                                class="custom-select-trigger flex w-full items-center justify-between gap-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm shadow-sm hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer h-9"
+                            >
+                                <span>{{ selectedStatusLabel }}</span>
+                                <ChevronDownIcon class="h-4 w-4 opacity-50 transition-transform" :class="{ 'rotate-180': isStatusSelectOpen }" />
+                            </div>
+                            
+                            <div 
+                                v-if="isStatusSelectOpen" 
+                                class="custom-select-dropdown bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-lg mt-1 overflow-hidden z-50"
+                            >
+                                <div 
+                                    v-for="option in statusOptions" 
+                                    :key="option.value"
+                                    @click="selectStatus(option.value)"
+                                    class="custom-select-option py-2 px-3 text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm"
+                                    :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': selectedStatus === option.value }"
+                                >
+                                    {{ option.label }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Filter Buttons -->
+                    <div class="flex items-end gap-2">
+                        <Button @click="applyFilters" class="h-9">Filter</Button>
+                        <Button @click="resetFilters" variant="outline" class="h-9">Reset</Button>
+                    </div>
+                </div>
+            </div>
                 
             <div class="bg-white dark:bg-slate-800 text-secondary-900 dark:text-white rounded-xl shadow border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <div class="p-6 border-b border-slate-200 dark:border-slate-700">
-                    <div>
-                        <h2 class="text-lg font-medium text-secondary-900 dark:text-white">Daftar Produk</h2>
-                        <p class="text-secondary-600 dark:text-secondary-400 mt-1">Kelola semua produk yang tersedia di situs Anda</p>
-                    </div>
+                    <h2 class="text-lg font-medium text-secondary-900 dark:text-white">Daftar Produk</h2>
+                    <p class="text-secondary-600 dark:text-secondary-400 mt-1">Kelola semua produk yang tersedia di situs Anda</p>
                 </div>
                 
                 <div class="overflow-x-auto">
@@ -75,17 +131,16 @@
                                     <span v-else>-</span>
                                 </TableCell>
                                 <TableCell class="py-3.5 px-6 align-middle">
-                                    <Badge 
-                                        :class="[
-                                            'px-2.5 py-0.5 text-xs font-medium',
-                                            product.is_active 
-                                                ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 border-green-800/20 dark:border-green-300/20' 
-                                                : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 border-red-800/20 dark:border-red-300/20'
-                                        ]"
-                                        variant="outline"
-                                    >
-                                        {{ product.is_active ? 'Aktif' : 'Nonaktif' }}
-                                    </Badge>
+                                    <div v-if="product.is_active" 
+                                         class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-900 dark:bg-green-900 dark:text-green-300 border border-emerald-300 dark:border-green-800 w-fit">
+                                        <span class="size-2 bg-emerald-600 dark:bg-emerald-400 rounded-full"></span>
+                                        <span>Aktif</span>
+                                    </div>
+                                    <div v-else
+                                         class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-900 dark:bg-red-900 dark:text-red-300 border border-rose-300 dark:border-red-800 w-fit">
+                                        <span class="size-2 bg-rose-600 dark:bg-rose-400 rounded-full"></span>
+                                        <span>Nonaktif</span>
+                                    </div>
                                 </TableCell>
                                 <TableCell class="py-3.5 px-6 align-middle text-right">
                                     <div class="flex justify-end">
@@ -144,20 +199,30 @@
 </template>
 
 <script setup>
-import { Head, Link } from '@inertiajs/vue3';
-import { ref, onMounted, computed } from 'vue';
+import { Head, Link, router } from '@inertiajs/vue3';
+import { ref, computed, onMounted, watch, nextTick, onUnmounted } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { PlusIcon, MoreHorizontal, Eye, Pencil, Trash, Trash2, ClipboardIcon } from 'lucide-vue-next';
+import { PlusIcon, MoreHorizontal, Eye, Pencil, Trash, Trash2, ClipboardIcon, SearchIcon, ChevronDownIcon } from 'lucide-vue-next';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import Pagination from '@/components/ui/pagination/Pagination.vue';
 import ConfirmationDialog from '@/components/ui/ConfirmationDialog.vue';
-import { router } from '@inertiajs/vue3';
 import { toast } from 'vue-sonner';
 
-// Breadcrumbs untuk AppLayout
+const props = defineProps({
+    products: Object,
+    filters: {
+        type: Object,
+        default: () => ({
+            search: '',
+            status: ''
+        })
+    },
+    categories: Array
+});
+
 const breadcrumbs = [
     {
         title: 'Admin',
@@ -174,9 +239,74 @@ const selectedProduct = ref(null);
 const showDeleteDialog = ref(false);
 const loading = ref(false);
 
-const props = defineProps({
-    products: Object
+// State untuk filter
+const search = ref(props.filters.search || '');
+const selectedStatus = ref(props.filters.status || '');
+
+// State untuk dropdown
+const isStatusSelectOpen = ref(false);
+const statusSelectRef = ref(null);
+
+// Filter options
+const statusOptions = [
+    { value: '', label: 'Semua Status' },
+    { value: '1', label: 'Aktif' },
+    { value: '0', label: 'Nonaktif' },
+];
+
+const selectedStatusLabel = computed(() => {
+    const option = statusOptions.find(option => option.value === selectedStatus.value);
+    return option ? option.label : 'Semua Status';
 });
+
+// Initialize filters and event listeners
+onMounted(() => {
+    // Set up click outside listeners
+    document.addEventListener('click', handleStatusClickOutside);
+    
+    nextTick(() => {
+        statusSelectRef.value = document.querySelector('.status-select-container');
+    });
+});
+
+onUnmounted(() => {
+    document.removeEventListener('click', handleStatusClickOutside);
+});
+
+// Toggle dropdown status
+const toggleStatusSelect = () => {
+    isStatusSelectOpen.value = !isStatusSelectOpen.value;
+};
+
+// Handle status selection
+const selectStatus = (value) => {
+    selectedStatus.value = value;
+    isStatusSelectOpen.value = false;
+};
+
+// Handle click outside for status dropdown
+const handleStatusClickOutside = (evt) => {
+    if (statusSelectRef.value && !statusSelectRef.value.contains(evt.target)) {
+        isStatusSelectOpen.value = false;
+    }
+};
+
+// Filter methods
+const applyFilters = () => {
+    router.get(route('admin.products.index'), {
+        search: search.value,
+        status: selectedStatus.value
+    }, {
+        preserveState: true,
+        replace: true
+    });
+};
+
+const resetFilters = () => {
+    search.value = '';
+    selectedStatus.value = '';
+    applyFilters();
+};
 
 const formatPrice = (price) => {
     return new Intl.NumberFormat('id-ID', {
@@ -230,4 +360,72 @@ const copyToClipboard = (url) => {
     });
 };
 </script>
+
+<style>
+/* Custom select styling */
+.custom-select-container {
+  position: relative;
+  width: 100%;
+  -webkit-tap-highlight-color: transparent;
+  border-radius: 0.375rem;
+}
+
+.custom-select-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  animation: slideDown 0.15s ease-out;
+  z-index: 50;
+}
+
+.custom-select-option:first-child {
+  border-top-left-radius: 0.375rem;
+  border-top-right-radius: 0.375rem;
+}
+
+.custom-select-option:last-child {
+  border-bottom-left-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Perbaikan outline saat fokus */
+.custom-select-trigger {
+  outline: none !important;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.custom-select-trigger:focus,
+.custom-select-trigger:focus-visible,
+.custom-select-trigger:active,
+.custom-select-trigger:hover,
+.custom-select-trigger:-moz-focusring {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: #0ea5e9 !important;
+}
+
+/* Fix untuk Firefox */
+.custom-select-trigger:-moz-focusring {
+  outline: none !important;
+}
+
+/* Fix untuk Safari dan Chrome */
+.custom-select-trigger::-webkit-focus-inner {
+  border: 0;
+}
+
+/* Fix tambahan untuk Chrome */
+*:focus {
+  outline-color: transparent !important;
+}
+</style>
 

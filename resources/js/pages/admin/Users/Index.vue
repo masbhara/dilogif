@@ -579,24 +579,24 @@ const hapusUser = () => {
                     <TableCell class="py-3.5 px-6 align-middle text-sm text-secondary-900 dark:text-white">{{ user.email }}</TableCell>
                     <TableCell class="py-3.5 px-6 align-middle text-sm text-secondary-900 dark:text-white hidden md:table-cell">{{ user.whatsapp || '-' }}</TableCell>
                     <TableCell class="py-3.5 px-6 align-middle">
-                      <div class="flex items-center gap-1.5">
+                      <div class="inline-flex w-fit">
                         <div v-if="user.status === 'active'" 
-                             class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-900 dark:bg-green-900 dark:text-green-300 border border-emerald-300 dark:border-green-800">
+                             class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-900 dark:bg-green-900 dark:text-green-300 border border-emerald-300 dark:border-green-800 w-fit">
                           <span class="size-2 bg-emerald-600 dark:bg-emerald-400 rounded-full"></span>
                           <span>Aktif</span>
                         </div>
                         <div v-else-if="user.status === 'inactive'" 
-                             class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-900 dark:bg-yellow-900 dark:text-yellow-300 border border-amber-300 dark:border-yellow-800">
+                             class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-900 dark:bg-yellow-900 dark:text-yellow-300 border border-amber-300 dark:border-yellow-800 w-fit">
                           <span class="size-2 bg-amber-600 dark:bg-amber-400 rounded-full"></span>
                           <span>Tidak Aktif</span>
                         </div>
                         <div v-else-if="user.status === 'blocked'" 
-                             class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-900 dark:bg-red-900 dark:text-red-300 border border-rose-300 dark:border-red-800">
+                             class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-900 dark:bg-red-900 dark:text-red-300 border border-rose-300 dark:border-red-800 w-fit">
                           <span class="size-2 bg-rose-600 dark:bg-rose-400 rounded-full"></span>
                           <span>Diblokir</span>
                         </div>
                         <div v-else 
-                             class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-900 dark:bg-gray-900 dark:text-gray-300 border border-slate-300 dark:border-gray-800">
+                             class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-900 dark:bg-gray-900 dark:text-gray-300 border border-slate-300 dark:border-gray-800 w-fit">
                           <span class="size-2 bg-slate-600 dark:bg-slate-400 rounded-full"></span>
                           <span>Ditolak</span>
                         </div>

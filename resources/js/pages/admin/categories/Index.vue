@@ -49,9 +49,16 @@
                                 <TableCell class="py-3.5 px-6 align-middle font-medium">{{ category.name }}</TableCell>
                                 <TableCell class="py-3.5 px-6 align-middle">{{ category.products_count }}</TableCell>
                                 <TableCell class="py-3.5 px-6 align-middle">
-                                    <StatusBadge :status="category.is_active ? 'active' : 'inactive'">
-                                        {{ category.is_active ? 'Aktif' : 'Nonaktif' }}
-                                    </StatusBadge>
+                                    <div v-if="category.is_active" 
+                                         class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-900 dark:bg-green-900 dark:text-green-300 border border-emerald-300 dark:border-green-800 w-fit">
+                                        <span class="size-2 bg-emerald-600 dark:bg-emerald-400 rounded-full"></span>
+                                        <span>Aktif</span>
+                                    </div>
+                                    <div v-else
+                                         class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-900 dark:bg-yellow-900 dark:text-yellow-300 border border-amber-300 dark:border-yellow-800 w-fit">
+                                        <span class="size-2 bg-amber-600 dark:bg-amber-400 rounded-full"></span>
+                                        <span>Nonaktif</span>
+                                    </div>
                                 </TableCell>
                                 <TableCell class="py-3.5 px-6 align-middle text-right">
                                     <DropdownMenu>

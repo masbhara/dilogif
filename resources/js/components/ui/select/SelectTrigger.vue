@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref, inject, provide, onMounted, onBeforeUnmount, computed } from 'vue';
-import { ChevronDown } from 'lucide-vue-next';
+import { ref, inject, provide, computed } from 'vue';
 import { cn } from '@/lib/utils';
 
 const props = defineProps({
@@ -25,55 +24,15 @@ const selectedLabel = inject('select-selected-label', ref(''));
 
 // References for positioning
 const triggerRef = ref<HTMLElement | null>(null);
-const triggerWidth = ref('12rem');
-const contentTop = ref('0px');
-const contentLeft = ref('0px');
-const availableHeight = ref('16rem');
 
-// Provide positioning values for SelectContent
-provide('select-trigger-width', triggerWidth);
-provide('select-content-top', contentTop);
-provide('select-content-left', contentLeft);
-provide('select-available-height', availableHeight);
+// Provide the trigger element reference for positioning
+provide('select-trigger-element', triggerRef);
 
 // Toggle the dropdown
 const toggleSelect = () => {
   if (props.disabled) return;
-  
   isOpen.value = !isOpen.value;
-  
-  if (isOpen.value) {
-    updatePosition();
-  }
 };
-
-// Function to update dropdown position
-const updatePosition = () => {
-  if (!triggerRef.value) return;
-  
-  const rect = triggerRef.value.getBoundingClientRect();
-  triggerWidth.value = `${rect.width}px`;
-  contentTop.value = `${rect.bottom + window.scrollY}px`;
-  contentLeft.value = `${rect.left + window.scrollX}px`;
-  
-  // Calculate available height (viewport height - trigger bottom position - padding)
-  const availableBottomSpace = window.innerHeight - rect.bottom - 10;
-  availableHeight.value = `${Math.min(availableBottomSpace, 300)}px`;
-};
-
-// Provide the update function
-provide('select-update-position', updatePosition);
-
-// Setup event listeners
-onMounted(() => {
-  window.addEventListener('resize', updatePosition);
-  window.addEventListener('scroll', updatePosition);
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener('resize', updatePosition);
-  window.removeEventListener('scroll', updatePosition);
-});
 
 // Display values
 const displayValue = computed(() => {

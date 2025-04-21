@@ -27,19 +27,19 @@
     <div class="py-6">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Status and Actions Panel -->
-        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div class="bg-white dark:bg-slate-800 rounded-lg shadow-sm p-6 mb-6 border border-slate-200 dark:border-slate-700">
           <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-              <p class="text-sm text-gray-500 mb-1">Status Pesanan</p>
+              <p class="text-sm text-gray-500 dark:text-slate-400 mb-1">Status Pesanan</p>
               <Badge 
                 variant="outline" 
                 class="text-sm px-3 py-1"
                 :class="{
-                  'border-yellow-400 text-yellow-600 bg-yellow-50': order.status === 'pending',
-                  'border-blue-400 text-blue-600 bg-blue-50': order.status === 'processing',
-                  'border-purple-400 text-purple-600 bg-purple-50': order.status === 'review',
-                  'border-green-400 text-green-600 bg-green-50': order.status === 'completed',
-                  'border-red-400 text-red-600 bg-red-50': order.status === 'cancelled'
+                  'border-yellow-400 text-yellow-600 bg-yellow-50 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-700': order.status === 'pending',
+                  'border-blue-400 text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700': order.status === 'processing',
+                  'border-purple-400 text-purple-600 bg-purple-50 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-700': order.status === 'review',
+                  'border-green-400 text-green-600 bg-green-50 dark:bg-green-900/30 dark:text-green-300 dark:border-green-700': order.status === 'completed',
+                  'border-red-400 text-red-600 bg-red-50 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700': order.status === 'cancelled'
                 }"
               >
                 {{ getStatusLabel(order.status) }}
@@ -105,21 +105,21 @@
           </div>
           
           <!-- Customer Information -->
-          <div class="bg-white rounded-lg shadow-sm p-6">
-            <h3 class="text-lg font-medium mb-4">Informasi Pelanggan</h3>
+          <div class="bg-white dark:bg-slate-800 rounded-lg shadow-sm p-6 border border-slate-200 dark:border-slate-700">
+            <h3 class="text-lg font-medium mb-4 text-slate-900 dark:text-white">Informasi Pelanggan</h3>
             <div class="space-y-3">
               <div>
-                <p class="text-sm text-gray-500">Nama</p>
-                <p class="font-medium">{{ order.customer_name }}</p>
+                <p class="text-sm text-gray-500 dark:text-slate-400">Nama</p>
+                <p class="font-medium text-slate-900 dark:text-white">{{ order.customer_name }}</p>
               </div>
               <div>
-                <p class="text-sm text-gray-500">Nomor WhatsApp</p>
+                <p class="text-sm text-gray-500 dark:text-slate-400">Nomor WhatsApp</p>
                 <div class="flex items-center gap-2">
-                  <p class="font-medium">{{ order.customer_phone }}</p>
+                  <p class="font-medium text-slate-900 dark:text-white">{{ order.customer_phone }}</p>
                   <a 
                     :href="`https://wa.me/${formatWhatsAppNumber(order.customer_phone)}`" 
                     target="_blank" 
-                    class="text-green-600 hover:text-green-800"
+                    class="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300"
                   >
                     <Button variant="ghost" size="sm" class="h-7 px-2">
                       <MessageCircleIcon class="h-4 w-4" />
@@ -128,12 +128,12 @@
                 </div>
               </div>
               <div v-if="order.customer_email">
-                <p class="text-sm text-gray-500">Email</p>
+                <p class="text-sm text-gray-500 dark:text-slate-400">Email</p>
                 <div class="flex items-center gap-2">
-                  <p class="font-medium">{{ order.customer_email }}</p>
+                  <p class="font-medium text-slate-900 dark:text-white">{{ order.customer_email }}</p>
                   <a 
                     :href="`mailto:${order.customer_email}`" 
-                    class="text-blue-600 hover:text-blue-800"
+                    class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
                   >
                     <Button variant="ghost" size="sm" class="h-7 px-2">
                       <MailIcon class="h-4 w-4" />
@@ -145,57 +145,57 @@
           </div>
           
           <!-- Payment Summary -->
-          <div class="bg-white rounded-lg shadow-sm p-6">
-            <h3 class="text-lg font-medium mb-4">Ringkasan Pembayaran</h3>
+          <div class="bg-white dark:bg-slate-800 rounded-lg shadow-sm p-6 border border-slate-200 dark:border-slate-700">
+            <h3 class="text-lg font-medium mb-4 text-slate-900 dark:text-white">Ringkasan Pembayaran</h3>
             <div class="space-y-3 mb-4">
               <div class="flex justify-between">
-                <p class="text-gray-600">Subtotal</p>
-                <p class="font-medium">{{ formatPrice(order.subtotal) }}</p>
+                <p class="text-gray-600 dark:text-slate-400">Subtotal</p>
+                <p class="font-medium text-slate-900 dark:text-white">{{ formatPrice(order.subtotal) }}</p>
               </div>
               <div class="flex justify-between">
-                <p class="text-gray-600">Biaya Admin</p>
-                <p class="font-medium">{{ formatPrice(order.admin_fee) }}</p>
+                <p class="text-gray-600 dark:text-slate-400">Biaya Admin</p>
+                <p class="font-medium text-slate-900 dark:text-white">{{ formatPrice(order.admin_fee) }}</p>
               </div>
               <div class="flex justify-between">
-                <p class="text-gray-600">Diskon</p>
-                <p class="font-medium text-green-600">-{{ formatPrice(order.discount) }}</p>
+                <p class="text-gray-600 dark:text-slate-400">Diskon</p>
+                <p class="font-medium text-green-600 dark:text-green-400">-{{ formatPrice(order.discount) }}</p>
               </div>
             </div>
-            <div class="pt-3 border-t border-gray-200 flex justify-between">
-              <p class="font-medium">Total</p>
-              <p class="text-lg font-bold text-primary-600">{{ formatPrice(order.total_amount) }}</p>
+            <div class="pt-3 border-t border-gray-200 dark:border-slate-700 flex justify-between">
+              <p class="font-medium text-slate-900 dark:text-white">Total</p>
+              <p class="text-lg font-bold text-primary-600 dark:text-primary-400">{{ formatPrice(order.total_amount) }}</p>
             </div>
           </div>
         </div>
         
         <!-- Order Items -->
-        <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
-          <div class="p-6 border-b border-gray-200">
-            <h3 class="text-lg font-medium">Produk yang Dipesan</h3>
+        <div class="bg-white dark:bg-slate-800 rounded-lg shadow-sm overflow-hidden mb-6 border border-slate-200 dark:border-slate-700">
+          <div class="p-6 border-b border-gray-200 dark:border-slate-700">
+            <h3 class="text-lg font-medium text-slate-900 dark:text-white">Produk yang Dipesan</h3>
           </div>
           <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-50">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
+              <thead class="bg-gray-50 dark:bg-slate-800/60">
                 <tr>
-                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                     Produk
                   </th>
-                  <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                     Harga
                   </th>
-                  <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                     Jumlah
                   </th>
-                  <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                     Subtotal
                   </th>
                 </tr>
               </thead>
-              <tbody class="bg-white divide-y divide-gray-200">
+              <tbody class="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
                 <tr v-for="item in order.items" :key="item.id">
                   <td class="px-6 py-4">
                     <div class="flex items-center">
-                      <div class="h-12 w-12 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                      <div class="h-12 w-12 flex-shrink-0 overflow-hidden rounded-md border border-gray-200 dark:border-slate-700">
                         <img 
                           :src="`/storage/${item.product.featured_image}`" 
                           :alt="item.product.name" 
@@ -203,26 +203,26 @@
                         />
                       </div>
                       <div class="ml-4">
-                        <div class="text-sm font-medium text-gray-900">{{ item.product.name }}</div>
-                        <div v-if="item.product.category" class="text-xs text-gray-500">{{ item.product.category.name }}</div>
+                        <div class="text-sm font-medium text-gray-900 dark:text-white">{{ item.product.name }}</div>
+                        <div v-if="item.product.category" class="text-xs text-gray-500 dark:text-slate-400">{{ item.product.category.name }}</div>
                       </div>
                     </div>
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500">
+                  <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500 dark:text-slate-400">
                     {{ formatPrice(item.price) }}
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500">
+                  <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500 dark:text-slate-400">
                     {{ item.quantity }}
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-gray-900">
+                  <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-gray-900 dark:text-white">
                     {{ formatPrice(item.subtotal) }}
                   </td>
                 </tr>
               </tbody>
-              <tfoot class="bg-gray-50">
+              <tfoot class="bg-gray-50 dark:bg-slate-800/60">
                 <tr>
-                  <td colspan="3" class="px-6 py-4 text-right text-sm font-medium text-gray-900">Total</td>
-                  <td class="px-6 py-4 text-right text-sm font-bold text-primary-600">{{ formatPrice(order.total_amount) }}</td>
+                  <td colspan="3" class="px-6 py-4 text-right text-sm font-medium text-gray-900 dark:text-white">Total</td>
+                  <td class="px-6 py-4 text-right text-sm font-bold text-primary-600 dark:text-primary-400">{{ formatPrice(order.total_amount) }}</td>
                 </tr>
               </tfoot>
             </table>
@@ -230,21 +230,21 @@
         </div>
         
         <!-- Notes -->
-        <div class="bg-white rounded-lg shadow-sm p-6">
-          <h3 class="text-lg font-medium mb-4">Catatan</h3>
+        <div class="bg-white dark:bg-slate-800 rounded-lg shadow-sm p-6 border border-slate-200 dark:border-slate-700">
+          <h3 class="text-lg font-medium mb-4 text-slate-900 dark:text-white">Catatan</h3>
           <div class="mb-4">
-            <p v-if="order.notes" class="text-gray-700 whitespace-pre-line">{{ order.notes }}</p>
-            <p v-else class="text-gray-500 italic">Tidak ada catatan dari pelanggan</p>
+            <p v-if="order.notes" class="text-gray-700 dark:text-slate-300 whitespace-pre-line">{{ order.notes }}</p>
+            <p v-else class="text-gray-500 dark:text-slate-400 italic">Tidak ada catatan dari pelanggan</p>
           </div>
           
           <!-- Notes Form -->
-          <div class="mt-6 pt-6 border-t border-gray-200">
-            <h4 class="text-md font-medium mb-3">Update Catatan Admin</h4>
+          <div class="mt-6 pt-6 border-t border-gray-200 dark:border-slate-700">
+            <h4 class="text-md font-medium mb-3 text-slate-900 dark:text-white">Update Catatan Admin</h4>
             <form @submit.prevent="updateNotes" class="flex flex-col gap-4">
               <textarea 
                 v-model="form.notes" 
                 rows="3" 
-                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                class="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
                 placeholder="Tambahkan catatan internal untuk pesanan ini"
               ></textarea>
               <div class="flex justify-end">

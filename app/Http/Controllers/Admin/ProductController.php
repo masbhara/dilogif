@@ -16,14 +16,27 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::with('category')
-            ->latest()
-            ->paginate(10);
-
+        $query = Product::with('category');
+        
+        // Filter by search
+        if ($request->has('search') && !empty($request->search)) {
+            $searchTerm = $request->search;
+            $query->where('name', 'like', "%{$searchTerm}%");
+        }
+        
+        // Filter by status
+        if ($request->has('status') && $request->status !== '') {
+            $isActive = $request->status == '1';
+            $query->where('is_active', $isActive);
+        }
+        
+        $products = $query->latest()->paginate(10);
+        
         return Inertia::render('admin/products/Index', [
-            'products' => $products
+            'products' => $products,
+            'filters' => $request->only(['search', 'status'])
         ]);
     }
 
