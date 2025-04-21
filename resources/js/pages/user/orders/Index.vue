@@ -9,7 +9,7 @@
       <div class="bg-secondary-50 rounded-lg shadow-sm">
         <div class="p-6">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-            <h1 class="text-2xl font-semibold text-gray-900 flex items-center">
+            <h1 class="text-2xl font-semibold text-gray-900 dark:text-slate-100 flex items-center">
               <ShoppingBag class="h-6 w-6 mr-2" />
               Pesanan Saya
             </h1>
@@ -48,19 +48,19 @@
           </div>
           
           <!-- Order List -->
-          <div v-if="orders.data.length > 0" class="bg-white overflow-hidden shadow-sm rounded-lg border border-gray-200">
-            <table class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-50">
+          <div v-if="orders.data.length > 0" class="bg-white dark:bg-slate-800 overflow-hidden shadow-sm rounded-lg border border-gray-200 dark:border-slate-700">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-700 dark:text-slate-50">
+              <thead class="bg-gray-50 dark:bg-slate-700">
                 <tr>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No. Pesanan</th>
-                  <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
-                  <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
-                  <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-50 uppercase tracking-wider">No. Pesanan</th>
+                  <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-slate-50 uppercase tracking-wider">Total</th>
+                  <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-slate-50 uppercase tracking-wider">Status</th>
+                  <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-slate-50 uppercase tracking-wider">Tanggal</th>
+                  <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-slate-50 uppercase tracking-wider">Aksi</th>
                 </tr>
               </thead>
-              <tbody class="bg-white divide-y divide-gray-200">
-                <tr v-for="order in orders.data" :key="order.id" class="hover:bg-gray-50">
+              <tbody class="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700 dark:text-slate-50">
+                <tr v-for="order in orders.data" :key="order.id" class="hover:bg-gray-50 dark:hover:bg-slate-700">
                   <!-- Order Number -->
                   <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-primary-600">
                     {{ order.order_number }}
@@ -96,7 +96,7 @@
                   <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500">
                     <!-- Add proper route here once we have a user order detail view -->
                     <Link :href="route('orders.track', { order_number: order.order_number, customer_phone: order.customer_phone })" class="text-primary-600 hover:text-primary-900">
-                      <Button size="sm" variant="ghost" class="h-8 px-2">
+                      <Button size="sm" variant="ghost" class="h-8 px-2 dark:text-slate-50 dark:hover:text-slate-100 cursor-pointer">
                         <EyeIcon class="h-4 w-4" />
                         <span class="sr-only">Lihat Detail</span>
                       </Button>
@@ -107,7 +107,7 @@
             </table>
             
             <!-- Pagination -->
-            <div class="px-6 py-4 border-t border-gray-200">
+            <div class="px-6 py-4 border-t border-gray-200 dark:border-slate-700">
               <Pagination :links="orders.links" />
             </div>
           </div>

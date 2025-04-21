@@ -208,7 +208,6 @@ const closeLightbox = () => {
                 <Card class="dark:bg-slate-800 dark:border-slate-700">
                     <CardHeader>
                         <CardTitle>Gambar Produk</CardTitle>
-                        <CardDescription>Foto utama produk</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div class="mb-6">

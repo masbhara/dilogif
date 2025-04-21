@@ -101,11 +101,11 @@ onMounted(() => {
 
 const getStatusColor = (status: string) => {
   switch(status) {
-    case 'active': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
-    case 'inactive': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
-    case 'blocked': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
-    case 'rejected': return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
-    default: return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
+    case 'active': return 'bg-emerald-100 text-emerald-900 dark:bg-green-900 dark:text-green-300 border border-emerald-300 dark:border-green-800';
+    case 'inactive': return 'bg-amber-100 text-amber-900 dark:bg-yellow-900 dark:text-yellow-300 border border-amber-300 dark:border-yellow-800';
+    case 'blocked': return 'bg-rose-100 text-rose-900 dark:bg-red-900 dark:text-red-300 border border-rose-300 dark:border-red-800';
+    case 'rejected': return 'bg-slate-100 text-slate-900 dark:bg-gray-900 dark:text-gray-300 border border-slate-300 dark:border-gray-800';
+    default: return 'bg-sky-100 text-sky-900 dark:bg-blue-900 dark:text-blue-300 border border-sky-300 dark:border-blue-800';
   }
 };
 
@@ -373,6 +373,35 @@ if (props.filters) {
     filters.value.status = props.filters.status || '';
     filters.value.role = props.filters.role || '';
 }
+
+// Fungsi untuk menghapus pengguna
+const hapusUser = () => {
+  if (!selectedUser.value) return;
+  
+  loading.value = true;
+  processingUser.value = selectedUser.value.id;
+  
+  router.delete(route('admin.users.destroy', selectedUser.value.id), {
+    preserveScroll: true,
+    onSuccess: () => {
+      toast.success('Berhasil', {
+        description: selectedUser.value ? `Pengguna ${selectedUser.value.name} berhasil dihapus` : 'Pengguna berhasil dihapus',
+      });
+      showDeleteDialog.value = false;
+      selectedUser.value = null; // Clear selected user
+    },
+    onError: (errors) => {
+      toast.error('Gagal', {
+        description: `Terjadi kesalahan saat menghapus pengguna: ${errors.message || 'Unknown error'}`,
+      });
+      console.error('Error saat hapus:', errors);
+    },
+    onFinish: () => {
+      loading.value = false;
+      processingUser.value = null;
+    }
+  });
+};
 </script>
 
 <template>
@@ -550,15 +579,37 @@ if (props.filters) {
                     <TableCell class="py-3.5 px-6 align-middle text-sm text-secondary-900 dark:text-white">{{ user.email }}</TableCell>
                     <TableCell class="py-3.5 px-6 align-middle text-sm text-secondary-900 dark:text-white hidden md:table-cell">{{ user.whatsapp || '-' }}</TableCell>
                     <TableCell class="py-3.5 px-6 align-middle">
-                      <Badge :class="getStatusColor(user.status)" class="px-2.5 py-0.5 text-xs font-medium">
-                        {{ user.status === 'active' ? 'Aktif' : 
-                           user.status === 'inactive' ? 'Tidak Aktif' : 
-                           user.status === 'blocked' ? 'Diblokir' : 'Ditolak' }}
-                      </Badge>
+                      <div class="flex items-center gap-1.5">
+                        <div v-if="user.status === 'active'" 
+                             class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-900 dark:bg-green-900 dark:text-green-300 border border-emerald-300 dark:border-green-800">
+                          <span class="size-2 bg-emerald-600 dark:bg-emerald-400 rounded-full"></span>
+                          <span>Aktif</span>
+                        </div>
+                        <div v-else-if="user.status === 'inactive'" 
+                             class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-900 dark:bg-yellow-900 dark:text-yellow-300 border border-amber-300 dark:border-yellow-800">
+                          <span class="size-2 bg-amber-600 dark:bg-amber-400 rounded-full"></span>
+                          <span>Tidak Aktif</span>
+                        </div>
+                        <div v-else-if="user.status === 'blocked'" 
+                             class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-900 dark:bg-red-900 dark:text-red-300 border border-rose-300 dark:border-red-800">
+                          <span class="size-2 bg-rose-600 dark:bg-rose-400 rounded-full"></span>
+                          <span>Diblokir</span>
+                        </div>
+                        <div v-else 
+                             class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-900 dark:bg-gray-900 dark:text-gray-300 border border-slate-300 dark:border-gray-800">
+                          <span class="size-2 bg-slate-600 dark:bg-slate-400 rounded-full"></span>
+                          <span>Ditolak</span>
+                        </div>
+                      </div>
                     </TableCell>
                     <TableCell class="py-3.5 px-6 align-middle hidden md:table-cell">
                       <div class="flex gap-1.5 flex-wrap">
-                        <Badge v-for="role in user.roles" :key="role.id" variant="outline" class="capitalize text-xs px-2 py-0.5">
+                        <Badge 
+                          v-for="role in user.roles" 
+                          :key="role.id" 
+                          variant="outline" 
+                          class="capitalize text-xs px-2 py-0.5 bg-slate-50 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
+                        >
                           {{ role.name }}
                         </Badge>
                       </div>
@@ -567,7 +618,7 @@ if (props.filters) {
                     <TableCell class="py-3.5 px-6 align-middle text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="primary" size="icon" class="h-8 w-8 rounded-md bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white">
+                          <Button variant="default" size="icon" class="h-8 w-8 rounded-md bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white">
                             <MoreHorizontal class="h-4 w-4" />
                             <span class="sr-only">Menu</span>
                           </Button>
