@@ -5,7 +5,7 @@ import NavUser from "@/components/layout/NavUser.vue";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
-import { LayoutGrid, UsersIcon, ShieldIcon, KeyIcon, Settings, Mail, Package, FolderTree, ShoppingBag } from 'lucide-vue-next';
+import { LayoutGrid, UsersIcon, ShieldIcon, KeyIcon, Settings, Mail, Package, FolderTree, ShoppingBag, BarChart3 } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 import { computed } from 'vue';
 
@@ -68,7 +68,14 @@ const adminNavItems: NavItem[] = [
         href: route('admin.orders.index'),
         icon: ShoppingBag,
         requiresRole: 'admin',
-        requiresPermission: 'manage_orders',
+        requiresPermission: 'view orders',
+    },
+    {
+        title: 'Statistik Pesanan',
+        href: route('admin.orders.statistics'),
+        icon: BarChart3,
+        requiresRole: 'admin',
+        requiresPermission: 'view orders',
     },
     {
         title: 'Products',

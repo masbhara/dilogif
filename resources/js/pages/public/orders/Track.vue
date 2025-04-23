@@ -242,10 +242,19 @@
               </div>
               
               <!-- Notes -->
-              <div v-if="order.notes">
+              <div v-if="order.notes || order.admin_notes" class="mt-4">
                 <h4 class="text-sm font-medium text-gray-500 mb-2">Catatan</h4>
-                <div class="bg-gray-50 rounded-lg p-4">
+                
+                <!-- Customer Notes -->
+                <div v-if="order.notes" class="bg-gray-50 rounded-lg p-4 mb-3">
+                  <p class="text-xs text-gray-500 mb-1">Catatan Pelanggan:</p>
                   <p class="text-sm text-gray-700">{{ order.notes }}</p>
+                </div>
+                
+                <!-- Admin Notes -->
+                <div v-if="order.admin_notes" class="bg-blue-50 rounded-lg p-4">
+                  <p class="text-xs text-gray-500 mb-1">Catatan Admin:</p>
+                  <p class="text-sm text-gray-700">{{ order.admin_notes }}</p>
                 </div>
               </div>
             </div>

@@ -31,6 +31,7 @@ class Order extends Model
         'total_amount',
         'status',
         'notes',
+        'admin_notes',
     ];
 
     protected $casts = [

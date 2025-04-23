@@ -53,7 +53,10 @@ export default {
     'hover:bg-secondary-50', 'hover:bg-secondary-100', 'hover:bg-secondary-200', 'hover:bg-secondary-300', 'hover:bg-secondary-400',
     'hover:bg-secondary-500', 'hover:bg-secondary-600', 'hover:bg-secondary-700', 'hover:bg-secondary-800', 'hover:bg-secondary-900', 'hover:bg-secondary-950',
     'dark:hover:bg-secondary-50', 'dark:hover:bg-secondary-100', 'dark:hover:bg-secondary-200', 'dark:hover:bg-secondary-300', 'dark:hover:bg-secondary-400',
-    'dark:hover:bg-secondary-500', 'dark:hover:bg-secondary-600', 'dark:hover:bg-secondary-700', 'dark:hover:bg-secondary-800', 'dark:hover:bg-secondary-900', 'dark:hover:bg-secondary-950'
+    'dark:hover:bg-secondary-500', 'dark:hover:bg-secondary-600', 'dark:hover:bg-secondary-700', 'dark:hover:bg-secondary-800', 'dark:hover:bg-secondary-900', 'dark:hover:bg-secondary-950',
+    'lazy',
+    'loaded',
+    'error'
   ],
   theme: {
     extend: {

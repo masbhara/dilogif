@@ -6,12 +6,12 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\TeamMemberController;
 use App\Http\Controllers\ContactMessageController;
-use App\Http\Controllers\Admin\ProductController;
-use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\OrderController as AdminOrderController;
-use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\CategoryController;
 
 Route::middleware(['auth'])->group(function () {
     // Dashboard Route
@@ -36,7 +36,7 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('messages/{message}', [ContactMessageController::class, 'destroy'])->name('messages.destroy');
     });
     
-    // User Orders - daftar pesanan pengguna
+    // User Orders
     Route::get('/orders', [OrderController::class, 'userOrders'])->name('orders.index');
 });
 
@@ -59,9 +59,13 @@ Route::get('/contact', function () {
 
 Route::post('/contact', [ContactMessageController::class, 'store'])->name('contact.store');
 
-// Rute Produk Publik
-Route::get('/products', [ProductsController::class, 'index'])->name('products.index');
-Route::get('/products/{slug}', [ProductsController::class, 'show'])->name('products.show');
+// Public routes with caching
+Route::middleware(['http-cache'])->group(function () {
+    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+});
+
+// Detail produk tanpa cache untuk menghindari masalah JSON
+Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
 
 // Cart Routes
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -77,17 +81,18 @@ Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
 Route::get('/orders/thankyou/{order}', [OrderController::class, 'thankYou'])->name('orders.thankyou');
 Route::get('/track-order', [OrderController::class, 'trackOrder'])->name('orders.track');
 
+// Admin Routes
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
     // Products
-    Route::resource('products', ProductController::class);
-    Route::delete('products/gallery/{gallery}', [ProductController::class, 'deleteGalleryImage'])->name('products.gallery.delete');
-    Route::post('products/gallery/order', [ProductController::class, 'updateGalleryOrder'])->name('products.gallery.order');
+    Route::resource('products', AdminProductController::class);
+    Route::delete('products/gallery/{gallery}', [AdminProductController::class, 'deleteGalleryImage'])->name('products.gallery.delete');
+    Route::post('products/gallery/order', [AdminProductController::class, 'updateGalleryOrder'])->name('products.gallery.order');
 
     // Categories
     Route::resource('categories', CategoryController::class);
     
     // Orders
-    Route::middleware('permission:manage_orders')->group(function () {
+    Route::middleware('permission:view orders')->group(function () {
         Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
         Route::get('orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
         Route::patch('orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.status.update');

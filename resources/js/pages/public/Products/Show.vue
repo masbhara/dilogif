@@ -181,7 +181,7 @@
         </div>
         
         <!-- Related Products -->
-        <div v-if="relatedProducts.length > 0" class="mb-8">
+        <div v-if="relatedProducts && relatedProducts.length > 0" class="mb-8">
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-2xl font-bold">Produk Terkait</h2>
             <Link :href="route('products.index')" class="text-primary-600 hover:text-primary-800 text-sm font-medium">Lihat Semua Produk</Link>
@@ -301,7 +301,10 @@ import axios from 'axios';
 
 const props = defineProps({
   product: Object,
-  relatedProducts: Array
+  relatedProducts: {
+    type: Array,
+    default: () => []
+  }
 });
 
 // Cek apakah produk memiliki fitur dan nilai

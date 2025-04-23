@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use App\Traits\HasLazyImage;
+use Illuminate\Support\Facades\Cache;
 
 class Product extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, HasLazyImage;
 
     protected $fillable = [
         'name',
@@ -33,7 +35,7 @@ class Product extends Model
         'product_values' => 'array',
     ];
 
-    protected $appends = ['url'];
+    protected $appends = ['url', 'lazy_image'];
 
     protected static function boot()
     {
@@ -62,6 +64,34 @@ class Product extends Model
                 $product->slug = Str::slug($product->custom_url);
             }
         });
+
+        static::saved(function ($product) {
+            self::clearProductCache();
+        });
+
+        static::deleted(function ($product) {
+            self::clearProductCache();
+        });
+    }
+
+    /**
+     * Hapus cache produk
+     */
+    public static function clearProductCache()
+    {
+        // Hapus cache active_products
+        Cache::forget('active_products');
+        
+        // Hapus cache produk individual berdasarkan slug
+        $products = self::all();
+        foreach ($products as $product) {
+            Cache::forget("product_{$product->slug}");
+        }
+        
+        // Hapus cache halaman produk jika menggunakan middleware http-cache
+        if (class_exists('App\Services\CacheManager')) {
+            app('App\Services\CacheManager')->forgetPattern('page_cache.GET.*products*');
+        }
     }
 
     /**
@@ -112,5 +142,25 @@ class Product extends Model
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    // Cache methods
+    public static function getActiveProducts()
+    {
+        return Cache::remember('active_products', 3600, function () {
+            return static::with(['category', 'gallery'])
+                ->where('is_active', true)
+                ->orderBy('price')
+                ->get();
+        });
+    }
+
+    public static function getProductBySlug($slug)
+    {
+        return Cache::remember("product_{$slug}", 3600, function () use ($slug) {
+            return static::with(['category', 'gallery'])
+                ->where('slug', $slug)
+                ->firstOrFail();
+        });
     }
 }

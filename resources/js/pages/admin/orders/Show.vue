@@ -237,12 +237,20 @@
           <p v-else class="text-gray-500 dark:text-slate-400 italic">Tidak ada catatan dari pelanggan</p>
         </div>
         
-        <!-- Notes Form -->
+        <!-- Admin Notes -->
+        <div class="mt-6 pt-6 border-t border-gray-200 dark:border-slate-700">
+          <h4 class="text-md font-medium mb-3 text-slate-900 dark:text-white">Catatan Admin</h4>
+          <div v-if="order.admin_notes" class="mb-4 bg-blue-50 dark:bg-blue-900/10 p-4 rounded-md">
+            <p class="text-gray-700 dark:text-slate-300 whitespace-pre-line">{{ order.admin_notes }}</p>
+          </div>
+        </div>
+        
+        <!-- Admin Notes Form -->
         <div class="mt-6 pt-6 border-t border-gray-200 dark:border-slate-700">
           <h4 class="text-md font-medium mb-3 text-slate-900 dark:text-white">Update Catatan Admin</h4>
           <form @submit.prevent="updateNotes" class="flex flex-col gap-4">
             <textarea 
-              v-model="form.notes" 
+              v-model="form.admin_notes" 
               rows="3" 
               class="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
               placeholder="Tambahkan catatan internal untuk pesanan ini"
@@ -310,7 +318,7 @@ const isUpdating = ref(false);
 const isUpdatingNotes = ref(false);
 const form = ref({
   status: props.order.status,
-  notes: props.order.notes
+  admin_notes: props.order.admin_notes
 });
 
 // Methods
@@ -378,7 +386,8 @@ const updateNotes = () => {
   isUpdatingNotes.value = true;
   
   router.patch(route('admin.orders.status.update', props.order.id), {
-    notes: form.value.notes
+    status: props.order.status,
+    admin_notes: form.value.admin_notes
   }, {
     onSuccess: () => {
       toast.success('Catatan pesanan berhasil diperbarui');

@@ -82,7 +82,7 @@ class OrderController extends Controller
                 Order::STATUS_COMPLETED,
                 Order::STATUS_CANCELLED,
             ]),
-            'notes' => 'nullable|string',
+            'admin_notes' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -91,7 +91,7 @@ class OrderController extends Controller
         
         $order->update([
             'status' => $request->status,
-            'notes' => $request->filled('notes') ? $request->notes : $order->notes,
+            'admin_notes' => $request->filled('admin_notes') ? $request->admin_notes : $order->admin_notes,
         ]);
         
         return redirect()->back()->with('success', 'Status pesanan berhasil diperbarui');

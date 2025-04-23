@@ -15,13 +15,14 @@ class OrderPermissionSeeder extends Seeder
     {
         // Buat permission jika belum ada
         Permission::firstOrCreate(['name' => 'manage_orders']);
+        Permission::firstOrCreate(['name' => 'view orders']);
         
         // Berikan permission ke role admin
         $adminRole = Role::where('name', 'admin')->first();
         
         if ($adminRole) {
-            $adminRole->givePermissionTo('manage_orders');
-            $this->command->info('Permission manage_orders berhasil ditambahkan ke role admin');
+            $adminRole->givePermissionTo(['manage_orders', 'view orders']);
+            $this->command->info('Permission manage_orders dan view orders berhasil ditambahkan ke role admin');
         } else {
             $this->command->error('Role admin tidak ditemukan');
         }
