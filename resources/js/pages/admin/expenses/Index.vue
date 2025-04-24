@@ -2,9 +2,10 @@
   <Head title="Daftar Pengeluaran" />
 
   <AppLayout :breadcrumbs="breadcrumbs">
-    <div class="flex flex-col gap-4 p-4 md:p-6 pb-12">
-      <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold text-slate-900 dark:text-slate-50">Daftar Pengeluaran</h1>
+    <div class="flex h-full flex-1 flex-col gap-4 p-4 md:p-6">
+      <!-- Header dengan judul dan tombol tambah -->
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <h1 class="text-2xl font-bold text-secondary-900 dark:text-white">Daftar Pengeluaran</h1>
         <div class="flex gap-2">
           <Link 
             :href="route('admin.expense-categories.index')" 
@@ -24,190 +25,207 @@
       </div>
 
       <!-- Filter dan pencarian -->
-      <Card class="border border-slate-200 dark:border-slate-700">
-        <CardContent class="p-4">
-          <form @submit.prevent="submit" class="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
-            <div class="space-y-2">
-              <Label for="search">Cari</Label>
+      <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
+        <form @submit.prevent="submit" class="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
+          <div class="space-y-2">
+            <Label for="search">Cari</Label>
+            <div class="relative">
               <Input 
                 id="search" 
                 v-model="form.search" 
                 placeholder="Cari nama atau deskripsi" 
-                class="w-full" 
+                class="w-full pl-9" 
               />
+              <div class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                <SearchIcon class="h-4 w-4" />
+              </div>
             </div>
-            <div class="space-y-2">
-              <Label for="category">Kategori</Label>
-              <div class="relative custom-select-container category-select-container" :class="{ 'active': isCategorySelectOpen }">
+          </div>
+          <div class="space-y-2">
+            <Label for="category">Kategori</Label>
+            <div class="relative custom-select-container category-select-container" :class="{ 'active': isCategorySelectOpen }">
+              <div 
+                @click="toggleCategorySelect" 
+                class="custom-select-trigger flex w-full items-center justify-between gap-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm shadow-sm hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer h-9"
+              >
+                <span>{{ selectedCategoryLabel }}</span>
+                <ChevronDownIcon class="h-4 w-4 opacity-50 transition-transform" :class="{ 'rotate-180': isCategorySelectOpen }" />
+              </div>
+              
+              <div 
+                v-if="isCategorySelectOpen" 
+                class="custom-select-dropdown bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-lg mt-1 overflow-hidden z-50"
+              >
                 <div 
-                  @click="toggleCategorySelect" 
-                  class="custom-select-trigger flex w-full items-center justify-between gap-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm shadow-sm hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer h-9"
+                  class="custom-select-option py-2 px-3 text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm"
+                  @click="selectCategoryString('')"
+                  :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': form.category_id === '' }"
                 >
-                  <span>{{ selectedCategoryLabel }}</span>
-                  <ChevronDownIcon class="h-4 w-4 opacity-50 transition-transform" :class="{ 'rotate-180': isCategorySelectOpen }" />
+                  Semua Kategori
                 </div>
-                
                 <div 
-                  v-if="isCategorySelectOpen" 
-                  class="custom-select-dropdown bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-lg mt-1 overflow-hidden z-50"
+                  v-for="category in categories" 
+                  :key="category.id"
+                  @click="selectCategoryNumber(category.id)"
+                  class="custom-select-option py-2 px-3 text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm"
+                  :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': Number(form.category_id) === category.id }"
                 >
-                  <div 
-                    class="custom-select-option py-2 px-3 text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm"
-                    @click="selectCategoryString('')"
-                    :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': form.category_id === '' }"
-                  >
-                    Semua Kategori
-                  </div>
-                  <div 
-                    v-for="category in categories" 
-                    :key="category.id"
-                    @click="selectCategoryNumber(category.id)"
-                    class="custom-select-option py-2 px-3 text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm"
-                    :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': Number(form.category_id) === category.id }"
-                  >
-                    {{ category.name }}
-                  </div>
+                  {{ category.name }}
                 </div>
               </div>
             </div>
-            <div class="space-y-2">
-              <Label for="status">Status</Label>
-              <div class="relative custom-select-container status-select-container" :class="{ 'active': isStatusSelectOpen }">
+          </div>
+          <div class="space-y-2">
+            <Label for="status">Status</Label>
+            <div class="relative custom-select-container status-select-container" :class="{ 'active': isStatusSelectOpen }">
+              <div 
+                @click="toggleStatusSelect" 
+                class="custom-select-trigger flex w-full items-center justify-between gap-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm shadow-sm hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer h-9"
+              >
+                <span>{{ selectedStatusLabel }}</span>
+                <ChevronDownIcon class="h-4 w-4 opacity-50 transition-transform" :class="{ 'rotate-180': isStatusSelectOpen }" />
+              </div>
+              
+              <div 
+                v-if="isStatusSelectOpen" 
+                class="custom-select-dropdown bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-lg mt-1 overflow-hidden z-50"
+              >
                 <div 
-                  @click="toggleStatusSelect" 
-                  class="custom-select-trigger flex w-full items-center justify-between gap-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm shadow-sm hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer h-9"
+                  class="custom-select-option py-2 px-3 text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm"
+                  @click="selectStatus('')"
+                  :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': form.status === '' }"
                 >
-                  <span>{{ selectedStatusLabel }}</span>
-                  <ChevronDownIcon class="h-4 w-4 opacity-50 transition-transform" :class="{ 'rotate-180': isStatusSelectOpen }" />
+                  Semua Status
                 </div>
-                
                 <div 
-                  v-if="isStatusSelectOpen" 
-                  class="custom-select-dropdown bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-lg mt-1 overflow-hidden z-50"
+                  class="custom-select-option py-2 px-3 text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm"
+                  @click="selectStatus('pending')"
+                  :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': form.status === 'pending' }"
                 >
-                  <div 
-                    class="custom-select-option py-2 px-3 text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm"
-                    @click="selectStatus('')"
-                    :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': form.status === '' }"
-                  >
-                    Semua Status
-                  </div>
-                  <div 
-                    class="custom-select-option py-2 px-3 text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm"
-                    @click="selectStatus('pending')"
-                    :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': form.status === 'pending' }"
-                  >
-                    Pending
-                  </div>
-                  <div 
-                    class="custom-select-option py-2 px-3 text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm"
-                    @click="selectStatus('completed')"
-                    :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': form.status === 'completed' }"
-                  >
-                    Completed
-                  </div>
-                  <div 
-                    class="custom-select-option py-2 px-3 text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm"
-                    @click="selectStatus('cancelled')"
-                    :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': form.status === 'cancelled' }"
-                  >
-                    Cancelled
-                  </div>
+                  Pending
+                </div>
+                <div 
+                  class="custom-select-option py-2 px-3 text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm"
+                  @click="selectStatus('completed')"
+                  :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': form.status === 'completed' }"
+                >
+                  Completed
+                </div>
+                <div 
+                  class="custom-select-option py-2 px-3 text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm"
+                  @click="selectStatus('cancelled')"
+                  :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': form.status === 'cancelled' }"
+                >
+                  Cancelled
                 </div>
               </div>
             </div>
-            <div class="flex gap-2 items-end">
-              <Button type="submit" variant="action">Filter</Button>
-              <Button variant="action-outline" @click="resetFilters">Reset</Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+          </div>
+          <div class="flex gap-2 items-end">
+            <Button type="submit" variant="action">Filter</Button>
+            <Button variant="action-outline" @click="resetFilters">Reset</Button>
+          </div>
+        </form>
+      </div>
 
-      <!-- Daftar Pengeluaran -->
-      <Card class="border border-slate-200 dark:border-slate-700">
-        <CardContent class="p-0">
-          <div class="relative overflow-x-auto">
-            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-              <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                <tr>
-                  <th scope="col" class="px-6 py-3">Nama</th>
-                  <th scope="col" class="px-6 py-3">Kategori</th>
-                  <th scope="col" class="px-6 py-3">Jumlah</th>
-                  <th scope="col" class="px-6 py-3">Tanggal</th>
-                  <th scope="col" class="px-6 py-3">Status</th>
-                  <th scope="col" class="px-6 py-3">Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="expense in expenses.data" :key="expense.id" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                  <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    {{ expense.name }}
-                  </td>
-                  <td class="px-6 py-4">{{ expense.category?.name || '-' }}</td>
-                  <td class="px-6 py-4">Rp {{ formatCurrency(expense.amount) }}</td>
-                  <td class="px-6 py-4">{{ formatDate(expense.expense_date) }}</td>
-                  <td class="px-6 py-4">
-                    <span 
-                      class="px-2 py-1 rounded-full text-xs"
-                      :class="{
-                        'bg-yellow-100 text-yellow-800': expense.status === 'pending',
-                        'bg-green-100 text-green-800': expense.status === 'completed',
-                        'bg-red-100 text-red-800': expense.status === 'cancelled',
-                      }"
-                    >
-                      {{ expense.status }}
-                    </span>
-                  </td>
-                  <td class="px-6 py-4 flex gap-2">
-                    <Link
-                      :href="route('admin.expenses.show', expense.id)"
-                      class="text-primary-600 hover:text-primary-900 dark:text-primary-400 dark:hover:text-primary-300"
-                    >
-                      <Eye class="h-5 w-5" />
-                    </Link>
-                    <Link
-                      :href="route('admin.expenses.edit', expense.id)"
-                      class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
-                    >
-                      <Edit class="h-5 w-5" />
-                    </Link>
-                    <button
-                      @click="confirmDelete(expense)"
-                      class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 rounded-sm"
-                    >
-                      <Trash class="h-5 w-5" />
-                    </button>
-                  </td>
-                </tr>
-                <tr v-if="expenses.data.length === 0">
-                  <td colspan="6" class="px-6 py-4 text-center">Tidak ada data pengeluaran</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-        <CardFooter class="p-4 flex justify-between items-center">
-          <div>
-            Menampilkan {{ expenses.from || 0 }} - {{ expenses.to || 0 }} dari {{ expenses.total }} data
-          </div>
-          <Pagination :links="expenses.links" />
-        </CardFooter>
-      </Card>
+      <!-- Tabel Pengeluaran dengan AdminTable -->
+      <AdminTable 
+        :columns="columns" 
+        :data="expenses" 
+        :loading="loading"
+        emptyMessage="Tidak ada data pengeluaran ditemukan"
+      >
+        <TableRow v-for="expense in expenses.data" :key="expense.id" class="hover:bg-secondary-100/50 dark:hover:bg-slate-900/90">
+          <TableCell class="py-3.5 px-6 align-middle font-medium text-secondary-900 dark:text-white">
+            {{ expense.name }}
+          </TableCell>
+          <TableCell class="py-3.5 px-6 align-middle">{{ expense.category?.name || '-' }}</TableCell>
+          <TableCell class="py-3.5 px-6 align-middle">Rp {{ formatCurrency(expense.amount) }}</TableCell>
+          <TableCell class="py-3.5 px-6 align-middle">{{ formatDate(expense.expense_date) }}</TableCell>
+          <TableCell class="py-3.5 px-6 align-middle">
+            <span 
+              class="px-2.5 py-0.5 rounded-full text-xs font-medium inline-flex items-center gap-1.5"
+              :class="{
+                'bg-yellow-100 text-yellow-800 border border-yellow-300 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800': expense.status === 'pending',
+                'bg-green-100 text-green-800 border border-green-300 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800': expense.status === 'completed',
+                'bg-red-100 text-red-800 border border-red-300 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800': expense.status === 'cancelled',
+              }"
+            >
+              <span class="size-2 rounded-full" 
+                :class="{
+                  'bg-yellow-600 dark:bg-yellow-400': expense.status === 'pending',
+                  'bg-green-600 dark:bg-green-400': expense.status === 'completed',
+                  'bg-red-600 dark:bg-red-400': expense.status === 'cancelled',
+                }"
+              ></span>
+              {{ expense.status }}
+            </span>
+          </TableCell>
+          <TableCell class="py-3.5 px-6 align-middle text-right">
+            <div class="flex justify-end">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="action" size="icon" class="h-8 w-8 rounded-md">
+                    <MoreHorizontal class="h-4 w-4" />
+                    <span class="sr-only">Menu</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" class="w-[160px]">
+                  <DropdownMenuItem @click="viewExpense(expense)" class="flex items-center gap-2 cursor-pointer py-1.5">
+                    <Eye class="h-4 w-4" />
+                    <span>Lihat</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem @click="editExpense(expense)" class="flex items-center gap-2 cursor-pointer py-1.5">
+                    <Pencil class="h-4 w-4" />
+                    <span>Edit</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    @click="confirmDelete(expense)" 
+                    variant="destructive" 
+                    class="flex items-center gap-2 cursor-pointer py-1.5 text-red-600 dark:text-red-400"
+                  >
+                    <Trash class="h-4 w-4" />
+                    <span>Hapus</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </TableCell>
+        </TableRow>
+      </AdminTable>
     </div>
+    
+    <!-- Dialog Konfirmasi Hapus -->
+    <ConfirmationDialog
+      :open="showDeleteDialog"
+      @update:open="showDeleteDialog = $event"
+      title="Konfirmasi Penghapusan"
+      dangerMode
+      :icon="Trash2"
+      :loading="loading"
+      confirmLabel="Hapus"
+      @confirm="deleteExpense()"
+    >
+      <p class="mb-2 text-secondary-900 dark:text-secondary-200">
+        Apakah Anda yakin ingin menghapus pengeluaran "{{ expenseToDelete?.name }}"?
+      </p>
+    </ConfirmationDialog>
   </AppLayout>
 </template>
 
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Edit, Eye, PlusIcon, Trash, Receipt, ChevronDownIcon } from 'lucide-vue-next';
+import { SearchIcon, Edit, Eye, PlusIcon, Trash, Trash2, Receipt, ChevronDownIcon, MoreHorizontal, Pencil } from 'lucide-vue-next';
+import { TableRow, TableCell } from '@/components/ui/table';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import AdminTable from '@/components/AdminTable.vue';
 import Pagination from '@/components/Pagination.vue';
+import ConfirmationDialog from '@/components/ui/ConfirmationDialog.vue';
 import { ref } from 'vue';
 
 // Definisikan tipe
@@ -275,6 +293,21 @@ interface ExpensesProps {
 // Definisikan props dengan tipe
 const props = defineProps<ExpensesProps>();
 
+// State untuk loading dan dialog hapus
+const loading = ref(false);
+const showDeleteDialog = ref(false);
+const expenseToDelete = ref<Expense | null>(null);
+
+// Kolom tabel untuk AdminTable
+const columns = [
+  { label: 'Nama' },
+  { label: 'Kategori' },
+  { label: 'Jumlah' },
+  { label: 'Tanggal' },
+  { label: 'Status' },
+  { label: 'Aksi', headerClass: 'text-right' }
+];
+
 // Form untuk filter
 const form = useForm({
   search: props.filters.search || '',
@@ -305,17 +338,29 @@ const resetFilters = () => {
 };
 
 // Konfirmasi hapus
-const expenseToDelete = ref<Expense | null>(null);
-
 const confirmDelete = (expense: Expense) => {
-  if (confirm(`Apakah Anda yakin ingin menghapus pengeluaran "${expense.name}"?`)) {
-    useForm({}).delete(route('admin.expenses.destroy', expense.id), {
-      preserveScroll: true,
-      onSuccess: () => {
-        expenseToDelete.value = null;
-      },
-    });
-  }
+  expenseToDelete.value = expense;
+  showDeleteDialog.value = true;
+};
+
+const deleteExpense = () => {
+  if (!expenseToDelete.value) return;
+  
+  loading.value = true;
+  
+  useForm({}).delete(route('admin.expenses.destroy', expenseToDelete.value.id), {
+    preserveScroll: true,
+    onSuccess: () => {
+      expenseToDelete.value = null;
+      showDeleteDialog.value = false;
+    },
+    onError: () => {
+      // Notifikasi error akan ditangani oleh sistem
+    },
+    onFinish: () => {
+      loading.value = false;
+    }
+  });
 };
 
 // Breadcrumbs untuk navigasi
@@ -383,6 +428,16 @@ const selectStatus = (status: string) => {
   form.status = status;
   isStatusSelectOpen.value = false;
   selectedStatusLabel.value = status === '' ? 'Semua Status' : status === 'pending' ? 'Pending' : status === 'completed' ? 'Completed' : 'Cancelled';
+};
+
+// Fungsi untuk melihat pengeluaran
+const viewExpense = (expense: Expense) => {
+  router.visit(route('admin.expenses.show', expense.id));
+};
+
+// Fungsi untuk mengedit pengeluaran
+const editExpense = (expense: Expense) => {
+  router.visit(route('admin.expenses.edit', expense.id));
 };
 </script>
 

@@ -100,29 +100,35 @@
                   </div>
                 </TableCell>
                 <TableCell class="py-3.5 px-6 align-middle text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="action" size="icon" class="h-8 w-8 rounded-md">
-                        <MoreHorizontal class="h-4 w-4" />
-                        <span class="sr-only">Menu</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" class="w-[160px]">
-                      <DropdownMenuItem @click="editCategory(category)" class="flex items-center gap-2 cursor-pointer py-1.5">
-                        <Pencil class="h-4 w-4" />
-                        <span>Edit</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem 
-                        v-if="category.expenses_count === 0"
-                        @click="openDeleteDialog(category)" 
-                        variant="destructive" 
-                        class="flex items-center gap-2 cursor-pointer py-1.5"
-                      >
-                        <Trash class="h-4 w-4" />
-                        <span>Hapus</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <div class="flex justify-end">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="action" size="icon" class="h-8 w-8 rounded-md">
+                          <MoreHorizontal class="h-4 w-4" />
+                          <span class="sr-only">Menu</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" class="w-[160px]">
+                        <DropdownMenuItem @click="viewCategory(category)" class="flex items-center gap-2 cursor-pointer py-1.5">
+                          <Eye class="h-4 w-4" />
+                          <span>Lihat</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem @click="editCategory(category)" class="flex items-center gap-2 cursor-pointer py-1.5">
+                          <Pencil class="h-4 w-4" />
+                          <span>Edit</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          v-if="category.expenses_count === 0"
+                          @click="openDeleteDialog(category)" 
+                          variant="destructive" 
+                          class="flex items-center gap-2 cursor-pointer py-1.5 text-red-600 dark:text-red-400"
+                        >
+                          <Trash class="h-4 w-4" />
+                          <span>Hapus</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                 </TableCell>
               </TableRow>
               <TableRow v-if="categories.data.length === 0">
@@ -164,15 +170,15 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { SearchIcon, Edit, Eye, Pencil, PlusIcon, Trash, Trash2, MoreHorizontal, ChevronDownIcon } from 'lucide-vue-next';
+import { SearchIcon, Eye, Edit, PlusIcon, Trash, Trash2, MoreHorizontal, Pencil } from 'lucide-vue-next';
 import Pagination from '@/components/ui/pagination/Pagination.vue';
 import { ref, computed } from 'vue';
 import ConfirmationDialog from '@/components/ui/ConfirmationDialog.vue';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 // Definisikan tipe
 interface ExpenseCategory {
@@ -251,6 +257,10 @@ const showDeleteDialog = ref(false);
 const loading = ref(false);
 
 // Fungsi untuk actions
+const viewCategory = (category: ExpenseCategory) => {
+  router.visit(route('admin.expense-categories.show', category.id));
+};
+
 const editCategory = (category: ExpenseCategory) => {
   router.visit(route('admin.expense-categories.edit', category.id));
 };
