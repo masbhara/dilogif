@@ -33,17 +33,16 @@
             </div>
             
             <div class="w-full sm:w-48">
-              <Select v-model="selectedStatus" @update:modelValue="applyFilters">
-                <SelectTrigger>
-                  <SelectValue placeholder="Filter Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">Semua Status</SelectItem>
-                  <SelectItem v-for="(label, status) in statuses" :key="status" :value="status">
-                    {{ label }}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+              <select 
+                v-model="selectedStatus" 
+                @change="applyFilters"
+                class="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:bg-slate-950 dark:ring-offset-slate-950 dark:placeholder:text-slate-400 dark:focus-visible:ring-primary-400"
+              >
+                <option value="">Semua Status</option>
+                <option v-for="(label, status) in statuses" :key="status" :value="status">
+                  {{ label }}
+                </option>
+              </select>
             </div>
           </div>
           
@@ -137,7 +136,6 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Pagination from '@/components/Pagination.vue';
 import { SearchIcon, EyeIcon, ShoppingBag } from 'lucide-vue-next';
 

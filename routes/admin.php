@@ -6,6 +6,8 @@ use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\ExpenseCategoryController;
+use App\Http\Controllers\Admin\ExpenseController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Models\Role;
@@ -111,5 +113,24 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         Route::get('email-settings', [EmailSettingController::class, 'edit'])->name('email-settings.edit');
         Route::put('email-settings', [EmailSettingController::class, 'update'])->name('email-settings.update');
         Route::post('email-settings/test', [EmailSettingController::class, 'sendTestEmail'])->name('email-settings.test');
+    });
+    
+    // Manajemen Pengeluaran
+    Route::group([], function () {
+        Route::resource('expense-categories', ExpenseCategoryController::class)
+            ->middleware([
+                'permission:view expense categories',
+                'permission:create expense categories',
+                'permission:edit expense categories',
+                'permission:delete expense categories',
+            ]);
+            
+        Route::resource('expenses', ExpenseController::class)
+            ->middleware([
+                'permission:view expenses',
+                'permission:create expenses',
+                'permission:edit expenses',
+                'permission:delete expenses',
+            ]);
     });
 });
