@@ -46,7 +46,7 @@
                 :disabled="isSubmitting"
               >
                 <SearchIcon v-if="!isSubmitting" class="h-4 w-4 mr-2" />
-                <ButtonLoader v-else />
+                <span v-else class="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></span>
                 {{ isSubmitting ? 'Mencari...' : 'Lacak Pesanan' }}
               </Button>
             </div>
@@ -268,7 +268,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 import { Head, router } from '@inertiajs/vue3';
-import { Button, ButtonLoader } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Breadcrumb from '@/components/ui/breadcrumb.vue';
 import MainLayout from '@/components/layout/MainLayout.vue';

@@ -252,9 +252,21 @@
             </div>
 
             <div class="flex gap-2">
-              <Button type="submit" :disabled="form.processing">{{ form.processing ? 'Menyimpan...' : 'Simpan' }}</Button>
+              <Button 
+                type="submit" 
+                :disabled="form.processing" 
+                class="bg-primary-600 text-white hover:bg-primary-500 shadow-sm"
+              >
+                {{ form.processing ? 'Menyimpan...' : 'Simpan' }}
+              </Button>
               <Link :href="route('admin.expenses.index')">
-                <Button type="button" variant="outline">Batal</Button>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  class="border-slate-300 hover:bg-slate-100 dark:border-slate-600 dark:hover:bg-slate-800"
+                >
+                  Batal
+                </Button>
               </Link>
             </div>
           </form>

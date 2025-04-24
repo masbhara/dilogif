@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { getSpinnerClasses } from './theme';
+import type { ButtonVariant } from './Button.vue';
 
 interface Props {
-  colorScheme?: string;
+  variant?: ButtonVariant;
   size?: 'sm' | 'md' | 'lg';
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  colorScheme: 'primary',
+  variant: 'default',
   size: 'md'
 });
 
@@ -21,16 +21,24 @@ const spinnerSize = computed(() => {
   }
 });
 
-// Mendapatkan kelas spinner berdasarkan colorScheme
+// Mendapatkan kelas spinner berdasarkan variant
 const spinnerClass = computed(() => {
-  return getSpinnerClasses(props.colorScheme as any);
+  // Untuk variant yang memerlukan spinner berwarna putih
+  const whiteSpinnerVariants = ['default', 'destructive', 'secondary', 'success', 'warning', 'action', 'action-secondary', 'action-danger', 'action-success', 'action-warning'];
+  
+  if (whiteSpinnerVariants.includes(props.variant)) {
+    return 'border-white border-t-transparent';
+  }
+  
+  // Untuk variant dengan latar belakang transparan
+  return 'border-current border-t-transparent';
 });
 </script>
 
 <template>
   <div :class="[
     spinnerSize, 
-    'mr-2 animate-spin rounded-full border-2', 
+    'animate-spin rounded-full border-2', 
     spinnerClass
   ]"></div>
 </template> 

@@ -5,10 +5,7 @@ import { twMerge } from 'tailwind-merge';
  * Combine multiple class names with clsx and tailwind-merge
  */
 export function cn(...inputs: ClassValue[]) {
-    console.log("Inputs to cn():", inputs);
-    const result = twMerge(clsx(inputs));
-    console.log("Result from cn():", result);
-    return result;
+    return twMerge(clsx(inputs));
 }
 
 /**
@@ -43,4 +40,21 @@ export function getInitials(name: string): string {
         .join('')
         .toUpperCase()
         .substring(0, 2);
+}
+
+// Helper untuk debug komponen di console
+export function debugComponent(name: string, props: Record<string, any>, additionalInfo?: Record<string, any>) {
+    console.log(`Debug [${name}]`, {
+        ...props,
+        ...(additionalInfo || {})
+    });
+}
+
+// Helper untuk memastikan variant Button bekerja dengan baik
+export function getVariantClasses(variant: string, allClasses: string): string {
+    console.log(`Variant: ${variant}`, {
+        allClasses,
+        classesArray: allClasses.split(' ')
+    });
+    return allClasses;
 }

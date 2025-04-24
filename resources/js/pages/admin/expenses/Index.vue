@@ -63,7 +63,7 @@
                     :key="category.id"
                     @click="selectCategoryNumber(category.id)"
                     class="custom-select-option py-2 px-3 text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm"
-                    :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': form.category_id === category.id }"
+                    :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': Number(form.category_id) === category.id }"
                   >
                     {{ category.name }}
                   </div>
@@ -117,8 +117,8 @@
               </div>
             </div>
             <div class="flex gap-2 items-end">
-              <Button type="submit" class="h-10">Filter</Button>
-              <Button variant="outline" @click="resetFilters" class="h-10">Reset</Button>
+              <Button type="submit" variant="action">Filter</Button>
+              <Button variant="action-outline" @click="resetFilters">Reset</Button>
             </div>
           </form>
         </CardContent>
@@ -174,7 +174,7 @@
                     </Link>
                     <button
                       @click="confirmDelete(expense)"
-                      class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                      class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 rounded-sm"
                     >
                       <Trash class="h-5 w-5" />
                     </button>

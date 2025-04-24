@@ -115,7 +115,7 @@
                     colorScheme="primary"
                     :disabled="isSubmitting"
                   >
-                    <ButtonLoader v-if="isSubmitting" />
+                    <span v-if="isSubmitting" class="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></span>
                     {{ isSubmitting ? 'Memproses...' : 'Kirim Pesanan' }}
                   </Button>
                 </div>
@@ -171,7 +171,7 @@
 
 <script setup>
 import { Head, Link, router } from '@inertiajs/vue3';
-import { Button, ButtonLoader } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import Breadcrumb from '@/components/ui/breadcrumb.vue';
 import MainLayout from '@/components/layout/MainLayout.vue';
 import { computed, ref } from 'vue';

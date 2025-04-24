@@ -133,4 +133,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
                 'permission:delete expenses',
             ]);
     });
+
+    // Halaman Contoh Komponen UI
+    Route::get('components-example', function () {
+        return inertia('admin/components-example');
+    })->name('components-example');
 });

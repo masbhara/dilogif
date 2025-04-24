@@ -7,8 +7,8 @@
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <h1 class="text-2xl font-bold text-secondary-900 dark:text-white">Kategori</h1>
                 <Link :href="route('admin.categories.create')" class="cursor-pointer">
-                    <Button class="flex items-center gap-1.5 w-full sm:w-auto cursor-pointer">
-                        <PlusIcon class="h-4 w-4" />
+                    <Button variant="action" class="flex items-center gap-1.5 w-full sm:w-auto cursor-pointer">
+                        <PlusIcon class="w-4 h-4" />
                         Tambah Kategori
                     </Button>
                 </Link>
@@ -63,7 +63,7 @@
                                 <TableCell class="py-3.5 px-6 align-middle text-right">
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
-                                            <Button variant="primary" size="icon" class="h-8 w-8 rounded-md bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white">
+                                            <Button variant="action" size="icon" class="h-8 w-8 rounded-md">
                                                 <MoreHorizontal class="h-4 w-4" />
                                                 <span class="sr-only">Menu</span>
                                             </Button>
