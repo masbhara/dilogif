@@ -14,11 +14,11 @@
                 </Link>
             </div>
             
-            <div class="bg-card text-card-foreground rounded-xl shadow border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div class="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-50 rounded-xl shadow border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <div class="p-6 border-b border-slate-200 dark:border-slate-700">
                     <div>
                         <h2 class="text-lg font-medium">Form Kategori Baru</h2>
-                        <p class="text-muted-foreground mt-1">Tambahkan kategori baru untuk produk Anda</p>
+                        <p class="text-slate-600 dark:text-slate-400 mt-1">Tambahkan kategori baru untuk produk Anda</p>
                     </div>
                 </div>
                 <div class="p-6">

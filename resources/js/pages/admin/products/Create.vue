@@ -7,18 +7,18 @@
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <h1 class="text-2xl font-bold">Tambah Produk</h1>
                 <Link :href="route('admin.products.index')" class="cursor-pointer">
-                    <Button variant="outline" colorScheme="primary" class="flex items-center gap-1.5 w-full sm:w-auto cursor-pointer">
+                    <Button variant="outline" class="flex items-center gap-1.5 w-full sm:w-auto cursor-pointer">
                         <ArrowLeft class="h-4 w-4" />
                         Kembali
                     </Button>
                 </Link>
             </div>
             
-            <div class="bg-card text-card-foreground rounded-xl shadow border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div class="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-50 rounded-xl shadow border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <div class="p-6 border-b border-slate-200 dark:border-slate-700">
                     <div>
                         <h2 class="text-lg font-medium">Form Produk Baru</h2>
-                        <p class="text-muted-foreground mt-1">Tambahkan produk baru ke dalam katalog Anda</p>
+                        <p class="text-slate-600 dark:text-slate-400 mt-1">Tambahkan produk baru ke dalam katalog Anda</p>
                     </div>
                 </div>
                 <div class="p-6">
@@ -47,7 +47,7 @@
                                         placeholder="Akan digenerate otomatis"
                                         disabled
                                     />
-                                    <p class="text-xs text-muted-foreground mt-1">
+                                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
                                         Kode produk akan digenerate otomatis oleh sistem
                                     </p>
                                     <InputError :message="form.errors.product_code" class="mt-2" />
@@ -62,7 +62,7 @@
                                         >
                                             <div 
                                                 @click="toggleSelect" 
-                                                class="custom-select-trigger flex w-full items-center justify-between gap-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-3 py-2 text-sm shadow-sm hover:border-gray-300 dark:hover:border-gray-600 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer h-9"
+                                                class="custom-select-trigger flex w-full items-center justify-between gap-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-2 text-sm shadow-sm hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer h-9"
                                             >
                                                 <span>{{ selectedCategoryLabel }}</span>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-50 transition-transform" :class="{ 'rotate-180': isSelectOpen }">
@@ -72,10 +72,10 @@
                                             
                                             <div 
                                                 v-if="isSelectOpen" 
-                                                class="custom-select-dropdown bg-white dark:bg-gray-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-lg mt-1 overflow-hidden z-50"
+                                                class="custom-select-dropdown bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-lg mt-1 overflow-hidden z-50"
                                             >
                                                 <div 
-                                                    class="custom-select-option py-2 px-3 text-amber-600 dark:text-amber-400 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer text-sm font-medium"
+                                                    class="custom-select-option py-2 px-3 text-amber-600 dark:text-amber-400 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm font-medium"
                                                     @click="selectCategory(null)"
                                                     :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300': form.category_id === null }"
                                                 >
@@ -85,7 +85,7 @@
                                                     v-for="category in props.categories" 
                                                     :key="category.id"
                                                     @click="selectCategory(category.id)"
-                                                    class="custom-select-option py-2 px-3 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer text-sm"
+                                                    class="custom-select-option py-2 px-3 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm"
                                                     :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': form.category_id === category.id }"
                                                 >
                                                     {{ category.name }}
@@ -113,7 +113,7 @@
                                             required
                                         />
                                     </div>
-                                    <p class="text-xs text-muted-foreground mt-1">
+                                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
                                         Masukkan harga tanpa tanda baca, contoh: 100000
                                     </p>
                                     <InputError :message="form.errors.price" class="mt-2" />
@@ -127,7 +127,7 @@
                                         type="text"
                                         class="mt-1 block w-full"
                                     />
-                                    <p class="text-xs text-muted-foreground mt-1">
+                                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
                                         Opsional: URL kustom untuk produk (tanpa spasi dan karakter khusus)
                                     </p>
                                     <InputError :message="form.errors.custom_url" class="mt-2" />
@@ -142,7 +142,7 @@
                                         class="mt-1 block w-full"
                                         placeholder="https://example.com"
                                     />
-                                    <p class="text-xs text-muted-foreground mt-1">
+                                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
                                         Opsional: Masukkan URL untuk demo produk
                                     </p>
                                     <InputError :message="form.errors.demo_url" class="mt-2" />
@@ -167,7 +167,7 @@
                                         class="mt-1 block w-full"
                                         required
                                     />
-                                    <p class="text-xs text-muted-foreground mt-1">
+                                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
                                         Format yang didukung: JPEG, PNG, JPG, GIF. Maksimal 2MB.
                                     </p>
                                     <InputError :message="form.errors.featured_image" class="mt-2" />
@@ -183,7 +183,7 @@
                                         multiple
                                         class="mt-1 block w-full"
                                     />
-                                    <p class="text-xs text-muted-foreground mt-1">
+                                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
                                         Opsional: Pilih beberapa gambar untuk galeri produk. Format yang didukung: JPEG, PNG, JPG, GIF. Maksimal 2MB per gambar.
                                     </p>
                                     <InputError :message="form.errors.gallery" class="mt-2" />
@@ -206,7 +206,6 @@
                                             <Button
                                                 type="button"
                                                 variant="destructive"
-                                                colorScheme="danger"
                                                 size="icon"
                                                 @click="removeFeature(index)"
                                                 class="h-10 w-10"
@@ -216,15 +215,14 @@
                                         </div>
                                         <Button
                                             type="button"
-                                            variant="outline"
-                                            colorScheme="primary"
+                                            variant="action"
                                             @click="addFeature"
                                             class="mt-2 w-full"
                                         >
                                             Tambah Fitur
                                         </Button>
                                     </div>
-                                    <p class="text-xs text-muted-foreground mt-1">
+                                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
                                         Opsional: Tambahkan fitur-fitur produk
                                     </p>
                                 </div>
@@ -244,7 +242,6 @@
                                             <Button
                                                 type="button"
                                                 variant="destructive"
-                                                colorScheme="danger"
                                                 size="icon"
                                                 @click="removeValue(index)"
                                                 class="h-10 w-10"
@@ -254,15 +251,14 @@
                                         </div>
                                         <Button
                                             type="button"
-                                            variant="outline"
-                                            colorScheme="primary"
+                                            variant="action"
                                             @click="addValue"
                                             class="mt-2 w-full"
                                         >
                                             Tambah Nilai/Keunggulan
                                         </Button>
                                     </div>
-                                    <p class="text-xs text-muted-foreground mt-1">
+                                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
                                         Opsional: Tambahkan nilai/keunggulan produk
                                     </p>
                                 </div>
@@ -282,7 +278,6 @@
                             <Button 
                                 type="submit" 
                                 :disabled="form.processing || loading"
-                                colorScheme="primary"
                                 class="cursor-pointer"
                             >
                                 <Loader2 v-if="form.processing || loading" class="mr-2 h-4 w-4 animate-spin" />

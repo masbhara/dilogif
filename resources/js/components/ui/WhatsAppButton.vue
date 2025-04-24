@@ -69,13 +69,13 @@
           </div>
 
           <div class="mb-6">
-            <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Pesan</label>
+            <label for="message" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Pesan</label>
             <textarea 
               id="message" 
               v-model="form.message" 
               placeholder="Tuliskan pesan Anda..."
               rows="4"
-              class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3B8BEE] focus:border-transparent resize-none"
+              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#3B8BEE] focus:border-transparent resize-none"
               required
             ></textarea>
           </div>
