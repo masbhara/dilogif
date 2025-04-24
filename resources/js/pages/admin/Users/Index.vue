@@ -530,7 +530,7 @@ const hapusUser = () => {
             :loading="isFiltering"
             emptyMessage="Tidak ada pengguna ditemukan"
           >
-            <TableRow v-for="user in users.data" :key="user.id" class="border-b border-secondary-200/60 dark:border-slate-700/60 hover:bg-secondary-100/50 dark:hover:bg-slate-900/90">
+            <TableRow v-for="user in users.data" :key="user.id" class="hover:bg-secondary-100/50 dark:hover:bg-slate-900/90">
               <TableCell class="py-3.5 px-6 align-middle font-medium text-secondary-900 dark:text-white">{{ user.name }}</TableCell>
               <TableCell class="py-3.5 px-6 align-middle text-sm text-secondary-900 dark:text-white">{{ user.email }}</TableCell>
               <TableCell class="py-3.5 px-6 align-middle text-sm text-secondary-900 dark:text-white hidden md:table-cell">{{ user.whatsapp || '-' }}</TableCell>
@@ -543,7 +543,7 @@ const hapusUser = () => {
                     v-for="role in user.roles" 
                     :key="role.id" 
                     variant="outline" 
-                    class="capitalize text-xs px-2 py-0.5 bg-slate-50 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
+                    class="capitalize text-xs px-2 py-0.5 bg-slate-50 text-slate-700 dark:bg-slate-800 dark:text-slate-300"
                   >
                     {{ role.name }}
                   </Badge>

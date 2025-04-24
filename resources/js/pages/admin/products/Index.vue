@@ -78,7 +78,7 @@
                 :loading="loading"
                 emptyMessage="Tidak ada produk ditemukan"
             >
-                <TableRow v-for="product in products.data" :key="product.id" class="border-b border-secondary-200/60 dark:border-slate-700/60 hover:bg-secondary-100/50 dark:hover:bg-slate-900/90">
+                <TableRow v-for="product in products.data" :key="product.id" class="hover:bg-secondary-100/50 dark:hover:bg-slate-900/90">
                     <TableCell class="py-3.5 px-6 align-middle">
                         <img
                             :src="'/storage/' + product.featured_image"

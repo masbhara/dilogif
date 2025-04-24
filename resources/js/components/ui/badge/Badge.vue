@@ -35,7 +35,7 @@ const variantClasses = computed(() => {
     case 'warning':
       return 'bg-warning-500 dark:bg-warning-500 text-white hover:bg-warning-600 dark:hover:bg-warning-600';
     case 'outline':
-      return 'border border-primary-300 dark:border-primary-700 bg-transparent text-primary-700 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-950/50';
+      return 'bg-transparent text-primary-700 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-950/50';
     case 'ghost':
       return 'bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-400 hover:bg-primary-200 dark:hover:bg-primary-900';
     default:

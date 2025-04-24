@@ -43,7 +43,7 @@ const handleRowClick = (item) => {
 
 <template>
   <div 
-    class="bg-white dark:bg-slate-800 text-secondary-900 dark:text-white rounded-xl shadow-lg border-2 border-slate-200 dark:border-slate-700 overflow-hidden"
+    class="bg-white dark:bg-slate-800 text-secondary-900 dark:text-white rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden"
     :class="containerClass"
   >
     <div class="overflow-x-auto">

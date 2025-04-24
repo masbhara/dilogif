@@ -19,18 +19,18 @@ const props = defineProps({
 
 const badgeClass = computed(() => {
   const statusStyles = {
-    active: 'bg-emerald-100 text-emerald-900 dark:bg-green-900 dark:text-green-300 border border-emerald-300 dark:border-green-800',
-    inactive: 'bg-amber-100 text-amber-900 dark:bg-yellow-900 dark:text-yellow-300 border border-amber-300 dark:border-yellow-800',
-    blocked: 'bg-rose-100 text-rose-900 dark:bg-red-900 dark:text-red-300 border border-rose-300 dark:border-red-800',
-    rejected: 'bg-slate-100 text-slate-900 dark:bg-gray-900 dark:text-gray-300 border border-slate-300 dark:border-gray-800',
-    pending: 'bg-amber-100 text-amber-900 dark:bg-yellow-900 dark:text-yellow-300 border border-amber-300 dark:border-yellow-800',
-    processing: 'bg-blue-100 text-blue-900 dark:bg-blue-900 dark:text-blue-300 border border-blue-300 dark:border-blue-800',
-    review: 'bg-purple-100 text-purple-900 dark:bg-purple-900 dark:text-purple-300 border border-purple-300 dark:border-purple-800',
-    completed: 'bg-emerald-100 text-emerald-900 dark:bg-green-900 dark:text-green-300 border border-emerald-300 dark:border-green-800',
-    cancelled: 'bg-rose-100 text-rose-900 dark:bg-red-900 dark:text-red-300 border border-rose-300 dark:border-red-800',
-    published: 'bg-emerald-100 text-emerald-900 dark:bg-green-900 dark:text-green-300 border border-emerald-300 dark:border-green-800',
-    draft: 'bg-amber-100 text-amber-900 dark:bg-yellow-900 dark:text-yellow-300 border border-amber-300 dark:border-yellow-800',
-    default: 'bg-slate-100 text-slate-900 dark:bg-gray-900 dark:text-gray-300 border border-slate-300 dark:border-gray-800'
+    active: 'bg-emerald-100 text-emerald-900 dark:bg-green-900 dark:text-green-300',
+    inactive: 'bg-amber-100 text-amber-900 dark:bg-yellow-900 dark:text-yellow-300',
+    blocked: 'bg-rose-100 text-rose-900 dark:bg-red-900 dark:text-red-300',
+    rejected: 'bg-slate-100 text-slate-900 dark:bg-gray-900 dark:text-gray-300',
+    pending: 'bg-amber-100 text-amber-900 dark:bg-yellow-900 dark:text-yellow-300',
+    processing: 'bg-blue-100 text-blue-900 dark:bg-blue-900 dark:text-blue-300',
+    review: 'bg-purple-100 text-purple-900 dark:bg-purple-900 dark:text-purple-300',
+    completed: 'bg-emerald-100 text-emerald-900 dark:bg-green-900 dark:text-green-300',
+    cancelled: 'bg-rose-100 text-rose-900 dark:bg-red-900 dark:text-red-300',
+    published: 'bg-emerald-100 text-emerald-900 dark:bg-green-900 dark:text-green-300',
+    draft: 'bg-amber-100 text-amber-900 dark:bg-yellow-900 dark:text-yellow-300',
+    default: 'bg-slate-100 text-slate-900 dark:bg-gray-900 dark:text-gray-300'
   };
   
   return statusStyles[props.status] || statusStyles.default;
