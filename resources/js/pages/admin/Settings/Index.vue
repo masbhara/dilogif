@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Textarea } from '@/components/ui/textarea/index';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs/index';
 import { toast } from 'vue-sonner';
-import { Globe, FileCode, Upload, Image as ImageIcon } from 'lucide-vue-next';
+import { Globe, FileCode, Upload, Image as ImageIcon, Mail as MailIcon } from 'lucide-vue-next';
 
 // Define props
 const props = defineProps<{
@@ -236,6 +236,15 @@ const uploadOgImage = () => {
     <div class="flex h-full flex-1 flex-col gap-4 p-4 md:p-6">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 class="text-2xl font-bold text-secondary-900 dark:text-white">Pengaturan Website</h1>
+        <div class="flex gap-2">
+          <Link 
+            :href="route('admin.email.index')" 
+            class="inline-flex items-center justify-center rounded-md text-sm font-medium h-10 px-4 py-2 bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-50 dark:hover:bg-slate-700"
+          >
+            <MailIcon class="mr-2 h-4 w-4" />
+            Email Settings
+          </Link>
+        </div>
       </div>
 
       <!-- Tab Navigation dengan Komponen Shadcn UI -->

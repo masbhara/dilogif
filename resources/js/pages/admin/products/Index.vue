@@ -6,14 +6,23 @@
             <!-- Header dengan judul dan tombol tambah -->
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <h1 class="text-2xl font-bold text-secondary-900 dark:text-white">Produk</h1>
-                <Link :href="route('admin.products.create')" class="cursor-pointer">
-                    <Button 
-                        variant="action" 
-                        class="flex items-center gap-1.5 w-full sm:w-auto cursor-pointer">
-                        <PlusIcon class="h-4 w-4" />
-                        Tambah Produk Ya
-                    </Button>
-                </Link>
+                <div class="flex gap-2">
+                    <Link 
+                        :href="route('admin.categories.index')" 
+                        class="inline-flex items-center justify-center rounded-md text-sm font-medium h-10 px-4 py-2 bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-50 dark:hover:bg-slate-700"
+                    >
+                        <TagIcon class="mr-2 h-4 w-4" />
+                        Kategori
+                    </Link>
+                    <Link :href="route('admin.products.create')" class="cursor-pointer">
+                        <Button 
+                            variant="action" 
+                            class="flex items-center gap-1.5 w-full sm:w-auto cursor-pointer">
+                            <PlusIcon class="h-4 w-4" />
+                            Tambah Produk
+                        </Button>
+                    </Link>
+                </div>
             </div>
             
             <!-- Filters Card -->
@@ -177,7 +186,7 @@
 import { Head, Link, router } from '@inertiajs/vue3';
 import { ref, computed, onMounted, watch, nextTick, onUnmounted } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { PlusIcon, MoreHorizontal, Eye, Pencil, Trash, Trash2, ClipboardIcon, SearchIcon, ChevronDownIcon } from 'lucide-vue-next';
+import { PlusIcon, MoreHorizontal, Eye, Pencil, Trash, Trash2, ClipboardIcon, SearchIcon, ChevronDownIcon, TagIcon } from 'lucide-vue-next';
 import { TableRow, TableCell } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';

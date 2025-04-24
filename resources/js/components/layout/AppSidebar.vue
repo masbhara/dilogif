@@ -5,7 +5,7 @@ import NavUser from "@/components/layout/NavUser.vue";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
-import { LayoutGrid, UsersIcon, ShieldIcon, KeyIcon, Settings, Mail, Package, FolderTree, ShoppingBag, BarChart3, Receipt, Wallet } from 'lucide-vue-next';
+import { LayoutGrid, UsersIcon, ShieldIcon, KeyIcon, Settings, Package, FolderTree, ShoppingBag, BarChart3, Receipt, Wallet } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 import { computed } from 'vue';
 
@@ -85,13 +85,6 @@ const adminNavItems: NavItem[] = [
         requiresPermission: 'manage_products',
     },
     {
-        title: 'Categories',
-        href: route('admin.categories.index'),
-        icon: FolderTree,
-        requiresRole: 'admin',
-        requiresPermission: 'manage_products',
-    },
-    {
         title: 'Expenses',
         href: route('admin.expenses.index'),
         icon: Wallet,
@@ -118,13 +111,6 @@ const adminNavItems: NavItem[] = [
         icon: KeyIcon,
         requiresRole: 'admin',
         requiresPermission: 'manage_permissions',
-    },
-    {
-        title: 'Email',
-        href: route('admin.email.index'),
-        icon: Mail,
-        requiresRole: 'admin',
-        requiresPermission: 'manage_settings',
     },
     {
         title: 'Settings',
