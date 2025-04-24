@@ -7,7 +7,7 @@
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <h1 class="text-2xl font-bold">Tambah Produk</h1>
                 <Link :href="route('admin.products.index')" class="cursor-pointer">
-                    <Button variant="outline" class="flex items-center gap-1.5 w-full sm:w-auto cursor-pointer">
+                    <Button variant="outline" colorScheme="primary" class="flex items-center gap-1.5 w-full sm:w-auto cursor-pointer">
                         <ArrowLeft class="h-4 w-4" />
                         Kembali
                     </Button>
@@ -206,6 +206,7 @@
                                             <Button
                                                 type="button"
                                                 variant="destructive"
+                                                colorScheme="danger"
                                                 size="icon"
                                                 @click="removeFeature(index)"
                                                 class="h-10 w-10"
@@ -216,6 +217,7 @@
                                         <Button
                                             type="button"
                                             variant="outline"
+                                            colorScheme="primary"
                                             @click="addFeature"
                                             class="mt-2 w-full"
                                         >
@@ -242,6 +244,7 @@
                                             <Button
                                                 type="button"
                                                 variant="destructive"
+                                                colorScheme="danger"
                                                 size="icon"
                                                 @click="removeValue(index)"
                                                 class="h-10 w-10"
@@ -252,6 +255,7 @@
                                         <Button
                                             type="button"
                                             variant="outline"
+                                            colorScheme="primary"
                                             @click="addValue"
                                             class="mt-2 w-full"
                                         >
@@ -278,6 +282,7 @@
                             <Button 
                                 type="submit" 
                                 :disabled="form.processing || loading"
+                                colorScheme="primary"
                                 class="cursor-pointer"
                             >
                                 <Loader2 v-if="form.processing || loading" class="mr-2 h-4 w-4 animate-spin" />

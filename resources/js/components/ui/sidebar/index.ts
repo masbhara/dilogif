@@ -36,13 +36,13 @@ export { default as SidebarTrigger } from './SidebarTrigger.vue'
 export { useSidebar } from './utils'
 
 export const sidebarMenuButtonVariants = cva(
-  'peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-gray-100 dark:hover:bg-gray-700/70 hover:text-gray-900 dark:hover:text-white focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:pr-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0',
+  'peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-gray-100 dark:hover:bg-sidebar-hover hover:text-gray-900 dark:hover:text-white focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:pr-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0',
   {
     variants: {
       variant: {
-        default: 'hover:bg-gray-100 dark:hover:bg-gray-700/70 hover:text-gray-900 dark:hover:text-white',
+        default: 'hover:bg-gray-100 dark:hover:bg-slate-700/40 hover:text-gray-900 dark:hover:text-white',
         outline:
-          'bg-white dark:bg-gray-900 shadow-[0_0_0_1px] shadow-gray-200 dark:shadow-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700/70 hover:text-gray-900 dark:hover:text-white hover:shadow-[0_0_0_1px] hover:shadow-gray-300 dark:hover:shadow-gray-600',
+          'bg-white dark:bg-gray-900 shadow-[0_0_0_1px] shadow-gray-200 dark:shadow-gray-700 hover:bg-gray-100 dark:hover:bg-slate-700/40 hover:text-gray-900 dark:hover:text-white hover:shadow-[0_0_0_1px] hover:shadow-gray-300 dark:hover:shadow-gray-600',
       },
       size: {
         default: 'h-8 text-sm',

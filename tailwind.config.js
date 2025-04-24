@@ -148,6 +148,68 @@ export default {
           900: "#0f172a",
           950: "#020617",
         },
+        // UI Component Colors - Tema Sidebar & Komponen
+        sidebar: {
+          accent: {
+            DEFAULT: 'var(--sidebar-accent)',
+            foreground: 'var(--sidebar-accent-foreground)',
+          },
+          ring: 'var(--sidebar-ring)',
+          foreground: 'var(--sidebar-foreground)',
+          foregroundMuted: 'var(--sidebar-foreground-muted)',
+          hover: 'var(--sidebar-hover)',
+        },
+        // Variabel CSS - Integrasi dengan CSS Variables untuk Shadcn
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+      },
+      // Tema komponen khusus
+      borderRadius: {
+        DEFAULT: '0.375rem',
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      transitionDuration: {
+        DEFAULT: '150ms',
+      },
+      // Animasi komponen
+      keyframes: {
+        "accordion-down": {
+          from: { height: 0 },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: 0 },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
       },
     },
   },
