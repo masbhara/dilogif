@@ -20,21 +20,25 @@ File `app.css` berisi deklarasi semua variabel CSS yang menjadi fondasi sistem t
 
 ```css
 :root {
-  /* Base Theme */
+  /* Base Variables */
   --font-family-base: 'Manrope', ui-sans-serif, system-ui, sans-serif;
   --border-color-base: #e2e8f0;
-  --radius-base: 0.375rem;
+  --radius: 0.5rem;
   --transition-base: 150ms;
   
   /* Sidebar Component */
-  --sidebar-accent: theme('colors.primary.500');
-  --sidebar-hover: theme('colors.slate.700 / 40%');
+  --sidebar-accent: var(--primary-600);
+  --sidebar-hover: rgba(203, 213, 225, 0.1);
+  --sidebar-bg-hover: var(--slate-100);
+  --sidebar-dark-bg-hover: var(--slate-700);
   /* ... etc */
 }
 
 .dark {
   /* Dark Theme Overrides */
   --border-color-base: #334155;
+  --sidebar-bg-hover: var(--slate-700);
+  --sidebar-dark-bg-hover: rgba(203, 213, 225, 0.1);
   /* ... etc */
 }
 ```
@@ -52,8 +56,13 @@ theme: {
           DEFAULT: 'var(--sidebar-accent)',
           foreground: 'var(--sidebar-accent-foreground)',
         },
+        bgHover: 'var(--sidebar-bg-hover)',
+        darkBgHover: 'var(--sidebar-dark-bg-hover)',
         /* ... etc */
       },
+    },
+    transitionDuration: {
+      DEFAULT: 'var(--transition-base)',
     },
   },
 },
@@ -68,7 +77,7 @@ Komponen khusus yang tidak bisa dibuat hanya dengan utility diletakkan dalam `@l
   .sidebar-menu-button {
     @apply flex w-full items-center gap-2 rounded-md p-2;
     @apply text-sm text-slate-700 dark:text-slate-300;
-    @apply hover:bg-gray-100 dark:hover:bg-slate-700/40;
+    @apply hover:bg-sidebar-bg-hover dark:hover:bg-sidebar-dark-bg-hover;
     /* ... etc */
   }
 }
@@ -96,7 +105,7 @@ Untuk styling komponen yang lebih kompleks, gunakan tema komponen yang sudah did
 
 **❌ TIDAK DISARANKAN**:
 ```html
-<div class="bg-primary-600 hover:bg-primary-700 text-white">...</div>
+<div class="bg-indigo-600 hover:bg-indigo-700 text-white">...</div>
 ```
 
 **✅ DISARANKAN**:
@@ -106,7 +115,7 @@ Untuk styling komponen yang lebih kompleks, gunakan tema komponen yang sudah did
 
 ### 3. Dark Mode Support
 
-Semua komponen sudah support dark mode melalui kelas Tailwind:
+Semua komponen mendukung dark mode melalui kelas Tailwind dan variabel tema:
 
 ```html
 <div class="bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100">...</div>
@@ -140,10 +149,10 @@ Semua komponen sudah support dark mode melalui kelas Tailwind:
 ### Button
 
 ```html
-<button class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md">...</button>
-
-<!-- Atau gunakan komponen Button.vue yang sudah ada -->
+<!-- Gunakan komponen Button.vue yang sudah ada -->
 <Button variant="primary">Button Text</Button>
+<Button variant="destructive">Hapus</Button>
+<Button variant="outline">Kembali</Button>
 ```
 
 ## Cara Mengubah Tema
@@ -157,17 +166,34 @@ Contoh mengubah warna primary:
 
 ```css
 :root {
-  --sidebar-accent: theme('colors.blue.500'); /* Mengubah dari nilai default */
+  --sidebar-accent: var(--blue-500); /* Mengubah dari nilai default */
 }
 ```
 
 ## Praktik Terbaik
 
-1. **Hindari Inline Styles**: Gunakan kelas Tailwind atau komponen yang sudah ada
-2. **Gunakan Design System**: Selalu rujuk dokumentasi ini sebelum membuat style baru
+1. **Hindari Hardcoded Values**: Jangan gunakan nilai hex, rgb, atau hsl secara langsung
+2. **Gunakan Variabel Tema**: Selalu gunakan variabel tema untuk warna, spasi, dll
 3. **Konsistensi Penamaan**: Ikuti konvensi penamaan yang sudah ada
 4. **Gunakan Komponen**: Untuk UI yang kompleks, buat dan gunakan komponen Vue
-5. **Minimize Custom CSS**: Gunakan utility Tailwind sebisa mungkin sebelum menulis CSS kustom
+5. **Minimize Custom CSS**: Gunakan utility Tailwind sebisa mungkin
+6. **Hindari !important**: Gunakan cascade CSS yang tepat, bukan !important
+7. **Perhatikan Mobile First**: Desain untuk mobile terlebih dahulu, baru desktop
+
+## Dos and Don'ts
+
+### Do:
+- ✅ Gunakan variabel tema (`var(--sidebar-accent)`, `bg-sidebar-accent`)
+- ✅ Terapkan dark mode dengan prefiks `dark:`
+- ✅ Kelompokkan styling terkait dalam satu komponen
+- ✅ Gunakan komponen yang sudah ada (Button, Card, dll)
+
+### Don't:
+- ❌ Hardcode nilai warna (`#0ea5e9`, `rgb(255,0,0)`)
+- ❌ Duplikasi styling yang sudah ada
+- ❌ Gunakan `!important` kecuali benar-benar diperlukan
+- ❌ Buat variasi styling untuk kasus spesifik yang dapat digeneralisasi
+- ❌ Membuat class kustom yang memerlukan modifier (seperti hover:) tanpa mendefinisikannya dengan benar
 
 ---
 

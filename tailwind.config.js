@@ -6,57 +6,24 @@ export default {
     "./resources/**/*.vue",
   ],
   safelist: [
-    // Safelist untuk background colors table
-    'bg-white',
-    'bg-transparent',
-    'dark:bg-slate-900',
-    'dark:bg-slate-800',
-    'bg-slate-900',
-    'bg-primary-900',
-    'dark:bg-primary-900',
-    // Tambahan untuk table row dan cell
+    // Status badges
+    'bg-white', 'bg-transparent',
+    'dark:bg-slate-900', 'dark:bg-slate-800',
+    'bg-slate-900', 'bg-primary-900', 'dark:bg-primary-900',
+    
+    // Status classes - digunakan secara dinamis
+    'aktif', 'active', 'sukses',
+    'tidak-aktif', 'inactive', 'gagal',
+    
+    // Table dynamic classes
     'tr-bg-white', 'tr-dark:bg-slate-900',
     'td-bg-white', 'td-dark:bg-slate-900',
     'tbody-bg-white', 'tbody-dark:bg-slate-900',
     'table-bg-white', 'table-dark:bg-slate-900',
     'dark:hover:bg-slate-800',
-    // Tambahan safelist untuk warna-warna slate
-    'bg-slate-50', 'bg-slate-100', 'bg-slate-200', 'bg-slate-300', 'bg-slate-400',
-    'bg-slate-500', 'bg-slate-600', 'bg-slate-700', 'bg-slate-800', 'bg-slate-900', 'bg-slate-950',
-    'dark:bg-slate-50', 'dark:bg-slate-100', 'dark:bg-slate-200', 'dark:bg-slate-300', 'dark:bg-slate-400',
-    'dark:bg-slate-500', 'dark:bg-slate-600', 'dark:bg-slate-700', 'dark:bg-slate-800', 'dark:bg-slate-900', 'dark:bg-slate-950',
-    'text-slate-50', 'text-slate-100', 'text-slate-200', 'text-slate-300', 'text-slate-400',
-    'text-slate-500', 'text-slate-600', 'text-slate-700', 'text-slate-800', 'text-slate-900', 'text-slate-950',
-    'dark:text-slate-50', 'dark:text-slate-100', 'dark:text-slate-200', 'dark:text-slate-300', 'dark:text-slate-400',
-    'dark:text-slate-500', 'dark:text-slate-600', 'dark:text-slate-700', 'dark:text-slate-800', 'dark:text-slate-900', 'dark:text-slate-950',
-    'border-slate-50', 'border-slate-100', 'border-slate-200', 'border-slate-300', 'border-slate-400',
-    'border-slate-500', 'border-slate-600', 'border-slate-700', 'border-slate-800', 'border-slate-900', 'border-slate-950',
-    'dark:border-slate-50', 'dark:border-slate-100', 'dark:border-slate-200', 'dark:border-slate-300', 'dark:border-slate-400',
-    'dark:border-slate-500', 'dark:border-slate-600', 'dark:border-slate-700', 'dark:border-slate-800', 'dark:border-slate-900', 'dark:border-slate-950',
-    'hover:bg-slate-50', 'hover:bg-slate-100', 'hover:bg-slate-200', 'hover:bg-slate-300', 'hover:bg-slate-400',
-    'hover:bg-slate-500', 'hover:bg-slate-600', 'hover:bg-slate-700', 'hover:bg-slate-800', 'hover:bg-slate-900', 'hover:bg-slate-950',
-    'dark:hover:bg-slate-50', 'dark:hover:bg-slate-100', 'dark:hover:bg-slate-200', 'dark:hover:bg-slate-300', 'dark:hover:bg-slate-400',
-    'dark:hover:bg-slate-500', 'dark:hover:bg-slate-600', 'dark:hover:bg-slate-700', 'dark:hover:bg-slate-800', 'dark:hover:bg-slate-900', 'dark:hover:bg-slate-950',
-    // Tambahan safelist untuk warna-warna kustom (disimpan untuk kompatibilitas)
-    'bg-secondary-50', 'bg-secondary-100', 'bg-secondary-200', 'bg-secondary-300', 'bg-secondary-400',
-    'bg-secondary-500', 'bg-secondary-600', 'bg-secondary-700', 'bg-secondary-800', 'bg-secondary-900', 'bg-secondary-950',
-    'dark:bg-secondary-50', 'dark:bg-secondary-100', 'dark:bg-secondary-200', 'dark:bg-secondary-300', 'dark:bg-secondary-400',
-    'dark:bg-secondary-500', 'dark:bg-secondary-600', 'dark:bg-secondary-700', 'dark:bg-secondary-800', 'dark:bg-secondary-900', 'dark:bg-secondary-950',
-    'text-secondary-50', 'text-secondary-100', 'text-secondary-200', 'text-secondary-300', 'text-secondary-400',
-    'text-secondary-500', 'text-secondary-600', 'text-secondary-700', 'text-secondary-800', 'text-secondary-900', 'text-secondary-950',
-    'dark:text-secondary-50', 'dark:text-secondary-100', 'dark:text-secondary-200', 'dark:text-secondary-300', 'dark:text-secondary-400',
-    'dark:text-secondary-500', 'dark:text-secondary-600', 'dark:text-secondary-700', 'dark:text-secondary-800', 'dark:text-secondary-900', 'dark:text-secondary-950',
-    'border-secondary-50', 'border-secondary-100', 'border-secondary-200', 'border-secondary-300', 'border-secondary-400',
-    'border-secondary-500', 'border-secondary-600', 'border-secondary-700', 'border-secondary-800', 'border-secondary-900', 'border-secondary-950',
-    'dark:border-secondary-50', 'dark:border-secondary-100', 'dark:border-secondary-200', 'dark:border-secondary-300', 'dark:border-secondary-400',
-    'dark:border-secondary-500', 'dark:border-secondary-600', 'dark:border-secondary-700', 'dark:border-secondary-800', 'dark:border-secondary-900', 'dark:border-secondary-950',
-    'hover:bg-secondary-50', 'hover:bg-secondary-100', 'hover:bg-secondary-200', 'hover:bg-secondary-300', 'hover:bg-secondary-400',
-    'hover:bg-secondary-500', 'hover:bg-secondary-600', 'hover:bg-secondary-700', 'hover:bg-secondary-800', 'hover:bg-secondary-900', 'hover:bg-secondary-950',
-    'dark:hover:bg-secondary-50', 'dark:hover:bg-secondary-100', 'dark:hover:bg-secondary-200', 'dark:hover:bg-secondary-300', 'dark:hover:bg-secondary-400',
-    'dark:hover:bg-secondary-500', 'dark:hover:bg-secondary-600', 'dark:hover:bg-secondary-700', 'dark:hover:bg-secondary-800', 'dark:hover:bg-secondary-900', 'dark:hover:bg-secondary-950',
-    'lazy',
-    'loaded',
-    'error'
+    
+    // Lazy loading classes
+    'lazy', 'loaded', 'error'
   ],
   theme: {
     extend: {
@@ -194,7 +161,7 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       transitionDuration: {
-        DEFAULT: '150ms',
+        DEFAULT: 'var(--transition-base)',
       },
       // Animasi komponen
       keyframes: {

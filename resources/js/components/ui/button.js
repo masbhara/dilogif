@@ -1,6 +1,10 @@
 import { computed, defineComponent, h } from 'vue'
 import { cn } from '@/lib/utils'
 
+/**
+ * Variasi button yang tersedia
+ * Semua variasi menggunakan CSS Variables yang sudah didefinisikan di app.css
+ */
 const buttonVariants = {
   variant: {
     default: "bg-primary text-primary-foreground hover:bg-primary/90",
@@ -18,6 +22,20 @@ const buttonVariants = {
   }
 }
 
+/**
+ * Komponen Button 
+ * 
+ * Contoh penggunaan:
+ * <Button>Default</Button>
+ * <Button variant="primary">Primary</Button>
+ * <Button variant="outline">Outline</Button>
+ * <Button variant="destructive">Destructive</Button>
+ * <Button variant="ghost">Ghost</Button>
+ * <Button variant="link">Link</Button>
+ * <Button disabled>Disabled</Button>
+ * 
+ * @component
+ */
 export const Button = defineComponent({
   name: 'Button',
   props: {

@@ -19,6 +19,12 @@
 */
 @layer base {
   :root {
+    /* Base Variables */
+    --radius: 0.5rem;
+    --transition-base: 150ms;
+    --font-family-base: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+    --border-color-base: #e2e8f0;
+    
     /* Variabel Design System */
     --primary-50: #f0f9ff;
     --primary-100: #e0f2fe;
@@ -99,6 +105,8 @@
     --sidebar-foreground: var(--slate-200);
     --sidebar-foreground-muted: var(--slate-400);
     --sidebar-hover: rgba(203, 213, 225, 0.1);
+    --sidebar-bg-hover: var(--slate-100);
+    --sidebar-dark-bg-hover: var(--slate-700);
 
     /* Variabel untuk Shadcn UI Components */
     --background: 0 0% 100%;
@@ -120,10 +128,14 @@
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 221.2 83.2% 53.3%;
-    --radius: 0.5rem;
   }
 
   .dark {
+    /* Variabel tema sidebar untuk dark mode */
+    --sidebar-bg-hover: var(--slate-700);
+    --sidebar-dark-bg-hover: rgba(203, 213, 225, 0.1);
+    
+    /* Variabel untuk Shadcn UI Components */
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
     --card: 222.2 84% 4.9%;
@@ -189,6 +201,10 @@
   
   .ring-sidebar-ring {
     --tw-ring-color: var(--sidebar-ring);
+  }
+  
+  .bg-sidebar-hover {
+    background-color: var(--sidebar-hover);
   }
 }
 
@@ -278,7 +294,7 @@ div:active {
   
   .sidebar-menu-button {
     @apply flex w-full items-center gap-2 rounded-md p-2 text-sm text-slate-700 dark:text-slate-300;
-    @apply hover:bg-gray-100 dark:hover:bg-slate-700/40 hover:text-gray-900 dark:hover:text-white;
+    @apply hover:bg-slate-100 dark:hover:bg-slate-700/40 hover:text-gray-900 dark:hover:text-white;
     @apply focus-visible:ring-2 focus-visible:ring-primary-500/50;
     @apply data-[active=true]:bg-sidebar-accent data-[active=true]:text-white data-[active=true]:font-medium;
   }
