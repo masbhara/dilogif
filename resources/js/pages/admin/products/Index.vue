@@ -70,115 +70,89 @@
                     </div>
                 </div>
             </div>
-                
-            <div class="bg-white dark:bg-slate-800 text-secondary-900 dark:text-white rounded-xl shadow border border-slate-200 dark:border-slate-700 overflow-hidden">
-                <div class="p-6 border-b border-slate-200 dark:border-slate-700">
-                    <h2 class="text-lg font-medium text-secondary-900 dark:text-white">Daftar Produk</h2>
-                    <p class="text-secondary-600 dark:text-secondary-400 mt-1">Kelola semua produk yang tersedia di situs Anda</p>
-                </div>
-                
-                <div class="overflow-x-auto">
-                    <Table>
-                        <TableHeader>
-                            <TableRow class="hover:bg-transparent border-b border-secondary-200 dark:border-slate-700">
-                                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Gambar</TableHead>
-                                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Nama</TableHead>
-                                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Kategori</TableHead>
-                                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Harga</TableHead>
-                                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">URL</TableHead>
-                                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Status</TableHead>
-                                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400 text-right">Tindakan</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            <TableRow v-for="product in products.data" :key="product.id" class="border-b border-secondary-200/60 dark:border-slate-700/60 hover:bg-secondary-100/50 dark:hover:bg-slate-900/90">
-                                <TableCell class="py-3.5 px-6 align-middle">
-                                    <img
-                                        :src="'/storage/' + product.featured_image"
-                                        :alt="product.name"
-                                        class="w-16 h-16 object-cover rounded-md"
-                                    />
-                                </TableCell>
-                                <TableCell class="py-3.5 px-6 align-middle font-medium text-secondary-900 dark:text-white">{{ product.name }}</TableCell>
-                                <TableCell class="py-3.5 px-6 align-middle">
-                                    <Badge v-if="product.category" variant="outline" class="px-2.5 py-0.5 text-xs font-medium">
-                                        {{ product.category.name }}
-                                    </Badge>
-                                    <Badge v-else variant="outline" class="px-2.5 py-0.5 text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">
-                                        Kategori tidak tersedia
-                                    </Badge>
-                                </TableCell>
-                                <TableCell class="py-3.5 px-6 align-middle">{{ formatPrice(product.price) }}</TableCell>
-                                <TableCell class="py-3.5 px-6 align-middle">
-                                    <div v-if="product.url" class="flex items-center gap-2">
-                                        <a 
-                                            :href="product.url" 
-                                            target="_blank" 
-                                            class="text-blue-600 hover:text-blue-800 underline text-xs truncate max-w-[150px]"
-                                            :title="product.url"
-                                        >
-                                            {{ product.slug }}
-                                        </a>
-                                        <button 
-                                            @click="copyToClipboard(product.url)" 
-                                            class="text-gray-500 hover:text-gray-700 focus:outline-none"
-                                            title="Salin URL"
-                                        >
-                                            <ClipboardIcon class="w-4 h-4" />
-                                        </button>
-                                    </div>
-                                    <span v-else>-</span>
-                                </TableCell>
-                                <TableCell class="py-3.5 px-6 align-middle">
-                                    <div v-if="product.is_active" 
-                                         class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-900 dark:bg-green-900 dark:text-green-300 border border-emerald-300 dark:border-green-800 w-fit">
-                                        <span class="size-2 bg-emerald-600 dark:bg-emerald-400 rounded-full"></span>
-                                        <span>Aktif</span>
-                                    </div>
-                                    <div v-else
-                                         class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-900 dark:bg-red-900 dark:text-red-300 border border-rose-300 dark:border-red-800 w-fit">
-                                        <span class="size-2 bg-rose-600 dark:bg-rose-400 rounded-full"></span>
-                                        <span>Nonaktif</span>
-                                    </div>
-                                </TableCell>
-                                <TableCell class="py-3.5 px-6 align-middle text-right">
-                                    <div class="flex justify-end">
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button variant="primary" size="icon" class="h-8 w-8 rounded-md bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white">
-                                                    <MoreHorizontal class="h-4 w-4" />
-                                                    <span class="sr-only">Menu</span>
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end" class="w-[160px]">
-                                                <DropdownMenuItem @click="viewProduct(product)" class="flex items-center gap-2 cursor-pointer py-1.5">
-                                                    <Eye class="h-4 w-4" />
-                                                    <span>Lihat</span>
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem @click="editProduct(product)" class="flex items-center gap-2 cursor-pointer py-1.5">
-                                                    <Pencil class="h-4 w-4" />
-                                                    <span>Edit</span>
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem 
-                                                    @click="showHapusDialog(product)" 
-                                                    variant="destructive" 
-                                                    class="flex items-center gap-2 cursor-pointer py-1.5">
-                                                    <Trash class="h-4 w-4" />
-                                                    <span>Hapus</span>
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-                </div>
-                
-                <div v-if="products.links && products.links.length > 0" class="py-4 px-6 flex items-center justify-between border-t border-secondary-200 dark:border-slate-700">
-                    <Pagination :links="products.links" />
-                </div>
-            </div>
+            
+            <!-- Tabel Produk dengan AdminTable -->
+            <AdminTable 
+                :columns="columns" 
+                :data="products" 
+                :loading="loading"
+                emptyMessage="Tidak ada produk ditemukan"
+            >
+                <TableRow v-for="product in products.data" :key="product.id" class="border-b border-secondary-200/60 dark:border-slate-700/60 hover:bg-secondary-100/50 dark:hover:bg-slate-900/90">
+                    <TableCell class="py-3.5 px-6 align-middle">
+                        <img
+                            :src="'/storage/' + product.featured_image"
+                            :alt="product.name"
+                            class="w-16 h-16 object-cover rounded-md"
+                        />
+                    </TableCell>
+                    <TableCell class="py-3.5 px-6 align-middle font-medium text-secondary-900 dark:text-white">{{ product.name }}</TableCell>
+                    <TableCell class="py-3.5 px-6 align-middle">
+                        <Badge v-if="product.category" variant="outline" class="px-2.5 py-0.5 text-xs font-medium">
+                            {{ product.category.name }}
+                        </Badge>
+                        <Badge v-else variant="outline" class="px-2.5 py-0.5 text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">
+                            Kategori tidak tersedia
+                        </Badge>
+                    </TableCell>
+                    <TableCell class="py-3.5 px-6 align-middle">{{ formatPrice(product.price) }}</TableCell>
+                    <TableCell class="py-3.5 px-6 align-middle">
+                        <div v-if="product.url" class="flex items-center gap-2">
+                            <a 
+                                :href="product.url" 
+                                target="_blank" 
+                                class="text-blue-600 hover:text-blue-800 underline text-xs truncate max-w-[150px]"
+                                :title="product.url"
+                            >
+                                {{ product.slug }}
+                            </a>
+                            <button 
+                                @click="copyToClipboard(product.url)" 
+                                class="text-gray-500 hover:text-gray-700 focus:outline-none"
+                                title="Salin URL"
+                            >
+                                <ClipboardIcon class="w-4 h-4" />
+                            </button>
+                        </div>
+                        <span v-else>-</span>
+                    </TableCell>
+                    <TableCell class="py-3.5 px-6 align-middle">
+                        <StatusBadge 
+                            :status="product.is_active ? '1' : '0'" 
+                            :statusMap="statusMap"
+                        />
+                    </TableCell>
+                    <TableCell class="py-3.5 px-6 align-middle text-right">
+                        <div class="flex justify-end">
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="primary" size="icon" class="h-8 w-8 rounded-md bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white">
+                                        <MoreHorizontal class="h-4 w-4" />
+                                        <span class="sr-only">Menu</span>
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" class="w-[160px]">
+                                    <DropdownMenuItem @click="viewProduct(product)" class="flex items-center gap-2 cursor-pointer py-1.5">
+                                        <Eye class="h-4 w-4" />
+                                        <span>Lihat</span>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem @click="editProduct(product)" class="flex items-center gap-2 cursor-pointer py-1.5">
+                                        <Pencil class="h-4 w-4" />
+                                        <span>Edit</span>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem 
+                                        @click="showHapusDialog(product)" 
+                                        variant="destructive" 
+                                        class="flex items-center gap-2 cursor-pointer py-1.5">
+                                        <Trash class="h-4 w-4" />
+                                        <span>Hapus</span>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
+                    </TableCell>
+                </TableRow>
+            </AdminTable>
         </div>
 
         <!-- Dialog Konfirmasi Hapus -->
@@ -202,13 +176,15 @@ import { Head, Link, router } from '@inertiajs/vue3';
 import { ref, computed, onMounted, watch, nextTick, onUnmounted } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { PlusIcon, MoreHorizontal, Eye, Pencil, Trash, Trash2, ClipboardIcon, SearchIcon, ChevronDownIcon } from 'lucide-vue-next';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { TableRow, TableCell } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import Pagination from '@/components/ui/pagination/Pagination.vue';
 import ConfirmationDialog from '@/components/ui/ConfirmationDialog.vue';
 import { toast } from 'vue-sonner';
+import AdminTable from '@/components/AdminTable.vue';
+import StatusBadge from '@/components/StatusBadge.vue';
 
 const props = defineProps({
     products: Object,
@@ -252,6 +228,23 @@ const statusOptions = [
     { value: '1', label: 'Aktif' },
     { value: '0', label: 'Nonaktif' },
 ];
+
+// Kolom tabel untuk AdminTable
+const columns = [
+    { label: 'Gambar' },
+    { label: 'Nama' },
+    { label: 'Kategori' },
+    { label: 'Harga' },
+    { label: 'URL' },
+    { label: 'Status' },
+    { label: 'Tindakan', headerClass: 'text-right' }
+];
+
+// Status map untuk StatusBadge
+const statusMap = {
+    '1': 'Aktif',
+    '0': 'Nonaktif'
+};
 
 const selectedStatusLabel = computed(() => {
     const option = statusOptions.find(option => option.value === selectedStatus.value);

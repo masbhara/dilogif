@@ -2,7 +2,7 @@
 @import "./tailwind-theme.css";
 */
 
-@import "tailwindcss";
+/* @import "tailwindcss"; - Dihapus karena menyebabkan error */
 
 /* Import Google Font Manrope */
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
@@ -27,6 +27,23 @@
   body,
   html {
     font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+  }
+  
+  /* Fix khusus untuk theme dark pada tabel */
+  .dark thead {
+    background-color: #334155 !important; /* slate-700 */
+  }
+  
+  .dark tbody, 
+  .dark tr, 
+  .dark td,
+  .dark th {
+    background-color: #1e293b !important; /* slate-800 */
+    color: #f8fafc !important; /* slate-50 */
+  }
+  
+  .dark tbody tr:hover {
+    background-color: #0f172a !important; /* slate-900 */
   }
 }
 

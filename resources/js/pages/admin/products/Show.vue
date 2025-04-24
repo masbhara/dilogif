@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, PencilLine, ShoppingBag, Tag, CircleDollarSign, Calendar, CircleCheck, CircleX, ImageIcon, X, CheckCircle, StarIcon, ExternalLink } from 'lucide-vue-next';
 import { ref, computed } from 'vue';
+import StatusBadge from '@/components/StatusBadge.vue';
 
 // Breadcrumbs untuk navigasi
 const breadcrumbs = [
@@ -27,6 +28,12 @@ const breadcrumbs = [
 const props = defineProps({
     product: Object
 });
+
+// Status map untuk StatusBadge
+const statusMap = {
+    true: 'Produk Aktif',
+    false: 'Produk Tidak Aktif'
+};
 
 // Cek apakah produk memiliki fitur dan nilai
 const hasProductFeatures = computed(() => {
@@ -178,9 +185,7 @@ const closeLightbox = () => {
                                 </div>
                                 <div class="flex-1">
                                     <p class="text-sm text-secondary-500 dark:text-secondary-400">Status</p>
-                                    <p class="font-medium text-secondary-900 dark:text-white">
-                                        {{ props.product.is_active ? 'Produk Aktif' : 'Produk Tidak Aktif' }}
-                                    </p>
+                                    <StatusBadge :status="props.product.is_active ? 'active' : 'inactive'" />
                                 </div>
                             </div>
 
