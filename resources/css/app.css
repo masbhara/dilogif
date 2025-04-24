@@ -294,7 +294,7 @@ div:active {
   
   .sidebar-menu-button {
     @apply flex w-full items-center gap-2 rounded-md p-2 text-sm text-slate-700 dark:text-slate-300;
-    @apply hover:bg-slate-100 dark:hover:bg-slate-700/40 hover:text-gray-900 dark:hover:text-white;
+    @apply hover:bg-slate-200/50 dark:hover:bg-slate-700/40 hover:text-gray-900 dark:hover:text-white;
     @apply focus-visible:ring-2 focus-visible:ring-primary-500/50;
     @apply data-[active=true]:bg-sidebar-accent data-[active=true]:text-white data-[active=true]:font-medium;
   }

@@ -22,7 +22,7 @@ const props = defineProps({
     default: 'Tidak ada data yang tersedia'
   },
   emptyIcon: {
-    type: Function,
+    type: Object,
     default: () => SearchIcon
   },
   containerClass: {
@@ -69,7 +69,7 @@ const handleRowClick = (item) => {
             <TableCell :colspan="columns.length" class="py-12 text-center">
               <div class="flex flex-col items-center justify-center gap-2">
                 <div class="bg-secondary-100 dark:bg-slate-800 rounded-full p-3">
-                  <component :is="emptyIcon" class="h-6 w-6 text-secondary-500 dark:text-secondary-400" />
+                  <SearchIcon class="h-6 w-6 text-secondary-500 dark:text-secondary-400" />
                 </div>
                 <span class="text-lg font-medium text-secondary-900 dark:text-white">{{ emptyMessage }}</span>
                 <span class="text-sm text-secondary-500 dark:text-secondary-400">Coba ubah filter atau tambahkan data baru</span>
