@@ -18,6 +18,7 @@ export interface NavItem {
     isActive?: boolean;
     requiresRole?: string;
     requiresPermission?: string;
+    description?: string;
 }
 
 export interface WebsiteSettings {
