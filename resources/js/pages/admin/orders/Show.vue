@@ -287,7 +287,9 @@ import {
   MessageCircleIcon, 
   MailIcon,
   SaveIcon,
-  ChevronDownIcon
+  ChevronDownIcon,
+  FileText,
+  Files
 } from 'lucide-vue-next';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { toast } from 'vue-sonner';

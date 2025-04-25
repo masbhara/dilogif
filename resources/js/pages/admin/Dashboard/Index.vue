@@ -205,9 +205,11 @@
             </div>
           </CardContent>
           <CardFooter>
-            <Button variant="outline" size="sm" class="w-full" as="a" :href="route('admin.orders.index')">
-              Lihat Semua Pesanan
-            </Button>
+            <Link :href="route('admin.orders.index')" class="w-full">
+              <Button variant="outline" size="sm" class="w-full">
+                Lihat Semua Pesanan
+              </Button>
+            </Link>
           </CardFooter>
         </Card>
       </div>

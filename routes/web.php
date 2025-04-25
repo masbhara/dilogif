@@ -13,6 +13,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Models\Order;
+use App\Http\Controllers\OrderDocumentController;
 
 Route::middleware(['auth'])->group(function () {
     // Dashboard Route
@@ -61,6 +62,9 @@ Route::middleware(['auth'])->group(function () {
     // User Orders
     Route::get('/orders', [OrderController::class, 'userOrders'])->name('orders.index');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::get('/orders/{order}/documents', [OrderDocumentController::class, 'index'])->name('orders.documents.index');
+    Route::get('/orders/{order}/documents/{document}', [OrderDocumentController::class, 'show'])->name('orders.documents.show');
+    Route::get('/orders/{order}/documents/{document}/download', [OrderDocumentController::class, 'download'])->name('orders.documents.download');
 });
 
 // Public Routes

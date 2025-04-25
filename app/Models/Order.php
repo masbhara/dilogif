@@ -57,6 +57,14 @@ class Order extends Model
     }
 
     /**
+     * Get the documents for the order.
+     */
+    public function documents()
+    {
+        return $this->hasMany(OrderDocument::class);
+    }
+
+    /**
      * Generate a unique order number
      */
     public static function generateOrderNumber()

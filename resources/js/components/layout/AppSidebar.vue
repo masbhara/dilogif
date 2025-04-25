@@ -78,6 +78,13 @@ const adminNavItems: NavItem[] = [
         requiresPermission: 'view orders',
     },
     {
+        title: 'Dokumen Order',
+        href: route('admin.orders.all.documents'),
+        icon: Receipt,
+        requiresRole: 'admin',
+        requiresPermission: 'view orders',
+    },
+    {
         title: 'Products',
         href: route('admin.products.index'),
         icon: Package,

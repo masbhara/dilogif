@@ -9,6 +9,8 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ExpenseCategoryController;
 use App\Http\Controllers\Admin\ExpenseController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\AdminOrderController;
+use App\Http\Controllers\Admin\OrderDocumentController;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\Product;
@@ -87,4 +89,29 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('components-example', function () {
         return inertia('admin/components-example');
     })->name('components-example');
+
+    // Orders
+    Route::middleware('permission:view orders')->group(function () {
+        Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
+        Route::get('orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
+        Route::patch('orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.status.update');
+        Route::get('orders/{order}/pdf', [AdminOrderController::class, 'exportPdf'])->name('orders.pdf');
+        Route::get('orders-statistics', [AdminOrderController::class, 'statistics'])->name('orders.statistics');
+        
+        // Route khusus untuk melihat semua dokumen dari semua order (cocok dengan URL /admin/orders/all/documents)
+        Route::get('orders/all/documents', [OrderDocumentController::class, 'allDocuments'])->name('orders.all.documents');
+        
+        // Dokumen Order
+        Route::get('orders/{order}/documents', [OrderDocumentController::class, 'index'])->name('orders.documents.index');
+        Route::get('orders/{order}/documents/create', [OrderDocumentController::class, 'create'])->name('orders.documents.create');
+        Route::post('orders/{order}/documents', [OrderDocumentController::class, 'store'])->name('orders.documents.store');
+        Route::get('orders/{order}/documents/{document}/edit', [OrderDocumentController::class, 'edit'])->name('orders.documents.edit');
+        Route::put('orders/{order}/documents/{document}', [OrderDocumentController::class, 'update'])->name('orders.documents.update');
+        Route::delete('orders/{order}/documents/{document}', [OrderDocumentController::class, 'destroy'])->name('orders.documents.destroy');
+        Route::post('orders/{order}/documents/{document}/send', [OrderDocumentController::class, 'send'])->name('orders.documents.send');
+        
+        // Route baru untuk melihat semua dokumen order
+        Route::get('order-documents', [OrderDocumentController::class, 'allDocuments'])->name('documents.all');
+        Route::get('documents/{document}/download', [OrderDocumentController::class, 'download'])->name('documents.download');
+    });
 });
