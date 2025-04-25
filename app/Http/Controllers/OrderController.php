@@ -302,4 +302,21 @@ class OrderController extends Controller
             ]
         ]);
     }
+
+    /**
+     * Display the specified order details.
+     */
+    public function show(Order $order)
+    {
+        // Pastikan user hanya bisa melihat pesanannya sendiri
+        if (auth()->id() !== $order->user_id) {
+            abort(403, 'Anda tidak memiliki akses ke pesanan ini');
+        }
+        
+        $order->load(['items.product', 'payment']);
+        
+        return Inertia::render('user/orders/Show', [
+            'order' => $order
+        ]);
+    }
 }

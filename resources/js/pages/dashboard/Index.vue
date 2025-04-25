@@ -158,9 +158,11 @@ const getStatusIcon = (status: string) => {
                             </div>
 
                             <div class="mt-6">
-                                <Button as="a" :href="route('orders.index')" class="w-full">
-                                    Lihat Semua Pesanan
-                                </Button>
+                                <Link :href="route('orders.index')" class="block w-full">
+                                    <Button variant="default" class="w-full">
+                                        Lihat Semua Pesanan
+                                    </Button>
+                                </Link>
                             </div>
                         </CardContent>
                     </Card>
@@ -198,9 +200,11 @@ const getStatusIcon = (status: string) => {
                             </div>
                         </CardContent>
                         <CardFooter>
-                            <Button variant="outline" as="a" :href="route('profile.edit')" class="w-full text-sm">
-                                Edit Profil
-                            </Button>
+                            <Link :href="route('profile.edit')" class="block w-full">
+                                <Button variant="outline" class="w-full text-sm">
+                                    Edit Profil
+                                </Button>
+                            </Link>
                         </CardFooter>
                     </Card>
                 </div>

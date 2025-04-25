@@ -64,6 +64,7 @@ Route::middleware(['auth'])->group(function () {
     
     // User Orders
     Route::get('/orders', [OrderController::class, 'userOrders'])->name('orders.index');
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
 });
 
 // Public Routes
