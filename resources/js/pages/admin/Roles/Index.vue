@@ -20,6 +20,11 @@ const loading = ref(false);
 const selectedRole = ref(null);
 const showDeleteDialog = ref(false);
 
+// Fungsi navigasi ke halaman permissions
+const navigateToPermissions = () => {
+  router.visit(route('admin.permissions.index'));
+};
+
 // Breadcrumbs untuk navigasi
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -113,12 +118,22 @@ const hapusRole = () => {
     <div class="flex h-full flex-1 flex-col gap-4 p-4 md:p-6">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 class="text-2xl font-bold">Manajemen Peran</h1>
-        <Link :href="route('admin.roles.create')" class="cursor-pointer">
-          <Button variant="action" class="flex items-center gap-1.5 w-full sm:w-auto cursor-pointer">
-            <Plus class="h-4 w-4" />
-            Tambah Peran
+        <div class="flex gap-2">
+          <Button 
+            variant="outline" 
+            @click="navigateToPermissions"
+            class="flex items-center gap-1.5 h-10"
+          >
+            <Key class="h-4 w-4 mr-1" />
+            Kelola Izin
           </Button>
-        </Link>
+          <Link :href="route('admin.roles.create')" class="cursor-pointer">
+            <Button variant="action" class="flex items-center gap-1.5 w-full sm:w-auto cursor-pointer">
+              <Plus class="h-4 w-4" />
+              Tambah Peran
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <div class="bg-white dark:bg-slate-800 text-secondary-900 dark:text-white rounded-xl shadow border border-slate-200 dark:border-slate-700 overflow-hidden">

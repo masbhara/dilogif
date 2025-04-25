@@ -71,7 +71,7 @@ const adminNavItems: NavItem[] = [
         requiresPermission: 'view orders',
     },
     {
-        title: 'Statistik Pesanan',
+        title: 'Statistics Orders',
         href: route('admin.orders.statistics'),
         icon: BarChart3,
         requiresRole: 'admin',
@@ -99,18 +99,11 @@ const adminNavItems: NavItem[] = [
         requiresPermission: 'manage_users',
     },
     {
-        title: 'Role',
+        title: 'Role & Permissions',
         href: route('admin.roles.index'),
         icon: ShieldIcon,
         requiresRole: 'admin',
         requiresPermission: 'manage_roles',
-    },
-    {
-        title: 'Permission',
-        href: route('admin.permissions.index'),
-        icon: KeyIcon,
-        requiresRole: 'admin',
-        requiresPermission: 'manage_permissions',
     },
     {
         title: 'Settings',

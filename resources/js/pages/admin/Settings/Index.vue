@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -227,6 +227,11 @@ const uploadOgImage = () => {
     },
   });
 };
+
+// Fungsi navigasi ke halaman email settings
+const navigateToEmailSettings = () => {
+  router.visit(route('admin.email.index'));
+};
 </script>
 
 <template>
@@ -237,13 +242,14 @@ const uploadOgImage = () => {
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 class="text-2xl font-bold text-secondary-900 dark:text-white">Pengaturan Website</h1>
         <div class="flex gap-2">
-          <Link 
-            :href="route('admin.email.index')" 
-            class="inline-flex items-center justify-center rounded-md text-sm font-medium h-10 px-4 py-2 bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-50 dark:hover:bg-slate-700"
+          <Button 
+            variant="outline" 
+            @click="navigateToEmailSettings"
+            class="flex items-center gap-1.5 h-10"
           >
-            <MailIcon class="mr-2 h-4 w-4" />
+            <MailIcon class="h-4 w-4 mr-1" />
             Email Settings
-          </Link>
+          </Button>
         </div>
       </div>
 

@@ -7,13 +7,14 @@
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <h1 class="text-2xl font-bold text-secondary-900 dark:text-white">Produk</h1>
                 <div class="flex gap-2">
-                    <Link 
-                        :href="route('admin.categories.index')" 
-                        class="inline-flex items-center justify-center rounded-md text-sm font-medium h-10 px-4 py-2 bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-50 dark:hover:bg-slate-700"
+                    <Button 
+                        variant="outline" 
+                        @click="navigateToCategories"
+                        class="flex items-center gap-1.5 h-10"
                     >
-                        <TagIcon class="mr-2 h-4 w-4" />
+                        <TagIcon class="h-4 w-4 mr-1" />
                         Kategori
-                    </Link>
+                    </Button>
                     <Link :href="route('admin.products.create')" class="cursor-pointer">
                         <Button 
                             variant="action" 
@@ -208,6 +209,11 @@ const props = defineProps({
     },
     categories: Array
 });
+
+// Fungsi navigasi ke halaman categories
+const navigateToCategories = () => {
+  router.visit(route('admin.categories.index'));
+};
 
 const breadcrumbs = [
     {

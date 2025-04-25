@@ -7,13 +7,14 @@
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 class="text-2xl font-bold text-secondary-900 dark:text-white">Daftar Pengeluaran</h1>
         <div class="flex gap-2">
-          <Link 
-            :href="route('admin.expense-categories.index')" 
-            class="inline-flex items-center justify-center rounded-md text-sm font-medium h-10 px-4 py-2 bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-50 dark:hover:bg-slate-700"
+          <Button 
+            variant="outline" 
+            @click="navigateToCategories"
+            class="flex items-center gap-1.5 h-10"
           >
-            <Receipt class="mr-2 h-4 w-4" />
-            Kategori
-          </Link>
+          <TagIcon class="h-4 w-4 mr-1" />
+          Kategori
+          </Button>
           <Link 
             :href="route('admin.expenses.create')" 
             class="inline-flex items-center justify-center rounded-md text-sm font-medium h-10 px-4 py-2 bg-primary-600 text-white shadow-sm hover:bg-primary-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
@@ -220,7 +221,7 @@ import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { SearchIcon, Edit, Eye, PlusIcon, Trash, Trash2, Receipt, ChevronDownIcon, MoreHorizontal, Pencil } from 'lucide-vue-next';
+import { SearchIcon, Edit, Eye, PlusIcon, Trash, Trash2, Receipt, ChevronDownIcon, MoreHorizontal, Pencil, TagIcon } from 'lucide-vue-next';
 import { TableRow, TableCell } from '@/components/ui/table';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import AdminTable from '@/components/AdminTable.vue';
@@ -438,6 +439,11 @@ const viewExpense = (expense: Expense) => {
 // Fungsi untuk mengedit pengeluaran
 const editExpense = (expense: Expense) => {
   router.visit(route('admin.expenses.edit', expense.id));
+};
+
+// Fungsi navigasi ke halaman kategori pengeluaran
+const navigateToCategories = () => {
+  router.visit(route('admin.expense-categories.index'));
 };
 </script>
 
