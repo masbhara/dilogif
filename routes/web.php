@@ -12,38 +12,34 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Models\Order;
 
 Route::middleware(['auth'])->group(function () {
     // Dashboard Route
     Route::get('/dashboard', function () {
         $user = auth()->user();
-        $recentOrders = App\Models\Order::where('user_id', auth()->id())
-                        ->latest()
-                        ->take(5)
-                        ->get();
-                        
-        // Order summary counts
+        
+        // Mengambil pesanan terbaru
+        $recentOrders = Order::where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+        
+        // Ringkasan pesanan berdasarkan status
         $orderSummary = [
-            'pending' => App\Models\Order::where('user_id', auth()->id())
-                        ->where('status', App\Models\Order::STATUS_PENDING)
-                        ->count(),
-            'processing' => App\Models\Order::where('user_id', auth()->id())
-                        ->where('status', App\Models\Order::STATUS_PROCESSING)
-                        ->count(),
-            'shipping' => App\Models\Order::where('user_id', auth()->id())
-                        ->where('status', 'shipping')
-                        ->count(),
-            'completed' => App\Models\Order::where('user_id', auth()->id())
-                        ->where('status', App\Models\Order::STATUS_COMPLETED)
-                        ->count(),
+            'pending' => Order::where('user_id', $user->id)->where('status', 'pending')->count(),
+            'processing' => Order::where('user_id', $user->id)->where('status', 'processing')->count(),
+            'review' => Order::where('user_id', $user->id)->where('status', 'review')->count(),
+            'completed' => Order::where('user_id', $user->id)->where('status', 'completed')->count(),
+            'cancelled' => Order::where('user_id', $user->id)->where('status', 'cancelled')->count(),
         ];
         
         return Inertia::render('dashboard/Index', [
-            'user' => $user,
             'recentOrders' => $recentOrders,
-            'orderSummary' => $orderSummary
+            'orderSummary' => $orderSummary,
+            'user' => $user,
         ]);
-    })->name('dashboard');
+    })->middleware(['auth', 'verified'])->name('dashboard');
     
     // Dashboard Routes
     Route::prefix('dashboard')->name('dashboard.')->group(function () {
