@@ -33,6 +33,8 @@ class OrderDocument extends Model
         'expires_at',
         'is_sent',
         'sent_at',
+        'is_read',
+        'read_at',
     ];
 
     /**
@@ -44,6 +46,8 @@ class OrderDocument extends Model
         'expires_at' => 'datetime',
         'sent_at' => 'datetime',
         'is_sent' => 'boolean',
+        'is_read' => 'boolean',
+        'read_at' => 'datetime',
     ];
 
     /**
@@ -142,5 +146,28 @@ class OrderDocument extends Model
         }
         
         return Storage::size($this->file_path);
+    }
+
+    /**
+     * Mark document as read
+     */
+    public function markAsRead(): bool
+    {
+        return $this->update([
+            'is_read' => true,
+            'read_at' => now(),
+        ]);
+    }
+
+    /**
+     * Get document read status text
+     */
+    public function getReadStatusAttribute(): string
+    {
+        if ($this->is_read) {
+            return 'Telah dibaca pada ' . $this->read_at->format('d M Y H:i');
+        }
+        
+        return 'Belum dibaca';
     }
 } 

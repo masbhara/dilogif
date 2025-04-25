@@ -65,6 +65,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/orders/{order}/documents', [OrderDocumentController::class, 'index'])->name('orders.documents.index');
     Route::get('/orders/{order}/documents/{document}', [OrderDocumentController::class, 'show'])->name('orders.documents.show');
     Route::get('/orders/{order}/documents/{document}/download', [OrderDocumentController::class, 'download'])->name('orders.documents.download');
+    Route::post('/orders/{order}/documents/{document}/mark-as-read', [OrderDocumentController::class, 'markAsRead'])->name('orders.documents.mark-as-read');
+    Route::get('/my-documents', [OrderDocumentController::class, 'allDocuments'])->name('my-documents');
 });
 
 // Public Routes

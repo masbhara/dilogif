@@ -173,32 +173,62 @@
             <div class="grid grid-cols-4 items-center gap-4">
               <Label for="order" class="text-right">Order Terkait</Label>
               <div class="col-span-3">
-                <Select v-model="createForm.order_id">
-                  <SelectTrigger class="w-full">
-                    <SelectValue placeholder="Pilih order" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem v-for="order in availableOrders" :key="order.id" :value="order.id">
+                <div class="relative custom-select-container order-select-container" :class="{ 'active': isOrderSelectOpen }">
+                  <div 
+                    @click="toggleOrderSelect" 
+                    class="custom-select-trigger flex w-full items-center justify-between gap-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm shadow-sm hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer h-9"
+                  >
+                    <span v-if="createForm.order_id">
+                      {{ getOrderLabel(createForm.order_id) }}
+                    </span>
+                    <span v-else class="text-slate-400">Pilih order</span>
+                    <ChevronDown class="h-4 w-4 opacity-50 transition-transform" :class="{ 'rotate-180': isOrderSelectOpen }" />
+                  </div>
+                  
+                  <div 
+                    v-if="isOrderSelectOpen" 
+                    class="custom-select-dropdown bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-lg mt-1 overflow-hidden max-h-[200px] overflow-y-auto"
+                  >
+                    <div 
+                      v-for="order in availableOrders" 
+                      :key="order.id"
+                      @click="selectOrder(order.id)"
+                      class="custom-select-option py-2 px-3 text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm"
+                      :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': createForm.order_id === String(order.id) }"
+                    >
                       {{ order.order_number }} - {{ order.customer_name }}
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="grid grid-cols-4 items-center gap-4">
               <Label for="type" class="text-right">Tipe Dokumen</Label>
               <div class="col-span-3">
-                <Select v-model="createForm.type">
-                  <SelectTrigger class="w-full">
-                    <SelectValue placeholder="Pilih tipe dokumen" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="credential">Kredensial Login</SelectItem>
-                    <SelectItem value="domain">Informasi Domain</SelectItem>
-                    <SelectItem value="update">Pembaruan</SelectItem>
-                    <SelectItem value="download">File Unduhan</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div class="relative custom-select-container type-select-container" :class="{ 'active': isTypeSelectOpen }">
+                  <div 
+                    @click="toggleTypeSelect" 
+                    class="custom-select-trigger flex w-full items-center justify-between gap-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm shadow-sm hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer h-9"
+                  >
+                    <span>{{ getDocumentType(createForm.type) }}</span>
+                    <ChevronDown class="h-4 w-4 opacity-50 transition-transform" :class="{ 'rotate-180': isTypeSelectOpen }" />
+                  </div>
+                  
+                  <div 
+                    v-if="isTypeSelectOpen" 
+                    class="custom-select-dropdown bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-lg mt-1 overflow-hidden"
+                  >
+                    <div 
+                      v-for="(label, type) in documentTypes" 
+                      :key="type"
+                      @click="selectType(type)"
+                      class="custom-select-option py-2 px-3 text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm"
+                      :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': createForm.type === type }"
+                    >
+                      {{ label }}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="grid grid-cols-4 items-center gap-4">
@@ -606,31 +636,99 @@ const getDocumentIcon = (type: string) => {
     }
 };
 
+// State untuk dropdown tipe dokumen dan order
+const isOrderSelectOpen = ref(false);
+const isTypeSelectOpen = ref(false);
+const orderSelectRef = ref<HTMLElement | null>(null);
+const typeSelectRef = ref<HTMLElement | null>(null);
+
+// Toggle dropdown order
+const toggleOrderSelect = () => {
+  isOrderSelectOpen.value = !isOrderSelectOpen.value;
+  
+  // Tutup dropdown lain jika terbuka
+  if (isOrderSelectOpen.value) {
+    isTypeSelectOpen.value = false;
+    isPerPageSelectOpen.value = false;
+  }
+};
+
+// Handle order selection
+const selectOrder = (id: number) => {
+  createForm.value.order_id = String(id);
+  isOrderSelectOpen.value = false;
+};
+
+// Toggle dropdown tipe dokumen
+const toggleTypeSelect = () => {
+  isTypeSelectOpen.value = !isTypeSelectOpen.value;
+  
+  // Tutup dropdown lain jika terbuka
+  if (isTypeSelectOpen.value) {
+    isOrderSelectOpen.value = false;
+    isPerPageSelectOpen.value = false;
+  }
+};
+
+// Handle tipe dokumen selection
+const selectType = (type: string) => {
+  createForm.value.type = type;
+  isTypeSelectOpen.value = false;
+};
+
+// Get order label dari id
+const getOrderLabel = (id: number | string) => {
+  const orderId = typeof id === 'string' ? parseInt(id) : id;
+  const order = availableOrders.value.find(o => o.id === orderId);
+  return order ? `${order.order_number} - ${order.customer_name}` : 'Pilih order';
+};
+
+// Handle click outside for type dan order dropdown
+const handleTypeClickOutside = (evt: MouseEvent) => {
+  const target = evt.target as Node;
+  if (typeSelectRef.value && !typeSelectRef.value.contains(target)) {
+    isTypeSelectOpen.value = false;
+  }
+};
+
+const handleOrderClickOutside = (evt: MouseEvent) => {
+  const target = evt.target as Node;
+  if (orderSelectRef.value && !orderSelectRef.value.contains(target)) {
+    isOrderSelectOpen.value = false;
+  }
+};
+
 // Ambil daftar order yang tersedia untuk dropdown
 onMounted(() => {
-    // Set up click outside listeners
-    document.addEventListener('click', handlePerPageClickOutside);
-    
-    nextTick(() => {
-        perPageSelectRef.value = document.querySelector('.perpage-select-container');
-    });
+  // Set up click outside listeners
+  document.addEventListener('click', handlePerPageClickOutside);
+  document.addEventListener('click', handleTypeClickOutside);
+  document.addEventListener('click', handleOrderClickOutside);
   
-    if (!props.available_orders || props.available_orders.length === 0) {
-        router.get(route('admin.orders.index'), {
-            only: ['available_orders']
-        }, {
-            preserveState: true,
-            onSuccess: (page: any) => {
-                if (page.props.available_orders) {
-                    availableOrders.value = page.props.available_orders;
-                }
+  nextTick(() => {
+    perPageSelectRef.value = document.querySelector('.perpage-select-container');
+    typeSelectRef.value = document.querySelector('.type-select-container');
+    orderSelectRef.value = document.querySelector('.order-select-container');
+  });
+  
+  if (!props.available_orders || props.available_orders.length === 0) {
+    router.get(route('admin.orders.index'), {
+        only: ['available_orders']
+    }, {
+        preserveState: true,
+        onSuccess: (page: any) => {
+            if (page.props.available_orders) {
+                availableOrders.value = page.props.available_orders;
             }
-        });
-    }
+        }
+    });
+  }
 });
 
 onUnmounted(() => {
-    document.removeEventListener('click', handlePerPageClickOutside);
+  document.removeEventListener('click', handlePerPageClickOutside);
+  document.removeEventListener('click', handleTypeClickOutside);
+  document.removeEventListener('click', handleOrderClickOutside);
 });
 
 // Kirim dokumen

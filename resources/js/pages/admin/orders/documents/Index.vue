@@ -39,7 +39,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Pelanggan</p>
-                <p class="text-base font-medium">{{ order.user_id ? order.user.name : order.customer_name }}</p>
+                <p class="text-base font-medium">{{ order.user_id && order.user ? order.user.name : order.customer_name }}</p>
                 <p class="text-sm text-slate-500 dark:text-slate-400">{{ order.customer_email }}</p>
                 <p class="text-sm text-slate-500 dark:text-slate-400">{{ order.customer_phone }}</p>
               </div>
@@ -170,7 +170,7 @@ import {
   File, Edit, Trash, Download, Send, 
   Plus, CheckCircle, XCircle 
 } from 'lucide-vue-next';
-import { useToast } from '@/components/ui/toast/use-toast';
+import { useToast } from '@/composables/useToast';
 
 // Props yang diterima dari controller
 const props = defineProps({

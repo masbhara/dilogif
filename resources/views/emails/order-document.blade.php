@@ -131,6 +131,10 @@
         </div>
         
         <div class="footer">
+            <p>
+                <a href="{{ $documentUrl }}" style="color: #4361ee; text-decoration: underline;">Lihat Dokumen</a> | 
+                <a href="{{ $allDocumentsUrl }}" style="color: #4361ee; text-decoration: underline;">Semua Dokumen Saya</a>
+            </p>
             <p>&copy; {{ date('Y') }} {{ config('app.name') }}. Seluruh hak cipta dilindungi.</p>
             <p>Email ini dikirim secara otomatis, mohon jangan membalas email ini.</p>
         </div>

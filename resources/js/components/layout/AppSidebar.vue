@@ -52,6 +52,11 @@ const mainNavItems: NavItem[] = [
         title: 'Pesanan Saya',
         href: route('orders.index'),
         icon: ShoppingBag,
+    },
+    {
+        title: 'Dokumen Saya',
+        href: route('my-documents'),
+        icon: Receipt,
     }
 ];
 

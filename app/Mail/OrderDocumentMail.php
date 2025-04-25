@@ -48,6 +48,10 @@ class OrderDocumentMail extends Mailable
     {
         return new Content(
             view: 'emails.order-document',
+            with: [
+                'documentUrl' => route('orders.documents.show', [$this->document->order_id, $this->document->id]),
+                'allDocumentsUrl' => route('my-documents'),
+            ]
         );
     }
 
