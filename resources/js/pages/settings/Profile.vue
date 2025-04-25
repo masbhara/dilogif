@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
-import { ref, computed, onBeforeUnmount } from 'vue';
+import { ref, computed, onBeforeUnmount, watch } from 'vue';
 
 import DeleteUser from '@/components/DeleteUser.vue';
 import InputError from '@/components/InputError.vue';
@@ -14,16 +14,23 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import AppLayout from '@/layouts/AppLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { type BreadcrumbItem, type SharedData, type User } from '@/types';
-import { Upload, User as UserIcon, Trash2, AlertCircle, Mail, Save } from 'lucide-vue-next';
+import { Upload, User as UserIcon, Trash2, AlertCircle, Mail, Save, Phone } from 'lucide-vue-next';
 import { useInitials } from '@/composables/useInitials';
 import { getAvatarUrl, validateAvatarFile, createAvatarPreview } from '@/utils/avatarUtils';
 
 interface Props {
     mustVerifyEmail: boolean;
     status?: string;
+    userData: {
+        id: number;
+        name: string;
+        email: string;
+        whatsapp: string;
+        profile_photo_path: string | null;
+    };
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -40,6 +47,10 @@ const page = usePage<SharedData>();
 const user = page.props.auth.user as User;
 const { getInitials } = useInitials();
 const errorMessage = ref<string | null>(null);
+
+// Debug output user info
+console.log('User data from server:', user);
+console.log('User data from props:', props.userData);
 
 // Avatar preview URL dan cleanup function
 const avatarPreview = ref<string | null>(getAvatarUrl(user.profile_photo_path || null));
@@ -58,11 +69,19 @@ const userInitials = computed(() => getInitials(user.name));
 
 // Form untuk update profile
 const form = useForm({
-    name: user.name,
-    email: user.email,
+    name: props.userData.name,
+    email: props.userData.email,
+    whatsapp: props.userData.whatsapp || '',
     avatar: null as File | null,
     _method: 'PATCH',
 });
+
+// Tambahkan watch untuk memastikan form.whatsapp diupdate jika user.whatsapp berubah
+watch(() => user.whatsapp, (newValue) => {
+    if (newValue && !form.whatsapp) {
+        form.whatsapp = newValue;
+    }
+}, { immediate: true });
 
 // Fungsi untuk menangani file upload avatar
 const handleAvatarChange = (e: Event) => {
@@ -220,6 +239,22 @@ const submit = () => {
                                     />
                                 </div>
                                 <InputError :message="form.errors.email" />
+                            </div>
+                            
+                            <div class="grid gap-2 md:col-span-2">
+                                <Label for="whatsapp">Nomor WhatsApp</Label>
+                                <div class="relative">
+                                    <Phone class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                    <Input
+                                        id="whatsapp"
+                                        type="text"
+                                        class="pl-10"
+                                        v-model="form.whatsapp"
+                                        required
+                                        placeholder="08xxxxxxxxxx"
+                                    />
+                                </div>
+                                <InputError :message="form.errors.whatsapp" />
                             </div>
                         </div>
 
