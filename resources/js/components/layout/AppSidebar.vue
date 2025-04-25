@@ -134,10 +134,10 @@ const filteredAdminNavItems = computed(() => filterNavItems(adminNavItems));
         </SidebarHeader>
 
         <SidebarContent>
-            <NavMain :items="filteredMainNavItems" />
-            
-            <!-- Menu administrasi -->
-            <NavMain v-if="filteredAdminNavItems.length > 0" :items="filteredAdminNavItems" />
+            <!-- Menu Utama User-->
+            <NavMain :items="filteredMainNavItems" label="Navigasi User" />
+            <!-- Menu admin -->
+            <NavMain v-if="filteredAdminNavItems.length > 0" :items="filteredAdminNavItems" label="Admin Panel" />
         </SidebarContent>
 
         <SidebarFooter>

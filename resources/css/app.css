@@ -186,6 +186,23 @@
     @apply bg-slate-900 !important;
   }
 
+  /* Fix khusus untuk sidebar dan content */
+  [data-slot="sidebar-inset"] {
+    @apply bg-white dark:bg-slate-800 !important;
+  }
+  
+  .dark [data-slot="sidebar-inset"] {
+    @apply bg-slate-800 !important;
+  }
+  
+  main, .main-content, [data-slot="main"] {
+    @apply bg-white dark:bg-slate-800 !important;
+  }
+  
+  .dark main, .dark .main-content, .dark [data-slot="main"] {
+    @apply bg-slate-800 !important;
+  }
+
   /* Definisi warna sidebar */
   .bg-sidebar-accent {
     background-color: var(--sidebar-accent);
