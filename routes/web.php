@@ -16,7 +16,33 @@ use App\Http\Controllers\Admin\CategoryController;
 Route::middleware(['auth'])->group(function () {
     // Dashboard Route
     Route::get('/dashboard', function () {
-        return Inertia::render('dashboard/Index');
+        $user = auth()->user();
+        $recentOrders = App\Models\Order::where('user_id', auth()->id())
+                        ->latest()
+                        ->take(5)
+                        ->get();
+                        
+        // Order summary counts
+        $orderSummary = [
+            'pending' => App\Models\Order::where('user_id', auth()->id())
+                        ->where('status', App\Models\Order::STATUS_PENDING)
+                        ->count(),
+            'processing' => App\Models\Order::where('user_id', auth()->id())
+                        ->where('status', App\Models\Order::STATUS_PROCESSING)
+                        ->count(),
+            'shipping' => App\Models\Order::where('user_id', auth()->id())
+                        ->where('status', 'shipping')
+                        ->count(),
+            'completed' => App\Models\Order::where('user_id', auth()->id())
+                        ->where('status', App\Models\Order::STATUS_COMPLETED)
+                        ->count(),
+        ];
+        
+        return Inertia::render('dashboard/Index', [
+            'user' => $user,
+            'recentOrders' => $recentOrders,
+            'orderSummary' => $orderSummary
+        ]);
     })->name('dashboard');
     
     // Dashboard Routes

@@ -51,16 +51,71 @@
                 
                 <!-- Customer Email -->
                 <div class="mb-4">
-                  <label for="customer_email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <label for="customer_email" class="block text-sm font-medium text-gray-700 mb-1">Email <span class="text-red-500">*</span></label>
                   <input 
                     id="customer_email"
                     v-model="form.customer_email" 
                     type="email" 
                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    placeholder="Contoh: nama@email.com (opsional)"
+                    placeholder="Contoh: nama@email.com"
+                    required
                   />
                   <div v-if="errors.customer_email" class="mt-1 text-sm text-red-600">
                     {{ errors.customer_email }}
+                  </div>
+                </div>
+                
+                <!-- Password -->
+                <div class="mb-4">
+                  <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password <span class="text-red-500">*</span></label>
+                  <div class="relative">
+                    <input 
+                      id="password"
+                      v-model="form.password" 
+                      :type="showPassword ? 'text' : 'password'" 
+                      class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      placeholder="Buat password untuk akun Anda"
+                      required
+                      minlength="8"
+                    />
+                    <button 
+                      type="button" 
+                      @click="showPassword = !showPassword" 
+                      class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 focus:outline-none"
+                    >
+                      <EyeIcon v-if="showPassword" class="h-5 w-5" />
+                      <EyeOffIcon v-else class="h-5 w-5" />
+                    </button>
+                  </div>
+                  <p class="mt-1 text-xs text-gray-500">Password akan digunakan untuk masuk ke dashboard member</p>
+                  <div v-if="errors.password" class="mt-1 text-sm text-red-600">
+                    {{ errors.password }}
+                  </div>
+                </div>
+
+                <!-- Password Confirmation -->
+                <div class="mb-6">
+                  <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1">Konfirmasi Password <span class="text-red-500">*</span></label>
+                  <div class="relative">
+                    <input 
+                      id="password_confirmation"
+                      v-model="form.password_confirmation" 
+                      :type="showPasswordConfirmation ? 'text' : 'password'" 
+                      class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      placeholder="Ulangi password Anda"
+                      required
+                    />
+                    <button 
+                      type="button" 
+                      @click="showPasswordConfirmation = !showPasswordConfirmation" 
+                      class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 focus:outline-none"
+                    >
+                      <EyeIcon v-if="showPasswordConfirmation" class="h-5 w-5" />
+                      <EyeOffIcon v-else class="h-5 w-5" />
+                    </button>
+                  </div>
+                  <div v-if="errors.password_confirmation" class="mt-1 text-sm text-red-600">
+                    {{ errors.password_confirmation }}
                   </div>
                 </div>
                 
@@ -175,7 +230,7 @@ import { Button } from '@/components/ui/button';
 import Breadcrumb from '@/components/ui/breadcrumb.vue';
 import MainLayout from '@/components/layout/MainLayout.vue';
 import { computed, ref } from 'vue';
-import { ArrowLeftIcon } from 'lucide-vue-next';
+import { ArrowLeftIcon, EyeIcon, EyeOffIcon } from 'lucide-vue-next';
 import { toast } from 'vue-sonner';
 
 const props = defineProps({
@@ -186,10 +241,14 @@ const props = defineProps({
 
 // State
 const isSubmitting = ref(false);
+const showPassword = ref(false);
+const showPasswordConfirmation = ref(false);
 const form = ref({
   customer_name: '',
   customer_phone: '',
   customer_email: '',
+  password: '',
+  password_confirmation: '',
   notes: ''
 });
 
@@ -212,16 +271,26 @@ const formatPrice = (price) => {
 const submitOrder = () => {
   if (isSubmitting.value) return;
   
+  console.log('Form submission started');
+  console.log('Form data:', form.value);
+  
+  if (form.value.password !== form.value.password_confirmation) {
+    toast.error('Password dan konfirmasi password tidak cocok');
+    return;
+  }
+  
   isSubmitting.value = true;
   
   router.post(route('orders.store'), form.value, {
-    onSuccess: () => {
-      // Success will redirect to thank you page
+    onSuccess: (page) => {
+      console.log('Order success, redirecting to:', page.url);
     },
     onError: (errors) => {
+      console.error('Order failed with errors:', errors);
       toast.error('Harap periksa formulir Anda untuk kesalahan');
     },
     onFinish: () => {
+      console.log('Form submission finished');
       isSubmitting.value = false;
     }
   });
