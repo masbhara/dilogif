@@ -8,72 +8,21 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ExpenseCategoryController;
 use App\Http\Controllers\Admin\ExpenseController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Models\User;
+use App\Models\Order;
+use App\Models\Product;
+use App\Models\Expense;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     // Dashboard Admin
-    Route::get('/', function () {
-        // Mengambil data real untuk dashboard
-        $userCount = User::count();
-        $roleCount = Role::count();
-        $permissionCount = Permission::count();
-        $recentUsers = User::latest()->take(5)->get();
-        
-        // Data aktivitas (dalam contoh ini masih dummy, 
-        // bisa diganti dengan model Activity jika ada)
-        $activities = [
-            [
-                'user' => 'Admin',
-                'action' => 'menyetujui pendaftaran pengguna baru',
-                'time' => '5 menit yang lalu'
-            ],
-            [
-                'user' => 'Admin',
-                'action' => 'menambahkan izin baru',
-                'time' => '2 jam yang lalu'
-            ],
-            // Data aktivitas lainnya...
-        ];
-        
-        return inertia('admin/dashboard/Index', [
-            'stats' => [
-                [
-                    'title' => 'Total Pengguna',
-                    'value' => $userCount,
-                    'icon' => 'Users',
-                    'change' => '+12%',
-                    'trend' => 'up',
-                ],
-                [
-                    'title' => 'Peran',
-                    'value' => $roleCount,
-                    'icon' => 'Shield',
-                    'change' => '0%',
-                    'trend' => 'neutral',
-                ],
-                [
-                    'title' => 'Izin',
-                    'value' => $permissionCount,
-                    'icon' => 'Key',
-                    'change' => '+5',
-                    'trend' => 'up',
-                ],
-                [
-                    'title' => 'Login Minggu Ini',
-                    'value' => '38',
-                    'icon' => 'BarChart3',
-                    'change' => '+24%',
-                    'trend' => 'up',
-                ]
-            ],
-            'activities' => $activities,
-            'title' => 'Dashboard Admin'
-        ]);
-    })->name('dashboard')->middleware('permission:access_admin_dashboard');
-
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard')->middleware('permission:access_admin_dashboard');
+    Route::get('/dashboard/data', [DashboardController::class, 'getData'])->name('dashboard.data')->middleware('permission:access_admin_dashboard');
+    
     // Manajemen User
     Route::middleware('permission:manage_users')->group(function () {
         Route::resource('users', UserController::class);

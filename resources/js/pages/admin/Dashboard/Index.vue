@@ -117,13 +117,13 @@
             <CardDescription>Distribusi order berdasarkan status</CardDescription>
           </CardHeader>
           <CardContent>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
               <div class="flex flex-col items-center justify-center p-4 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
                 <div class="bg-warning-100 dark:bg-warning-900/30 p-2 rounded-full mb-2">
                   <ClockIcon class="h-4 w-4 text-warning-500 dark:text-warning-400" />
                 </div>
                 <span class="text-sm text-slate-500 dark:text-slate-400">Pending</span>
-                <span class="text-2xl font-bold text-slate-900 dark:text-slate-50">{{ pendingOrders || '-' }}</span>
+                <span class="text-2xl font-bold text-slate-900 dark:text-slate-50">{{ pendingOrders || 0 }}</span>
               </div>
 
               <div class="flex flex-col items-center justify-center p-4 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
@@ -131,15 +131,15 @@
                   <TimerIcon class="h-4 w-4 text-primary-500 dark:text-primary-400" />
                 </div>
                 <span class="text-sm text-slate-500 dark:text-slate-400">Diproses</span>
-                <span class="text-2xl font-bold text-slate-900 dark:text-slate-50">{{ processingOrders || '-' }}</span>
+                <span class="text-2xl font-bold text-slate-900 dark:text-slate-50">{{ processingOrders || 0 }}</span>
               </div>
 
               <div class="flex flex-col items-center justify-center p-4 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
                 <div class="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-full mb-2">
-                  <TruckIcon class="h-4 w-4 text-blue-500 dark:text-blue-400" />
+                  <EyeIcon class="h-4 w-4 text-blue-500 dark:text-blue-400" />
                 </div>
-                <span class="text-sm text-slate-500 dark:text-slate-400">Dikirim</span>
-                <span class="text-2xl font-bold text-slate-900 dark:text-slate-50">{{ shippingOrders || '-' }}</span>
+                <span class="text-sm text-slate-500 dark:text-slate-400">Review</span>
+                <span class="text-2xl font-bold text-slate-900 dark:text-slate-50">{{ reviewOrders || 0 }}</span>
               </div>
 
               <div class="flex flex-col items-center justify-center p-4 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
@@ -147,7 +147,15 @@
                   <CheckCircleIcon class="h-4 w-4 text-success-500 dark:text-success-400" />
                 </div>
                 <span class="text-sm text-slate-500 dark:text-slate-400">Selesai</span>
-                <span class="text-2xl font-bold text-slate-900 dark:text-slate-50">{{ completedOrders || '-' }}</span>
+                <span class="text-2xl font-bold text-slate-900 dark:text-slate-50">{{ completedOrders || 0 }}</span>
+              </div>
+
+              <div class="flex flex-col items-center justify-center p-4 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 md:col-span-4 lg:col-span-2 xl:col-span-1">
+                <div class="bg-danger-100 dark:bg-danger-900/30 p-2 rounded-full mb-2">
+                  <XCircleIcon class="h-4 w-4 text-danger-500 dark:text-danger-400" />
+                </div>
+                <span class="text-sm text-slate-500 dark:text-slate-400">Dibatalkan</span>
+                <span class="text-2xl font-bold text-slate-900 dark:text-slate-50">{{ cancelledOrders || 0 }}</span>
               </div>
             </div>
 
@@ -278,9 +286,11 @@ import { Button } from '@/components/ui/button';
 import { 
   BarChart3, Users as UsersIcon, ShoppingBag, Wallet, CreditCard, TrendingUp, TrendingDown,
   Clock as ClockIcon, Timer as TimerIcon, Truck as TruckIcon, CheckCircle as CheckCircleIcon,
-  Package, User as UserIcon, Settings
+  Package, User as UserIcon, Settings, Eye as EyeIcon, XCircle as XCircleIcon
 } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted } from 'vue';
+import { usePage } from '@inertiajs/vue3';
+import axios from 'axios';
 
 // Definisikan tipe data
 interface ActivityItem {
@@ -325,24 +335,70 @@ interface DashboardProps {
   expensesTrend?: number | null;
   pendingOrders?: number | null;
   processingOrders?: number | null;
+  reviewOrders?: number | null;
   shippingOrders?: number | null;
   completedOrders?: number | null;
+  cancelledOrders?: number | null;
   chartData?: ChartItem[] | null;
   recentOrders?: OrderItem[] | null;
   topProducts?: ProductItem[] | null;
   activities?: ActivityItem[] | null;
 }
 
-// Definisikan props dengan tipe
+// Data dashboard
+const dashboardData = ref({
+  usersCount: 0,
+  usersTrend: 0,
+  ordersCount: 0,
+  ordersTrend: 0,
+  totalIncome: 0,
+  incomeTrend: 0,
+  totalExpenses: 0,
+  expensesTrend: 0,
+  pendingOrders: 0,
+  processingOrders: 0,
+  reviewOrders: 0,
+  completedOrders: 0,
+  cancelledOrders: 0,
+  chartData: [],
+  recentOrders: [],
+  topProducts: [],
+  activities: []
+});
+
+// Mengambil data dari props jika tersedia
 const props = defineProps<DashboardProps>();
 
-// Ekstrak properties untuk mempermudah akses
-const { 
-  usersCount, usersTrend, ordersCount, ordersTrend, 
-  totalIncome, incomeTrend, totalExpenses, expensesTrend,
-  pendingOrders, processingOrders, shippingOrders, completedOrders,
-  chartData, recentOrders, topProducts, activities 
-} = props;
+// Ekstrak properties untuk access
+const usersCount = computed(() => props.usersCount || dashboardData.value.usersCount);
+const usersTrend = computed(() => props.usersTrend || dashboardData.value.usersTrend);
+const ordersCount = computed(() => props.ordersCount || dashboardData.value.ordersCount);
+const ordersTrend = computed(() => props.ordersTrend || dashboardData.value.ordersTrend);
+const totalIncome = computed(() => props.totalIncome || dashboardData.value.totalIncome);
+const incomeTrend = computed(() => props.incomeTrend || dashboardData.value.incomeTrend);
+const totalExpenses = computed(() => props.totalExpenses || dashboardData.value.totalExpenses);
+const expensesTrend = computed(() => props.expensesTrend || dashboardData.value.expensesTrend);
+const pendingOrders = computed(() => props.pendingOrders || dashboardData.value.pendingOrders);
+const processingOrders = computed(() => props.processingOrders || dashboardData.value.processingOrders);
+const reviewOrders = computed(() => props.reviewOrders || dashboardData.value.reviewOrders);
+const completedOrders = computed(() => props.completedOrders || dashboardData.value.completedOrders);
+const cancelledOrders = computed(() => props.cancelledOrders || dashboardData.value.cancelledOrders);
+const chartData = computed(() => props.chartData || dashboardData.value.chartData);
+const recentOrders = computed(() => props.recentOrders || dashboardData.value.recentOrders);
+const topProducts = computed(() => props.topProducts || dashboardData.value.topProducts);
+const activities = computed(() => props.activities || dashboardData.value.activities);
+
+// Ambil data dashboard
+onMounted(async () => {
+  try {
+    const response = await axios.get(route('admin.dashboard.data'));
+    if (response.data) {
+      dashboardData.value = response.data;
+    }
+  } catch (error) {
+    console.error('Gagal mengambil data dashboard:', error);
+  }
+});
 
 // Breadcrumbs untuk navigasi
 const breadcrumbs: BreadcrumbItem[] = [
@@ -389,9 +445,9 @@ const formatDate = (dateString: string): string => {
 
 // Helper untuk chart
 const getChartPercentage = (value: number): number => {
-  if (!chartData) return 0;
+  if (!chartData.value || chartData.value.length === 0) return 0;
   
-  const maxValue = Math.max(...chartData.map(item => item.value));
+  const maxValue = Math.max(...chartData.value.map(item => item.value));
   if (maxValue === 0) return 0;
   
   return (value / maxValue) * 100;
@@ -403,7 +459,7 @@ const getChartBarColor = (status: string): string => {
       return 'bg-warning-500 dark:bg-warning-600';
     case 'processing':
       return 'bg-primary-500 dark:bg-primary-600';
-    case 'shipping':
+    case 'review':
       return 'bg-blue-500 dark:bg-blue-600';
     case 'completed':
       return 'bg-success-500 dark:bg-success-600';
@@ -420,7 +476,7 @@ const getStatusColor = (status: string): string => {
       return 'bg-warning-500 dark:bg-warning-600';
     case 'processing':
       return 'bg-primary-500 dark:bg-primary-600';
-    case 'shipping':
+    case 'review':
       return 'bg-blue-500 dark:bg-blue-600';
     case 'completed':
       return 'bg-success-500 dark:bg-success-600';
@@ -437,7 +493,7 @@ const getStatusTextColor = (status: string): string => {
       return 'text-warning-600 dark:text-warning-400';
     case 'processing':
       return 'text-primary-600 dark:text-primary-400';
-    case 'shipping':
+    case 'review':
       return 'text-blue-600 dark:text-blue-400';
     case 'completed':
       return 'text-success-600 dark:text-success-400';
@@ -454,8 +510,8 @@ const getStatusLabel = (status: string): string => {
       return 'Menunggu Pembayaran';
     case 'processing':
       return 'Sedang Diproses';
-    case 'shipping':
-      return 'Dalam Pengiriman';
+    case 'review':
+      return 'Dalam Review';
     case 'completed':
       return 'Selesai';
     case 'cancelled':
