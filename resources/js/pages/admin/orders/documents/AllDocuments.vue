@@ -360,10 +360,11 @@ const documentTypes = {
 };
 
 const badgeVariants = {
-    credential: 'default',
-    domain: 'secondary',
-    update: 'outline',
-    download: 'destructive',
+    credential: 'credential',
+    domain: 'domain',
+    update: 'orange',
+    download: 'download',
+    other: 'other'
 };
 
 // Format file size (jika diperlukan)

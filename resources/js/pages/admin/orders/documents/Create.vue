@@ -5,7 +5,10 @@
     <div class="flex h-full flex-1 flex-col gap-4 p-4 md:p-6">
       <!-- Header dengan judul dan tombol kembali -->
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h1 class="text-2xl font-bold text-secondary-900 dark:text-white">Tambah Dokumen Order</h1>
+        <div class="flex flex-col gap-2">
+          <h1 class="text-2xl font-bold text-secondary-900 dark:text-white">Tambah Dokumen Order</h1>
+        
+        </div>
         <Link :href="getBackUrl()" class="cursor-pointer">
           <Button variant="outline" class="flex items-center gap-1.5 w-full sm:w-auto cursor-pointer">
             <ArrowLeft class="h-4 w-4" />
@@ -57,7 +60,12 @@
                         @click="toggleDocumentTypeSelect" 
                         class="custom-select-trigger flex w-full items-center justify-between gap-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-2 text-sm shadow-sm hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer h-9"
                       >
-                        <span>{{ selectedDocumentTypeLabel }}</span>
+                        <span>
+                          <Badge v-if="form.type" :variant="getDocumentTypeBadgeVariant(form.type)">
+                            {{ selectedDocumentTypeLabel }}
+                          </Badge>
+                          <span v-else>{{ selectedDocumentTypeLabel }}</span>
+                        </span>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-50 transition-transform" :class="{ 'rotate-180': isDocumentTypeSelectOpen }">
                           <path d="m6 9 6 6 6-6"></path>
                         </svg>
@@ -74,7 +82,7 @@
                           class="custom-select-option py-2 px-3 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm"
                           :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': form.type === type }"
                         >
-                          {{ label }}
+                          <Badge :variant="getDocumentTypeBadgeVariant(type)">{{ label }}</Badge>
                         </div>
                       </div>
                     </div>
@@ -177,6 +185,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import Combobox from '@/components/ui/combobox/Combobox.vue';
 import InputError from '@/components/InputError.vue';
+import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Loader2 } from 'lucide-vue-next';
 import { useToast } from '@/composables/useToast';
 
@@ -361,6 +370,12 @@ const selectedDocumentTypeLabel = computed(() => {
   if (!form.type) return 'Pilih Tipe Dokumen';
   return documentTypes[form.type as keyof typeof documentTypes] || 'Pilih Tipe Dokumen';
 });
+
+// Dapatkan variant badge berdasarkan tipe dokumen
+const getDocumentTypeBadgeVariant = (type: string) => {
+  // Langsung menggunakan tipe dokumen sebagai variant badge
+  return type || 'default';
+};
 
 // Toggle dropdown tipe dokumen
 const toggleDocumentTypeSelect = () => {
