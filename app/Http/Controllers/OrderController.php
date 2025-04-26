@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Payment;
+use App\Models\PaymentMethod;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -197,6 +199,29 @@ class OrderController extends Controller
             
             \Log::info('Order items created');
             
+            // Get default payment method (Bank BCA)
+            $defaultPaymentMethod = PaymentMethod::where('code', 'bca')->first();
+            
+            if ($defaultPaymentMethod) {
+                // Create initial payment record
+                Payment::create([
+                    'order_id' => $order->id,
+                    'payment_method_id' => $defaultPaymentMethod->id,
+                    'amount' => $total,
+                    'status' => 'pending',
+                    'payment_details' => [
+                        'created_at' => now()->toIso8601String(),
+                        'customer_name' => $request->customer_name,
+                        'customer_phone' => $request->customer_phone,
+                        'customer_email' => $request->customer_email,
+                    ],
+                ]);
+                
+                \Log::info('Payment record created with default payment method');
+            } else {
+                \Log::warning('Default payment method not found');
+            }
+            
             // Clear cart
             \Log::info('Clearing cart');
             Cart::where('session_id', $sessionId)->delete();
@@ -241,7 +266,7 @@ class OrderController extends Controller
     public function trackOrder(Request $request)
     {
         if ($request->has('order_number')) {
-            $order = Order::with(['items.product'])
+            $order = Order::with(['items.product', 'payment.paymentMethod'])
                 ->where('order_number', $request->order_number)
                 ->where('customer_phone', $request->customer_phone)
                 ->first();
@@ -254,14 +279,12 @@ class OrderController extends Controller
             } else {
                 return Inertia::render('public/orders/Track', [
                     'found' => false,
-                    'message' => 'Pesanan tidak ditemukan. Periksa nomor pesanan dan nomor telepon Anda.'
+                    'message' => 'Pesanan tidak ditemukan dengan nomor pesanan dan nomor telepon yang Anda masukkan.'
                 ]);
             }
         }
         
-        return Inertia::render('public/orders/Track', [
-            'found' => null
-        ]);
+        return Inertia::render('public/orders/Track');
     }
 
     /**
@@ -269,37 +292,15 @@ class OrderController extends Controller
      */
     public function userOrders(Request $request)
     {
-        $query = Order::query()
-            ->with('items.product')
-            ->where('user_id', auth()->id())
-            ->latest();
-            
-        // Filter by status
-        if ($request->has('status') && $request->status !== '') {
-            $query->where('status', $request->status);
-        }
+        $user = auth()->user();
         
-        // Filter by order number
-        if ($request->has('search') && !empty($request->search)) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('order_number', 'like', "%{$search}%");
-            });
-        }
-        
-        $orders = $query->paginate(10)
-            ->withQueryString();
+        $orders = Order::with(['items.product', 'payment.paymentMethod'])
+            ->where('user_id', $user->id)
+            ->latest()
+            ->paginate(10);
             
         return Inertia::render('user/orders/Index', [
-            'orders' => $orders,
-            'filters' => $request->only(['status', 'search']),
-            'statuses' => [
-                Order::STATUS_PENDING => 'Menunggu Konfirmasi',
-                Order::STATUS_PROCESSING => 'Sedang Diproses',
-                Order::STATUS_REVIEW => 'Review',
-                Order::STATUS_COMPLETED => 'Selesai',
-                Order::STATUS_CANCELLED => 'Dibatalkan',
-            ]
+            'orders' => $orders
         ]);
     }
 
@@ -308,12 +309,12 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        // Pastikan user hanya bisa melihat pesanannya sendiri
+        // Make sure user can only view their own orders
         if (auth()->id() !== $order->user_id) {
-            abort(403, 'Anda tidak memiliki akses ke pesanan ini');
+            abort(403);
         }
         
-        $order->load(['items.product', 'payment']);
+        $order->load(['items.product', 'payment.paymentMethod']);
         
         return Inertia::render('user/orders/Show', [
             'order' => $order

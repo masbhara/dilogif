@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             PermissionRoleSeeder::class,
+            PaymentMethodSeeder::class,
         ]);
 
         // Buat role customer jika belum ada

@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\ExpenseController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\OrderDocumentController;
+use App\Http\Controllers\Admin\PaymentMethodController;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\Product;
@@ -84,6 +85,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
                 'permission:delete expenses',
             ]);
     });
+
+    // Manajemen Metode Pembayaran
+    Route::resource('payment-methods', PaymentMethodController::class);
 
     // Halaman Contoh Komponen UI
     Route::get('components-example', function () {

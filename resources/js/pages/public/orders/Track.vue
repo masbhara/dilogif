@@ -215,6 +215,62 @@
                 </div>
               </div>
               
+              <!-- Payment Information - NEW SECTION -->
+              <div v-if="order.payment" class="mb-6">
+                <h4 class="text-sm font-medium text-gray-500 mb-2">Informasi Pembayaran</h4>
+                <div class="bg-gray-50 rounded-lg p-4">
+                  <!-- Payment Method -->
+                  <div class="flex flex-col space-y-2">
+                    <div class="mb-2">
+                      <p class="text-xs text-gray-500">Metode Pembayaran</p>
+                      <div class="flex items-center mt-1">
+                        <img 
+                          v-if="order.payment.payment_method?.logo" 
+                          :src="`/storage/${order.payment.payment_method.logo}`" 
+                          class="h-6 mr-2 object-contain" 
+                          :alt="order.payment.payment_method?.name" 
+                        />
+                        <p class="font-medium">
+                          {{ order.payment.payment_method?.name || 'Belum ditentukan' }}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <!-- Bank Transfer Details -->
+                    <div v-if="order.payment.payment_method?.type === 'bank_transfer'" class="border border-gray-200 rounded-lg p-3 bg-white">
+                      <p class="text-xs text-gray-500 mb-1">Informasi Rekening</p>
+                      <div class="space-y-1 text-sm">
+                        <p><span class="font-medium">Bank:</span> {{ order.payment.payment_method.bank_name }}</p>
+                        <p><span class="font-medium">No. Rekening:</span> {{ order.payment.payment_method.account_number }}</p>
+                        <p><span class="font-medium">Atas Nama:</span> {{ order.payment.payment_method.account_name }}</p>
+                      </div>
+                    </div>
+                    
+                    <!-- Payment Status -->
+                    <div class="mt-2">
+                      <p class="text-xs text-gray-500">Status Pembayaran</p>
+                      <Badge 
+                        variant="outline" 
+                        class="text-sm px-3 py-1 mt-1"
+                        :class="{
+                          'border-yellow-400 text-yellow-600 bg-yellow-50': order.payment.status === 'pending',
+                          'border-green-400 text-green-600 bg-green-50': order.payment.status === 'completed',
+                          'border-red-400 text-red-600 bg-red-50': order.payment.status === 'failed'
+                        }"
+                      >
+                        {{ getPaymentStatusLabel(order.payment.status) }}
+                      </Badge>
+                    </div>
+                    
+                    <!-- Payment Amount -->
+                    <div class="mt-2">
+                      <p class="text-xs text-gray-500">Jumlah</p>
+                      <p class="font-medium text-primary-600">{{ formatPrice(order.payment.amount) }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
               <!-- Order Items -->
               <h4 class="text-sm font-medium text-gray-500 mb-2">Produk yang Dipesan</h4>
               <div class="border border-gray-200 rounded-lg overflow-hidden mb-6">
@@ -336,6 +392,16 @@ const getStatusLabel = (status) => {
     'review': 'Review',
     'completed': 'Selesai',
     'cancelled': 'Dibatalkan'
+  };
+  
+  return statusMap[status] || status;
+};
+
+const getPaymentStatusLabel = (status) => {
+  const statusMap = {
+    'pending': 'Menunggu Pembayaran',
+    'completed': 'Pembayaran Diterima',
+    'failed': 'Pembayaran Gagal'
   };
   
   return statusMap[status] || status;

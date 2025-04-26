@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Models\Order;
@@ -67,6 +68,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/orders/{order}/documents/{document}/download', [OrderDocumentController::class, 'download'])->name('orders.documents.download');
     Route::post('/orders/{order}/documents/{document}/mark-as-read', [OrderDocumentController::class, 'markAsRead'])->name('orders.documents.mark-as-read');
     Route::get('/my-documents', [OrderDocumentController::class, 'allDocuments'])->name('my-documents');
+    
+    // Payment Routes
+    Route::get('/orders/{order}/payment', [PaymentController::class, 'showOptions'])->name('orders.payment');
+    Route::post('/orders/{order}/payment', [PaymentController::class, 'updateMethod'])->name('orders.payment.update');
 });
 
 // Public Routes
@@ -109,6 +114,9 @@ Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
 Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
 Route::get('/orders/thankyou/{order}', [OrderController::class, 'thankYou'])->name('orders.thankyou');
 Route::get('/track-order', [OrderController::class, 'trackOrder'])->name('orders.track');
+
+// Public Payment Routes
+Route::get('/payment-methods', [PaymentController::class, 'getPaymentMethods'])->name('payment.methods');
 
 // Admin Routes
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
