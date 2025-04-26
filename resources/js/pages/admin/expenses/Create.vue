@@ -81,37 +81,12 @@
                 <!-- Order -->
                 <div class="space-y-2">
                   <Label for="order_id">Terkait Pesanan</Label>
-                  <div class="relative custom-select-container order-select-container" :class="{ 'active': isOrderSelectOpen }">
-                    <div 
-                      @click="toggleOrderSelect" 
-                      class="custom-select-trigger flex w-full items-center justify-between gap-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm shadow-sm hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer h-9"
-                      :class="{ 'border-red-500': form.errors.order_id }"
-                    >
-                      <span>{{ selectedOrderLabel }}</span>
-                      <ChevronDownIcon class="h-4 w-4 opacity-50 transition-transform" :class="{ 'rotate-180': isOrderSelectOpen }" />
-                    </div>
-                    
-                    <div 
-                      v-if="isOrderSelectOpen" 
-                      class="custom-select-dropdown bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-lg mt-1 overflow-hidden z-50"
-                    >
-                      <div
-                        class="custom-select-option py-2 px-3 text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm"
-                        @click="selectOrder('')"
-                        :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': form.order_id === '' }"
-                      >
-                        Tidak Terkait Pesanan
-                      </div>
-                      <div 
-                        v-for="order in orders" 
-                        :key="order.id"
-                        @click="selectOrder(order.id)"
-                        class="custom-select-option py-2 px-3 text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm"
-                        :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': Number(form.order_id) === order.id }"
-                      >
-                        {{ order.order_number }}
-                      </div>
-                    </div>
+                  <div id="combobox-container">
+                    <Combobox
+                      v-model="form.order_id"
+                      :options="ordersFormatted"
+                      placeholder="Cari dan pilih order..."
+                    />
                   </div>
                   <div v-if="form.errors.order_id" class="text-red-500 text-sm mt-1">{{ form.errors.order_id }}</div>
                 </div>
@@ -286,7 +261,8 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { ChevronDownIcon } from 'lucide-vue-next';
-import { ref } from 'vue';
+import Combobox from '@/components/ui/combobox/Combobox.vue';
+import { ref, computed } from 'vue';
 
 // Definisikan tipe
 interface Category {
@@ -348,20 +324,14 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 // Custom select logic
 const isCategorySelectOpen = ref(false);
-const isOrderSelectOpen = ref(false);
 const isPaymentSelectOpen = ref(false);
 const isStatusSelectOpen = ref(false);
 const selectedCategoryLabel = ref('Pilih Kategori');
-const selectedOrderLabel = ref('Tidak Terkait Pesanan');
 const selectedPaymentLabel = ref('Tunai');
 const selectedStatusLabel = ref('Completed');
 
 const toggleCategorySelect = () => {
   isCategorySelectOpen.value = !isCategorySelectOpen.value;
-};
-
-const toggleOrderSelect = () => {
-  isOrderSelectOpen.value = !isOrderSelectOpen.value;
 };
 
 const togglePaymentSelect = () => {
@@ -384,18 +354,6 @@ const selectCategory = (id: string | number) => {
   }
 };
 
-const selectOrder = (id: string | number) => {
-  form.order_id = id.toString();
-  isOrderSelectOpen.value = false;
-  
-  if (id === '' || id === 0 || id.toString() === '0') {
-    selectedOrderLabel.value = 'Tidak Terkait Pesanan';
-  } else {
-    const order = props.orders.find(o => o.id === Number(id));
-    selectedOrderLabel.value = order ? order.order_number : 'Tidak Terkait Pesanan';
-  }
-};
-
 const selectPayment = (method: string) => {
   form.payment_method = method;
   isPaymentSelectOpen.value = false;
@@ -407,6 +365,14 @@ const selectStatus = (status: string) => {
   isStatusSelectOpen.value = false;
   selectedStatusLabel.value = status === 'pending' ? 'Pending' : status === 'completed' ? 'Completed' : 'Cancelled';
 };
+
+// Menyiapkan data orders untuk combobox
+const ordersFormatted = computed(() => {
+  return props.orders.map(order => ({
+    label: `${order.order_number}`,
+    value: order.id.toString()
+  }));
+});
 </script>
 
 <style>
