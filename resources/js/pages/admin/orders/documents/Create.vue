@@ -31,12 +31,13 @@
                   <Label for="order_id" class="text-sm font-medium">Order Terkait <span class="text-red-500">*</span></Label>
                 </div>
                 <div class="md:col-span-3">
-                  <Combobox
-                    v-model="form.order_id"
-                    :options="availableOrdersFormatted"
-                    placeholder="Cari dan pilih order..."
-                    class="w-full"
-                  />
+                  <div id="combobox-container" class="relative w-full">
+                    <Combobox
+                      v-model="form.order_id"
+                      :options="availableOrdersFormatted"
+                      placeholder="Cari dan pilih order..."
+                    />
+                  </div>
                   <InputError :message="form.errors.order_id" class="mt-1" />
                 </div>
               </div>
@@ -345,6 +346,15 @@ onMounted(() => {
 // State untuk custom select dropdown - Tipe Dokumen
 const isDocumentTypeSelectOpen = ref(false);
 const documentTypeSelectRef = ref<HTMLElement | null>(null);
+
+// Fix linter errors with unique keys for document types
+const documentTypeKeys = {
+  credential: 'credential',
+  domain: 'domain',
+  update: 'update',
+  download: 'download',
+  other: 'other'
+};
 
 // Computed property untuk label tipe dokumen terpilih
 const selectedDocumentTypeLabel = computed(() => {

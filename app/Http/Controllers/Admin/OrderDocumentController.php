@@ -49,15 +49,18 @@ class OrderDocumentController extends Controller
         // yang memungkinkan memilih order
         if ($orderParam === 'new') {
             // Ambil daftar order yang tersedia untuk dropdown
-            $availableOrders = Order::select('id', 'order_number')
+            $availableOrders = Order::select('id', 'order_number', 'customer_name', 'user_id')
                 ->with('user:id,name')
                 ->orderBy('created_at', 'desc')
                 ->get()
                 ->map(function ($order) {
+                    // Gunakan customer_name langsung dari order jika ada, atau nama user jika ada
+                    $customerName = $order->customer_name ?: ($order->user ? $order->user->name : 'Tanpa Nama');
+                    
                     return [
                         'id' => $order->id,
                         'order_number' => $order->order_number,
-                        'customer_name' => $order->user ? $order->user->name : 'Tanpa Nama',
+                        'customer_name' => $customerName,
                     ];
                 });
                 
@@ -81,14 +84,14 @@ class OrderDocumentController extends Controller
             'order' => [
                 'id' => $order->id,
                 'order_number' => $order->order_number,
-                'customer_name' => $order->user ? $order->user->name : 'Tanpa Nama',
+                'customer_name' => $order->customer_name ?: ($order->user ? $order->user->name : 'Tanpa Nama'),
             ],
             'orderParam' => $orderParam,
             'availableOrders' => [
                 [
                     'id' => $order->id,
                     'order_number' => $order->order_number,
-                    'customer_name' => $order->user ? $order->user->name : 'Tanpa Nama',
+                    'customer_name' => $order->customer_name ?: ($order->user ? $order->user->name : 'Tanpa Nama'),
                 ]
             ],
             'documentTypes' => [
@@ -316,7 +319,7 @@ class OrderDocumentController extends Controller
             ->get()
             ->map(function ($order) {
                 // Gunakan customer_name langsung jika ada, atau ambil dari user jika ada
-                $customerName = $order->customer_name ?? ($order->user ? $order->user->name : 'Tanpa Nama');
+                $customerName = $order->customer_name ?: ($order->user ? $order->user->name : 'Tanpa Nama');
                 
                 return [
                     'id' => $order->id,
