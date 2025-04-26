@@ -7,20 +7,8 @@
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 class="text-2xl font-bold text-secondary-900 dark:text-white">Dokumen Saya</h1>
         <div class="flex items-center gap-2">
-          <Badge variant="secondary" class="h-8 px-3 text-sm">
-            {{ totalDocuments }} Dokumen
-          </Badge>
-          <Badge v-if="totalUnread > 0" variant="destructive" class="h-8 px-3 text-sm">
-            {{ totalUnread }} Belum Dibaca
-          </Badge>
-        </div>
-      </div>
-
-      <!-- Filter dan Pencarian -->
-        <CardContent class="px-0">
           <div class="flex flex-col md:flex-row gap-4">
             <div class="flex-1">
-            
               <div class="relative">
                 <input 
                   id="search"
@@ -41,8 +29,14 @@
               </Button>
             </div>
           </div>
-        </CardContent>
-        
+          <Badge variant="secondary" class="h-8 px-3 text-sm">
+            {{ totalDocuments }} Dokumen
+          </Badge>
+          <Badge v-if="totalUnread > 0" variant="destructive" class="h-8 px-3 text-sm">
+            {{ totalUnread }} Belum Dibaca
+          </Badge>
+        </div>
+      </div>
 
       <!-- Dokumen Belum Dibaca -->
       <Card v-if="filteredUnreadDocuments.length > 0" class="mb-6">
