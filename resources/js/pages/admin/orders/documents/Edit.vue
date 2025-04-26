@@ -7,7 +7,7 @@
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 class="text-2xl font-bold text-secondary-900 dark:text-white">Edit Dokumen</h1>
         <div class="flex gap-2">
-          <Link :href="route('admin.orders.documents.index', order.id)">
+          <Link :href="route('admin.documents.all')">
             <Button variant="outline" size="sm" class="h-9">
               <ArrowLeft class="h-4 w-4 mr-2" />
               Kembali
@@ -29,16 +29,42 @@
               <Label for="type" class="text-right hidden md:block">Tipe Dokumen</Label>
               <div class="md:col-span-3 space-y-1">
                 <Label for="type" class="md:hidden">Tipe Dokumen</Label>
-                <Select v-model="form.type">
-                  <SelectTrigger>
-                    <SelectValue placeholder="Pilih tipe dokumen" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem v-for="(label, value) in documentTypes" :key="value" :value="value">
-                      {{ label }}
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
+                <div class="relative">
+                  <div 
+                    class="custom-select-container" 
+                    :class="{ 'active': isDocumentTypeSelectOpen }"
+                  >
+                    <div 
+                      @click="toggleDocumentTypeSelect" 
+                      class="custom-select-trigger flex w-full items-center justify-between gap-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-2 text-sm shadow-sm hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer h-9"
+                    >
+                      <span>
+                        <Badge v-if="form.type" :variant="getDocumentTypeBadgeVariant(form.type)">
+                          {{ selectedDocumentTypeLabel }}
+                        </Badge>
+                        <span v-else>{{ selectedDocumentTypeLabel }}</span>
+                      </span>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-50 transition-transform" :class="{ 'rotate-180': isDocumentTypeSelectOpen }">
+                        <path d="m6 9 6 6 6-6"></path>
+                      </svg>
+                    </div>
+                    
+                    <div 
+                      v-if="isDocumentTypeSelectOpen" 
+                      class="custom-select-dropdown bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-lg mt-1 overflow-hidden z-50"
+                    >
+                      <div 
+                        v-for="(label, type) in documentTypes" 
+                        :key="type"
+                        @click="selectDocumentType(type)"
+                        class="custom-select-option py-2 px-3 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm"
+                        :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': form.type === type }"
+                      >
+                        <Badge :variant="getDocumentTypeBadgeVariant(type)">{{ label }}</Badge>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <p v-if="errors.type" class="text-destructive text-sm">{{ errors.type }}</p>
               </div>
             </div>
@@ -97,7 +123,7 @@
                   <Loader2 v-if="isSubmitting" class="mr-2 h-4 w-4 animate-spin" />
                   Simpan Perubahan
                 </Button>
-                <Link :href="route('admin.orders.documents.index', order.id)">
+                <Link :href="route('admin.documents.all')">
                   <Button type="button" variant="outline">
                     Batal
                   </Button>
@@ -112,7 +138,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Button } from '@/components/ui/button';
@@ -123,6 +149,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, Loader2 } from 'lucide-vue-next';
 import { useToast } from '@/composables/useToast';
+import { Badge } from '@/components/ui/badge';
 
 const props = defineProps({
   order: Object,
@@ -201,4 +228,120 @@ const updateDocument = () => {
     }
   });
 };
-</script> 
+
+// Document type selection logic
+const isDocumentTypeSelectOpen = ref(false);
+const documentTypeSelectRef = ref(null);
+
+// Computed property untuk label tipe dokumen terpilih
+const selectedDocumentTypeLabel = computed(() => {
+  if (!form.type) return 'Pilih Tipe Dokumen';
+  return props.documentTypes[form.type] || 'Pilih Tipe Dokumen';
+});
+
+const toggleDocumentTypeSelect = () => {
+  isDocumentTypeSelectOpen.value = !isDocumentTypeSelectOpen.value;
+};
+
+const selectDocumentType = (type) => {
+  form.type = type;
+  isDocumentTypeSelectOpen.value = false;
+};
+
+const getDocumentTypeBadgeVariant = (type) => {
+  switch (type) {
+    case 'credential': return 'credential';
+    case 'domain': return 'domain';
+    case 'update': return 'orange';
+    case 'download': return 'download';
+    case 'other': return 'other';
+    default: return 'default';
+  }
+};
+
+// Handle click outside untuk document type select
+const handleClickOutside = (event) => {
+  const selectContainer = document.querySelector('.custom-select-container');
+  if (selectContainer && !selectContainer.contains(event.target)) {
+    isDocumentTypeSelectOpen.value = false;
+  }
+};
+
+// Lifecycle hooks
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+  documentTypeSelectRef.value = document.querySelector('.custom-select-container');
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
+</script>
+
+<style>
+/* Custom select styling */
+.custom-select-container {
+  position: relative;
+  width: 100%;
+  -webkit-tap-highlight-color: transparent;
+  border-radius: 0.375rem;
+}
+
+.custom-select-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  animation: slideDown 0.15s ease-out;
+  z-index: 50;
+}
+
+.custom-select-option:first-child {
+  border-top-left-radius: 0.375rem;
+  border-top-right-radius: 0.375rem;
+}
+
+.custom-select-option:last-child {
+  border-bottom-left-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Perbaikan outline saat fokus */
+.custom-select-trigger {
+  outline: none !important;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.custom-select-trigger:focus,
+.custom-select-trigger:focus-visible,
+.custom-select-trigger:active,
+.custom-select-trigger:hover,
+.custom-select-trigger:-moz-focusring {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: #0ea5e9 !important;
+}
+
+/* Fix untuk Firefox */
+.custom-select-trigger:-moz-focusring {
+  outline: none !important;
+}
+
+/* Fix untuk Safari dan Chrome */
+.custom-select-trigger::-webkit-focus-inner {
+  border: 0;
+}
+
+/* Fix tambahan untuk Chrome */
+*:focus {
+  outline-color: transparent !important;
+}
+</style> 
