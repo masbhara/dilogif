@@ -43,15 +43,60 @@ class OrderDocumentController extends Controller
     /**
      * Tampilkan form untuk membuat dokumen baru
      */
-    public function create(Order $order)
+    public function create($orderParam)
     {
+        // Jika parameter order adalah 'new', maka ini adalah halaman create umum
+        // yang memungkinkan memilih order
+        if ($orderParam === 'new') {
+            // Ambil daftar order yang tersedia untuk dropdown
+            $availableOrders = Order::select('id', 'order_number')
+                ->with('user:id,name')
+                ->orderBy('created_at', 'desc')
+                ->get()
+                ->map(function ($order) {
+                    return [
+                        'id' => $order->id,
+                        'order_number' => $order->order_number,
+                        'customer_name' => $order->user ? $order->user->name : 'Tanpa Nama',
+                    ];
+                });
+                
+            return Inertia::render('admin/orders/documents/Create', [
+                'orderParam' => $orderParam,
+                'availableOrders' => $availableOrders,
+                'documentTypes' => [
+                    OrderDocument::TYPE_CREDENTIAL => 'Kredensial Login',
+                    OrderDocument::TYPE_DOMAIN => 'Informasi Domain',
+                    OrderDocument::TYPE_UPDATE => 'Pembaruan',
+                    OrderDocument::TYPE_DOWNLOAD => 'File Unduhan',
+                    'other' => 'Lainnya',
+                ],
+            ]);
+        }
+        
+        // Jika bukan 'new', maka parameter adalah ID order
+        $order = Order::findOrFail($orderParam);
+        
         return Inertia::render('admin/orders/documents/Create', [
-            'order' => $order,
+            'order' => [
+                'id' => $order->id,
+                'order_number' => $order->order_number,
+                'customer_name' => $order->user ? $order->user->name : 'Tanpa Nama',
+            ],
+            'orderParam' => $orderParam,
+            'availableOrders' => [
+                [
+                    'id' => $order->id,
+                    'order_number' => $order->order_number,
+                    'customer_name' => $order->user ? $order->user->name : 'Tanpa Nama',
+                ]
+            ],
             'documentTypes' => [
                 OrderDocument::TYPE_CREDENTIAL => 'Kredensial Login',
                 OrderDocument::TYPE_DOMAIN => 'Informasi Domain',
                 OrderDocument::TYPE_UPDATE => 'Pembaruan',
                 OrderDocument::TYPE_DOWNLOAD => 'File Unduhan',
+                'other' => 'Lainnya',
             ],
         ]);
     }
@@ -59,10 +104,13 @@ class OrderDocumentController extends Controller
     /**
      * Simpan dokumen baru
      */
-    public function store(Request $request, Order $order)
+    public function store(Request $request, $orderId)
     {
+        // Pastikan order_id yang valid
+        $order = Order::findOrFail($orderId);
+        
         $validated = $request->validate([
-            'type' => 'required|in:credential,domain,update,download',
+            'type' => 'required|in:credential,domain,update,download,other',
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'expires_at' => 'nullable|date',
@@ -97,7 +145,14 @@ class OrderDocumentController extends Controller
                 case OrderDocument::TYPE_DOWNLOAD:
                     $this->notificationService->sendDownloadLink($document);
                     break;
+                // case 'other' dihandle secara default
             }
+        }
+        
+        // Periksa jika request dari halaman allDocuments atau tidak
+        if ($request->headers->get('referer') && str_contains($request->headers->get('referer'), 'order-documents')) {
+            return redirect()->route('admin.documents.all')
+                ->with('message', 'Dokumen berhasil dibuat');
         }
         
         return redirect()->route('admin.orders.documents.index', $order)
@@ -255,9 +310,20 @@ class OrderDocumentController extends Controller
         $documents->getCollection()->each->append(['type_label', 'type_icon', 'type_color', 'file_size']);
 
         // Ambil daftar order yang tersedia untuk dropdown
-        $availableOrders = Order::select('id', 'order_number', 'customer_name')
+        $availableOrders = Order::select('id', 'order_number', 'customer_name', 'user_id')
+            ->with('user:id,name')
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->get()
+            ->map(function ($order) {
+                // Gunakan customer_name langsung jika ada, atau ambil dari user jika ada
+                $customerName = $order->customer_name ?? ($order->user ? $order->user->name : 'Tanpa Nama');
+                
+                return [
+                    'id' => $order->id,
+                    'order_number' => $order->order_number,
+                    'customer_name' => $customerName,
+                ];
+            });
 
         return Inertia::render('admin/orders/documents/AllDocuments', [
             'documents' => $documents,

@@ -13,10 +13,12 @@
               Kelola Order
             </Button>
           </Link>
-          <Button variant="action" size="sm" class="h-9" @click="showCreateModal = true">
-            <PlusIcon class="h-4 w-4 mr-2" />
-            Tambah Dokumen
-          </Button>
+          <Link :href="route('admin.orders.documents.create', 'new')">
+            <Button variant="action" size="sm" class="h-9">
+              <PlusIcon class="h-4 w-4 mr-2" />
+              Tambah Dokumen
+            </Button>
+          </Link>
         </div>
       </div>
 
@@ -95,7 +97,7 @@
                     {{ document.order.order_number }}
                   </Link>
                 </TableCell>
-                <TableCell class="py-4 px-6">{{ document.order.user.name }}</TableCell>
+                <TableCell class="py-4 px-6">{{ document.order.user ? document.order.user.name : 'Tanpa Nama' }}</TableCell>
                 <TableCell class="py-4 px-6">
                   <Badge :variant="getBadgeVariant(document.type)">
                     {{ getDocumentType(document.type) }}
@@ -161,109 +163,6 @@
       </div>
     </div>
 
-    <!-- Modal Tambah Dokumen -->
-    <Dialog :open="showCreateModal" @update:open="showCreateModal = false">
-      <DialogContent class="sm:max-w-[600px]">
-        <DialogHeader>
-          <DialogTitle>Tambah Dokumen Order</DialogTitle>
-          <DialogDescription>
-            Tambahkan dokumen baru yang berkaitan dengan order. Masukkan informasi dokumen dan pilih order terkait.
-          </DialogDescription>
-        </DialogHeader>
-        <form @submit.prevent="createDocument">
-          <div class="grid gap-4 py-4">
-            <div class="grid grid-cols-4 items-center gap-4">
-              <Label for="order" class="text-right">Order Terkait</Label>
-              <div class="col-span-3">
-                <div class="relative custom-select-container order-select-container" :class="{ 'active': isOrderSelectOpen }">
-                  <div 
-                    @click="toggleOrderSelect" 
-                    class="custom-select-trigger flex w-full items-center justify-between gap-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm shadow-sm hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer h-9"
-                  >
-                    <span v-if="createForm.order_id">
-                      {{ getOrderLabel(createForm.order_id) }}
-                    </span>
-                    <span v-else class="text-slate-400">Pilih order</span>
-                    <ChevronDown class="h-4 w-4 opacity-50 transition-transform" :class="{ 'rotate-180': isOrderSelectOpen }" />
-                  </div>
-                  
-                  <div 
-                    v-if="isOrderSelectOpen" 
-                    class="custom-select-dropdown bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-lg mt-1 overflow-hidden max-h-[200px] overflow-y-auto"
-                  >
-                    <div 
-                      v-for="order in availableOrders" 
-                      :key="order.id"
-                      @click="selectOrder(order.id)"
-                      class="custom-select-option py-2 px-3 text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm"
-                      :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': createForm.order_id === String(order.id) }"
-                    >
-                      {{ order.order_number }} - {{ order.customer_name }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="grid grid-cols-4 items-center gap-4">
-              <Label for="type" class="text-right">Tipe Dokumen</Label>
-              <div class="col-span-3">
-                <div class="relative custom-select-container type-select-container" :class="{ 'active': isTypeSelectOpen }">
-                  <div 
-                    @click="toggleTypeSelect" 
-                    class="custom-select-trigger flex w-full items-center justify-between gap-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm shadow-sm hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer h-9"
-                  >
-                    <span>{{ getDocumentType(createForm.type) }}</span>
-                    <ChevronDown class="h-4 w-4 opacity-50 transition-transform" :class="{ 'rotate-180': isTypeSelectOpen }" />
-                  </div>
-                  
-                  <div 
-                    v-if="isTypeSelectOpen" 
-                    class="custom-select-dropdown bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-lg mt-1 overflow-hidden"
-                  >
-                    <div 
-                      v-for="(label, type) in documentTypes" 
-                      :key="type"
-                      @click="selectType(type)"
-                      class="custom-select-option py-2 px-3 text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm"
-                      :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': createForm.type === type }"
-                    >
-                      {{ label }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="grid grid-cols-4 items-center gap-4">
-              <Label for="title" class="text-right">Judul Dokumen</Label>
-              <Input id="title" v-model="createForm.title" class="col-span-3" />
-            </div>
-            <div class="grid grid-cols-4 items-center gap-4">
-              <Label for="content" class="text-right">Isi Dokumen</Label>
-              <Textarea id="content" v-model="createForm.content" class="col-span-3" rows="4" />
-            </div>
-            <div class="grid grid-cols-4 items-center gap-4">
-              <Label for="file" class="text-right">Unggah File</Label>
-              <Input id="file" type="file" class="col-span-3" @change="handleFileChange" />
-            </div>
-            <div class="grid grid-cols-4 items-center gap-4">
-              <Label for="should_notify" class="text-right">Kirim Notifikasi</Label>
-              <div class="flex items-center space-x-2 col-span-3">
-                <Checkbox id="should_notify" v-model="createForm.should_notify" />
-                <Label for="should_notify">Kirim notifikasi ke pelanggan</Label>
-              </div>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button type="button" variant="outline" @click="showCreateModal = false">Batal</Button>
-            <Button type="submit" :disabled="isSubmitting">
-              <Loader2 v-if="isSubmitting" class="mr-2 h-4 w-4 animate-spin" />
-              Tambah Dokumen
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
-
     <!-- Modal Konfirmasi Hapus -->
     <Dialog :open="showDeleteModal" @update:open="showDeleteModal = false">
       <DialogContent>
@@ -310,7 +209,7 @@
             </div>
             <div class="flex items-center">
               <span class="font-medium w-32">Pelanggan:</span>
-              <span>{{ selectedDocument.order.user.name }}</span>
+              <span>{{ selectedDocument.order.user ? selectedDocument.order.user.name : 'Tanpa Nama' }}</span>
             </div>
           </div>
         </div>
@@ -443,8 +342,6 @@ const perPage = ref(props.filters.per_page?.toString() || '10');
 const currentPage = ref(1);
 
 // Status modals
-const showCreateModal = ref(false);
-const showEditModal = ref(false);
 const showDeleteModal = ref(false);
 const showSendModal = ref(false);
 const isSubmitting = ref(false);
@@ -452,75 +349,6 @@ const selectedDocument = ref<any>(null);
 
 // Availabe orders untuk dropdown
 const availableOrders = ref(props.available_orders || []);
-
-// Form untuk membuat dokumen baru
-const createForm = ref({
-    order_id: '',
-    type: 'credential',
-    title: '',
-    content: '',
-    file: null,
-    should_notify: false
-});
-
-// Handler untuk file upload
-const handleFileChange = (event: any) => {
-    createForm.value.file = event.target.files[0];
-};
-
-// Fungsi untuk membuat dokumen baru
-const createDocument = () => {
-    isSubmitting.value = true;
-
-    const formData = new FormData();
-    formData.append('order_id', createForm.value.order_id);
-    formData.append('type', createForm.value.type);
-    formData.append('title', createForm.value.title);
-    formData.append('content', createForm.value.content);
-    formData.append('should_notify', createForm.value.should_notify ? '1' : '0');
-    
-    if (createForm.value.file) {
-        formData.append('file', createForm.value.file);
-    }
-
-    router.post(route('admin.orders.documents.store', createForm.value.order_id), formData, {
-        onSuccess: () => {
-            showCreateModal.value = false;
-            createForm.value = {
-                order_id: '',
-                type: 'credential',
-                title: '',
-                content: '',
-                file: null,
-                should_notify: false
-            };
-        },
-        onFinish: () => {
-            isSubmitting.value = false;
-        }
-    });
-};
-
-// Konfirmasi hapus dokumen
-const confirmDelete = (document: any) => {
-    selectedDocument.value = document;
-    showDeleteModal.value = true;
-};
-
-// Hapus dokumen
-const deleteDocument = () => {
-    isSubmitting.value = true;
-    
-    router.delete(route('admin.orders.documents.destroy', [selectedDocument.value.order_id, selectedDocument.value.id]), {
-        onSuccess: () => {
-            showDeleteModal.value = false;
-            selectedDocument.value = null;
-        },
-        onFinish: () => {
-            isSubmitting.value = false;
-        }
-    });
-};
 
 // Dokumentasi tipe dan badge color
 const documentTypes = {
@@ -645,99 +473,39 @@ const getDocumentIcon = (type: string) => {
     }
 };
 
-// State untuk dropdown tipe dokumen dan order
-const isOrderSelectOpen = ref(false);
-const isTypeSelectOpen = ref(false);
-const orderSelectRef = ref<HTMLElement | null>(null);
-const typeSelectRef = ref<HTMLElement | null>(null);
-
-// Toggle dropdown order
-const toggleOrderSelect = () => {
-  isOrderSelectOpen.value = !isOrderSelectOpen.value;
-  
-  // Tutup dropdown lain jika terbuka
-  if (isOrderSelectOpen.value) {
-    isTypeSelectOpen.value = false;
-    isPerPageSelectOpen.value = false;
-  }
+// Konfirmasi hapus dokumen
+const confirmDelete = (document: any) => {
+    selectedDocument.value = document;
+    showDeleteModal.value = true;
 };
 
-// Handle order selection
-const selectOrder = (id: number) => {
-  createForm.value.order_id = String(id);
-  isOrderSelectOpen.value = false;
-};
-
-// Toggle dropdown tipe dokumen
-const toggleTypeSelect = () => {
-  isTypeSelectOpen.value = !isTypeSelectOpen.value;
-  
-  // Tutup dropdown lain jika terbuka
-  if (isTypeSelectOpen.value) {
-    isOrderSelectOpen.value = false;
-    isPerPageSelectOpen.value = false;
-  }
-};
-
-// Handle tipe dokumen selection
-const selectType = (type: string) => {
-  createForm.value.type = type;
-  isTypeSelectOpen.value = false;
-};
-
-// Get order label dari id
-const getOrderLabel = (id: number | string) => {
-  const orderId = typeof id === 'string' ? parseInt(id) : id;
-  const order = availableOrders.value.find(o => o.id === orderId);
-  return order ? `${order.order_number} - ${order.customer_name}` : 'Pilih order';
-};
-
-// Handle click outside for type dan order dropdown
-const handleTypeClickOutside = (evt: MouseEvent) => {
-  const target = evt.target as Node;
-  if (typeSelectRef.value && !typeSelectRef.value.contains(target)) {
-    isTypeSelectOpen.value = false;
-  }
-};
-
-const handleOrderClickOutside = (evt: MouseEvent) => {
-  const target = evt.target as Node;
-  if (orderSelectRef.value && !orderSelectRef.value.contains(target)) {
-    isOrderSelectOpen.value = false;
-  }
+// Hapus dokumen
+const deleteDocument = () => {
+    isSubmitting.value = true;
+    
+    router.delete(route('admin.orders.documents.destroy', [selectedDocument.value.order_id, selectedDocument.value.id]), {
+        onSuccess: () => {
+            showDeleteModal.value = false;
+            selectedDocument.value = null;
+        },
+        onFinish: () => {
+            isSubmitting.value = false;
+        }
+    });
 };
 
 // Ambil daftar order yang tersedia untuk dropdown
 onMounted(() => {
   // Set up click outside listeners
   document.addEventListener('click', handlePerPageClickOutside);
-  document.addEventListener('click', handleTypeClickOutside);
-  document.addEventListener('click', handleOrderClickOutside);
   
   nextTick(() => {
     perPageSelectRef.value = document.querySelector('.perpage-select-container');
-    typeSelectRef.value = document.querySelector('.type-select-container');
-    orderSelectRef.value = document.querySelector('.order-select-container');
   });
-  
-  if (!props.available_orders || props.available_orders.length === 0) {
-    router.get(route('admin.orders.index'), {
-        only: ['available_orders']
-    }, {
-        preserveState: true,
-        onSuccess: (page: any) => {
-            if (page.props.available_orders) {
-                availableOrders.value = page.props.available_orders;
-            }
-        }
-    });
-  }
 });
 
 onUnmounted(() => {
   document.removeEventListener('click', handlePerPageClickOutside);
-  document.removeEventListener('click', handleTypeClickOutside);
-  document.removeEventListener('click', handleOrderClickOutside);
 });
 
 // Kirim dokumen

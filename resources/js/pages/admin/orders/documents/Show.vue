@@ -61,7 +61,7 @@
             </div>
             <div>
               <h3 class="text-sm font-medium text-secondary-500 dark:text-secondary-400">Customer</h3>
-              <p class="mt-1 text-secondary-900 dark:text-white text-base">{{ order.user?.name }}</p>
+              <p class="mt-1 text-secondary-900 dark:text-white text-base">{{ order.user ? order.user.name : 'Tanpa Nama' }}</p>
             </div>
             <div>
               <h3 class="text-sm font-medium text-secondary-500 dark:text-secondary-400">Dibuat Pada</h3>

@@ -1,13 +1,13 @@
 <template>
   <div class="relative w-full">
     <div
-      class="relative w-full cursor-default overflow-hidden rounded-md border border-input bg-background text-sm ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+      class="relative w-full cursor-default overflow-hidden rounded-md border border-slate-200 dark:border-slate-700 bg-transparent text-sm ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
     >
       <div class="flex items-center">
         <input
           type="text"
           :placeholder="placeholder"
-          class="w-full bg-background py-2 pl-3 pr-10 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+          class="w-full bg-transparent py-2 pl-3 pr-10 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
           :value="inputValue"
           @input="filterOptions"
           @focus="open = true"
@@ -28,7 +28,7 @@
 
     <div
       v-if="open"
-      class="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md border bg-popover text-popover-foreground shadow-md"
+      class="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-secondary-900 dark:text-white shadow-md"
     >
       <div 
         v-if="filteredOptions.length > 0" 
@@ -37,8 +37,8 @@
         <div
           v-for="option in filteredOptions"
           :key="option.value"
-          class="relative flex cursor-pointer select-none items-center rounded-sm px-3 py-2 text-sm hover:bg-muted"
-          :class="{ 'bg-muted': option.value === modelValue }"
+          class="relative flex cursor-pointer select-none items-center rounded-sm px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700"
+          :class="{ 'bg-slate-100 dark:bg-slate-700': option.value === modelValue }"
           @click="selectOption(option)"
           @mousedown.prevent
         >
@@ -118,7 +118,8 @@ function toggleOpen() {
 
 // Close dropdown when clicking outside
 function handleClickOutside(event) {
-  if (event.target.closest('.relative.w-full') !== event.currentTarget) {
+  const combobox = document.querySelector('.relative.w-full');
+  if (combobox && !combobox.contains(event.target)) {
     open.value = false;
     searchQuery.value = '';
     filteredOptions.value = [...props.options];

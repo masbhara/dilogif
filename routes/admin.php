@@ -100,7 +100,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         
         // Dokumen Order
         Route::get('orders/{order}/documents', [OrderDocumentController::class, 'index'])->name('orders.documents.index');
-        Route::get('orders/{order}/documents/create', [OrderDocumentController::class, 'create'])->name('orders.documents.create');
+        Route::get('orders/{order}/documents/create', [OrderDocumentController::class, 'create'])->name('orders.documents.create')->where('order', '[0-9]+|new');
         Route::post('orders/{order}/documents', [OrderDocumentController::class, 'store'])->name('orders.documents.store');
         Route::get('orders/{order}/documents/{document}/edit', [OrderDocumentController::class, 'edit'])->name('orders.documents.edit');
         Route::get('orders/{order}/documents/{document}', [OrderDocumentController::class, 'show'])->name('orders.documents.show');
