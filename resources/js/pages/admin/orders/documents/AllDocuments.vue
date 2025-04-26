@@ -79,8 +79,6 @@
                 <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Customer</TableHead>
                 <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Tipe</TableHead>
                 <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Status</TableHead>
-                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Dibuat Pada</TableHead>
-                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Ukuran File</TableHead>
                 <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400 text-right">Aksi</TableHead>
               </TableRow>
             </TableHeader>
@@ -108,44 +106,48 @@
                     {{ document.is_sent ? 'Terkirim' : 'Belum Terkirim' }}
                   </Badge>
                 </TableCell>
-                <TableCell class="py-4 px-6">{{ formatDate(document.created_at) }}</TableCell>
-                <TableCell class="py-4 px-6">{{ formatFileSize(document.file_size) }}</TableCell>
                 <TableCell class="py-4 px-6 text-right">
-                  <div class="flex justify-end gap-2">
-                    <Button 
-                      v-if="document.file_path"
-                      size="sm" 
-                      variant="outline"
-                      @click="downloadDocument(document.id)"
-                      title="Unduh Dokumen"
-                    >
-                      <Download class="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      @click="showSendModal = true; selectedDocument = document"
-                      title="Kirim ke Pelanggan"
-                    >
-                      <Mail class="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      @click="showEditModal = true; selectedDocument = document"
-                      title="Edit Dokumen"
-                    >
-                      <Edit class="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      @click="confirmDelete(document)"
-                      title="Hapus Dokumen"
-                      class="text-destructive hover:bg-destructive/10"
-                    >
-                      <Trash2 class="h-4 w-4" />
-                    </Button>
+                  <div class="flex justify-end">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="action" size="icon" class="h-8 w-8 rounded-md">
+                          <MoreHorizontal class="h-4 w-4" />
+                          <span class="sr-only">Menu</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" class="w-[160px]">
+                        <DropdownMenuItem 
+                          @click="viewDocumentDetail(document)" 
+                          class="flex items-center gap-2 cursor-pointer py-1.5"
+                        >
+                          <Eye class="h-4 w-4" />
+                          <span>Lihat Detail</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          v-if="document.file_path"
+                          @click="downloadDocument(document.id)" 
+                          class="flex items-center gap-2 cursor-pointer py-1.5"
+                        >
+                          <Download class="h-4 w-4" />
+                          <span>Unduh</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          @click="editDocument(document)" 
+                          class="flex items-center gap-2 cursor-pointer py-1.5"
+                        >
+                          <Edit class="h-4 w-4" />
+                          <span>Edit</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          @click="showSendModal = true; selectedDocument = document" 
+                          class="flex items-center gap-2 cursor-pointer py-1.5"
+                        >
+                          <Mail class="h-4 w-4" />
+                          <span>Kirim</span>
+                        </DropdownMenuItem>
+                       
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </TableCell>
               </TableRow>
@@ -354,12 +356,18 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
 import Pagination from '@/components/Pagination.vue';
 import { 
     Download, 
     FileText, 
     Edit, 
+    Eye,
     Globe, 
     RefreshCw, 
     Key, 
@@ -368,13 +376,14 @@ import {
     Plus as PlusIcon,
     Search,
     Loader2,
-    ChevronDown
+    ChevronDown,
+    MoreHorizontal
 } from 'lucide-vue-next';
 
 // Breadcrumbs untuk navigasi
 const breadcrumbs = [
     { title: 'Dashboard', href: route('admin.dashboard') },
-    { title: 'Dokumen Order', href: route('admin.orders.all.documents') },
+    { title: 'Dokumen Order', href: route('admin.documents.all') },
 ];
 
 const props = defineProps<{
@@ -553,7 +562,7 @@ const formatDate = (dateString: string | null) => {
 
 // Update search dengan debounce
 const updateSearch = debounce((value: string) => {
-    router.get(route('admin.orders.all.documents'), {
+    router.get(route('admin.documents.all'), {
         search: value,
         per_page: perPage.value
     }, {
@@ -601,7 +610,7 @@ const handlePerPageClickOutside = (evt: MouseEvent) => {
 
 // Update per page
 const updatePerPage = (value: string) => {
-    router.get(route('admin.orders.all.documents'), {
+    router.get(route('admin.documents.all'), {
         search: search.value,
         per_page: value
     }, {
@@ -612,7 +621,7 @@ const updatePerPage = (value: string) => {
 
 // Download dokumen
 const downloadDocument = (id: number) => {
-    window.open(route('admin.documents.download', id));
+    window.open(route('documents.download', id));
 };
 
 // Get badge variant
@@ -769,6 +778,16 @@ const sendDocument = () => {
 // Handle pagination
 const onSuccess = (page: number) => {
     currentPage.value = page;
+};
+
+// Fungsi untuk melihat detail dokumen
+const viewDocumentDetail = (document: any) => {
+  router.visit(route('admin.orders.documents.show', [document.order_id, document.id]));
+};
+
+// Fungsi untuk mengedit dokumen
+const editDocument = (document: any) => {
+  router.visit(route('admin.orders.documents.edit', [document.order_id, document.id]));
 };
 </script>
 

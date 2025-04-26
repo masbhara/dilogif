@@ -98,19 +98,17 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         Route::get('orders/{order}/pdf', [AdminOrderController::class, 'exportPdf'])->name('orders.pdf');
         Route::get('orders-statistics', [AdminOrderController::class, 'statistics'])->name('orders.statistics');
         
-        // Route khusus untuk melihat semua dokumen dari semua order (cocok dengan URL /admin/orders/all/documents)
-        Route::get('orders/all/documents', [OrderDocumentController::class, 'allDocuments'])->name('orders.all.documents');
-        
         // Dokumen Order
         Route::get('orders/{order}/documents', [OrderDocumentController::class, 'index'])->name('orders.documents.index');
         Route::get('orders/{order}/documents/create', [OrderDocumentController::class, 'create'])->name('orders.documents.create');
         Route::post('orders/{order}/documents', [OrderDocumentController::class, 'store'])->name('orders.documents.store');
         Route::get('orders/{order}/documents/{document}/edit', [OrderDocumentController::class, 'edit'])->name('orders.documents.edit');
+        Route::get('orders/{order}/documents/{document}', [OrderDocumentController::class, 'show'])->name('orders.documents.show');
         Route::put('orders/{order}/documents/{document}', [OrderDocumentController::class, 'update'])->name('orders.documents.update');
         Route::delete('orders/{order}/documents/{document}', [OrderDocumentController::class, 'destroy'])->name('orders.documents.destroy');
         Route::post('orders/{order}/documents/{document}/send', [OrderDocumentController::class, 'send'])->name('orders.documents.send');
         
-        // Route baru untuk melihat semua dokumen order
+        // Route untuk melihat semua dokumen order (cocok dengan URL /admin/order-documents)
         Route::get('order-documents', [OrderDocumentController::class, 'allDocuments'])->name('documents.all');
         Route::get('documents/{document}/download', [OrderDocumentController::class, 'download'])->name('documents.download');
     });

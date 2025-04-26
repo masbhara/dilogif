@@ -5,7 +5,7 @@ import NavUser from "@/components/layout/NavUser.vue";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
-import { LayoutGrid, UsersIcon, ShieldIcon, KeyIcon, Settings, Package, FolderTree, ShoppingBag, BarChart3, Receipt, Wallet } from 'lucide-vue-next';
+import { LayoutGrid, UsersIcon, ShieldIcon, KeyIcon, Settings, Package, FolderTree, ShoppingBag, BarChart3, Receipt, Wallet, Mail } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 import { computed } from 'vue';
 
@@ -49,14 +49,14 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Pesanan Saya',
+        title: 'My Orders',
         href: route('orders.index'),
         icon: ShoppingBag,
     },
     {
-        title: 'Dokumen Saya',
+        title: 'Documents',
         href: route('my-documents'),
-        icon: Receipt,
+        icon: Mail,
     }
 ];
 
@@ -84,7 +84,7 @@ const adminNavItems: NavItem[] = [
     },
     {
         title: 'Dokumen Order',
-        href: route('admin.orders.all.documents'),
+        href: route('admin.documents.all'),
         icon: Receipt,
         requiresRole: 'admin',
         requiresPermission: 'view orders',

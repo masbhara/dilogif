@@ -16,8 +16,36 @@
         </div>
       </div>
 
+      <!-- Filter dan Pencarian -->
+        <CardContent class="px-0">
+          <div class="flex flex-col md:flex-row gap-4">
+            <div class="flex-1">
+            
+              <div class="relative">
+                <input 
+                  id="search"
+                  v-model="searchQuery" 
+                  type="text" 
+                  placeholder="Cari berdasarkan judul, nomor pesanan..." 
+                  class="w-full h-9 pl-10 px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+                />
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Search class="h-4 w-4 text-slate-400" />
+                </div>
+              </div>
+            </div>
+            <div v-if="searchQuery" class="flex items-end">
+              <Button @click="searchQuery = ''" variant="outline" size="sm" class="h-9">
+                <X class="h-4 w-4 mr-1" />
+                Reset
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+        
+
       <!-- Dokumen Belum Dibaca -->
-      <Card v-if="unreadDocuments && unreadDocuments.length > 0" class="mb-6">
+      <Card v-if="filteredUnreadDocuments.length > 0" class="mb-6">
         <CardHeader class="pb-3">
           <CardTitle class="flex items-center">
             <AlertTriangle class="h-5 w-5 text-red-500 mr-2" />
@@ -28,17 +56,19 @@
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div class="space-y-4">
-            <div v-for="doc in unreadDocuments" :key="doc.id" class="p-4 bg-white dark:bg-slate-800 border border-red-100 dark:border-red-900/30 rounded-md">
-              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div v-for="doc in filteredUnreadDocuments" :key="doc.id" class="p-4 bg-white dark:bg-slate-800 border border-red-100 dark:border-red-900/30 rounded-md">
+              <div class="flex flex-col gap-4">
                 <div>
-                  <div class="flex items-center space-x-2 mb-2">
-                    <Badge :variant="getBadgeVariant(doc.type)">
-                      {{ getDocumentTypeLabel(doc.type) }}
-                    </Badge>
-                    <Badge variant="destructive" size="sm">
-                      Belum Dibaca
-                    </Badge>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2 mb-2">
+                      <Badge :variant="getBadgeVariant(doc.type)">
+                        {{ getDocumentTypeLabel(doc.type) }}
+                      </Badge>
+                      <Badge variant="destructive" size="sm">
+                        Belum Dibaca
+                      </Badge>
+                    </div>
                   </div>
                   <h4 class="text-lg font-medium text-slate-900 dark:text-white mb-1">{{ doc.title }}</h4>
                   <div class="text-sm text-slate-500 dark:text-slate-400">
@@ -49,10 +79,11 @@
                     </p>
                   </div>
                 </div>
-                <div class="flex flex-shrink-0 gap-2">
+                <div class="flex gap-2 mt-2">
                   <Button 
                     variant="outline" 
                     size="sm"
+                    class="flex-1"
                     @click="navigateToDocumentDetail(doc.order_id, doc.id)"
                   >
                     <Eye class="h-4 w-4 mr-1" />
@@ -61,6 +92,7 @@
                   <Button 
                     variant="secondary" 
                     size="sm"
+                    class="flex-1"
                     @click="markAsRead(doc.order_id, doc.id)"
                   >
                     <CheckCircle class="h-4 w-4 mr-1" />
@@ -82,16 +114,17 @@
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <!-- Kredensial -->
-          <div v-if="filteredCredentials.length > 0" class="mb-8">
-            <h3 class="text-lg font-medium mb-4 flex items-center">
-              <Key class="h-5 w-5 text-blue-500 mr-2" />
-              Kredensial
-            </h3>
-            <div class="space-y-4">
-              <div v-for="doc in filteredCredentials" :key="doc.id" class="p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div>
+          <!-- Semua Dokumen dalam Satu Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Kredensial -->
+            <div 
+              v-for="doc in filteredCredentials" 
+              :key="'credential-'+doc.id" 
+              class="p-4 bg-white dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-md"
+            >
+              <div class="flex flex-col gap-4">
+                <div>
+                  <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-2 mb-2">
                       <Badge variant="blue">
                         Kredensial
@@ -100,40 +133,39 @@
                         Kedaluwarsa
                       </Badge>
                     </div>
-                    <h4 class="text-lg font-medium text-slate-900 dark:text-white mb-1">{{ doc.title }}</h4>
-                    <div class="text-sm text-slate-500 dark:text-slate-400">
-                      <p>Pesanan: <span class="font-medium">{{ doc.order?.order_number || 'N/A' }}</span></p>
-                      <p>{{ formatDate(doc.created_at) }}</p>
-                      <p v-if="doc.expires_at" :class="{ 'text-red-600 dark:text-red-400 font-medium': isExpired(doc.expires_at) }">
-                        {{ getExpiryText(doc.expires_at) }}
-                      </p>
-                    </div>
                   </div>
-                  <div class="flex-shrink-0">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      @click="navigateToDocumentDetail(doc.order_id, doc.id)"
-                    >
-                      <Eye class="h-4 w-4 mr-1" />
-                      Lihat Detail
-                    </Button>
+                  <h4 class="text-lg font-medium text-slate-900 dark:text-white mb-1">{{ doc.title }}</h4>
+                  <div class="text-sm text-slate-500 dark:text-slate-400">
+                    <p>Pesanan: <span class="font-medium">{{ doc.order?.order_number || 'N/A' }}</span></p>
+                    <p>{{ formatDate(doc.created_at) }}</p>
+                    <p v-if="doc.expires_at" :class="{ 'text-red-600 dark:text-red-400 font-medium': isExpired(doc.expires_at) }">
+                      {{ getExpiryText(doc.expires_at) }}
+                    </p>
                   </div>
+                </div>
+                <div class="mt-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    class="w-full"
+                    @click="navigateToDocumentDetail(doc.order_id, doc.id)"
+                  >
+                    <Eye class="h-4 w-4 mr-1" />
+                    Lihat Detail
+                  </Button>
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- Informasi Domain -->
-          <div v-if="filteredDomainInfo.length > 0" class="mb-8">
-            <h3 class="text-lg font-medium mb-4 flex items-center">
-              <Globe class="h-5 w-5 text-green-500 mr-2" />
-              Informasi Domain
-            </h3>
-            <div class="space-y-4">
-              <div v-for="doc in filteredDomainInfo" :key="doc.id" class="p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div>
+            <!-- Informasi Domain -->
+            <div 
+              v-for="doc in filteredDomainInfo" 
+              :key="'domain-'+doc.id" 
+              class="p-4 bg-white dark:bg-slate-800 border border-green-100 dark:border-slate-700 rounded-md"
+            >
+              <div class="flex flex-col gap-4">
+                <div>
+                  <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-2 mb-2">
                       <Badge variant="green">
                         Domain
@@ -142,103 +174,116 @@
                         Kedaluwarsa
                       </Badge>
                     </div>
-                    <h4 class="text-lg font-medium text-slate-900 dark:text-white mb-1">{{ doc.title }}</h4>
-                    <div class="text-sm text-slate-500 dark:text-slate-400">
-                      <p>Pesanan: <span class="font-medium">{{ doc.order?.order_number || 'N/A' }}</span></p>
-                      <p>{{ formatDate(doc.created_at) }}</p>
-                      <p v-if="doc.expires_at" :class="{ 'text-red-600 dark:text-red-400 font-medium': isExpired(doc.expires_at) }">
-                        {{ getExpiryText(doc.expires_at) }}
-                      </p>
-                    </div>
                   </div>
-                  <div class="flex-shrink-0">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      @click="navigateToDocumentDetail(doc.order_id, doc.id)"
-                    >
-                      <Eye class="h-4 w-4 mr-1" />
-                      Lihat Detail
-                    </Button>
+                  <h4 class="text-lg font-medium text-slate-900 dark:text-white mb-1">{{ doc.title }}</h4>
+                  <div class="text-sm text-slate-500 dark:text-slate-400">
+                    <p>Pesanan: <span class="font-medium">{{ doc.order?.order_number || 'N/A' }}</span></p>
+                    <p>{{ formatDate(doc.created_at) }}</p>
+                    <p v-if="doc.expires_at" :class="{ 'text-red-600 dark:text-red-400 font-medium': isExpired(doc.expires_at) }">
+                      {{ getExpiryText(doc.expires_at) }}
+                    </p>
                   </div>
+                </div>
+                <div class="mt-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    class="w-full"
+                    @click="navigateToDocumentDetail(doc.order_id, doc.id)"
+                  >
+                    <Eye class="h-4 w-4 mr-1" />
+                    Lihat Detail
+                  </Button>
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- Pembaruan -->
-          <div v-if="filteredUpdates.length > 0" class="mb-8">
-            <h3 class="text-lg font-medium mb-4 flex items-center">
-              <RefreshCw class="h-5 w-5 text-orange-500 mr-2" />
-              Pembaruan
-            </h3>
-            <div class="space-y-4">
-              <div v-for="doc in filteredUpdates" :key="doc.id" class="p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div>
+            <!-- Pembaruan -->
+            <div 
+              v-for="doc in filteredUpdates" 
+              :key="'update-'+doc.id" 
+              class="p-4 bg-white dark:bg-slate-800 border border-orange-100 dark:border-slate-700 rounded-md"
+            >
+              <div class="flex flex-col gap-4">
+                <div>
+                  <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-2 mb-2">
                       <Badge variant="orange">
                         Pembaruan
                       </Badge>
                     </div>
-                    <h4 class="text-lg font-medium text-slate-900 dark:text-white mb-1">{{ doc.title }}</h4>
-                    <div class="text-sm text-slate-500 dark:text-slate-400">
-                      <p>Pesanan: <span class="font-medium">{{ doc.order?.order_number || 'N/A' }}</span></p>
-                      <p>{{ formatDate(doc.created_at) }}</p>
-                    </div>
                   </div>
-                  <div class="flex-shrink-0">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      @click="navigateToDocumentDetail(doc.order_id, doc.id)"
-                    >
-                      <Eye class="h-4 w-4 mr-1" />
-                      Lihat Detail
-                    </Button>
+                  <h4 class="text-lg font-medium text-slate-900 dark:text-white mb-1">{{ doc.title }}</h4>
+                  <div class="text-sm text-slate-500 dark:text-slate-400">
+                    <p>Pesanan: <span class="font-medium">{{ doc.order?.order_number || 'N/A' }}</span></p>
+                    <p>{{ formatDate(doc.created_at) }}</p>
                   </div>
+                </div>
+                <div class="mt-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    class="w-full"
+                    @click="navigateToDocumentDetail(doc.order_id, doc.id)"
+                  >
+                    <Eye class="h-4 w-4 mr-1" />
+                    Lihat Detail
+                  </Button>
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- Unduhan -->
-          <div v-if="filteredDownloads.length > 0" class="mb-8">
-            <h3 class="text-lg font-medium mb-4 flex items-center">
-              <Download class="h-5 w-5 text-purple-500 mr-2" />
-              Berkas Unduhan
-            </h3>
-            <div class="space-y-4">
-              <div v-for="doc in filteredDownloads" :key="doc.id" class="p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div>
+            <!-- Unduhan -->
+            <div 
+              v-for="doc in filteredDownloads" 
+              :key="'download-'+doc.id" 
+              class="p-4 bg-white dark:bg-slate-800 border border-purple-100 dark:border-slate-700 rounded-md"
+            >
+              <div class="flex flex-col gap-4">
+                <div>
+                  <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-2 mb-2">
                       <Badge variant="purple">
                         Unduhan
                       </Badge>
                     </div>
-                    <h4 class="text-lg font-medium text-slate-900 dark:text-white mb-1">{{ doc.title }}</h4>
-                    <div class="text-sm text-slate-500 dark:text-slate-400">
-                      <p>Pesanan: <span class="font-medium">{{ doc.order?.order_number || 'N/A' }}</span></p>
-                      <p>{{ formatDate(doc.created_at) }}</p>
-                    </div>
                   </div>
-                  <div class="flex-shrink-0">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      @click="navigateToDocumentDetail(doc.order_id, doc.id)"
-                    >
-                      <Eye class="h-4 w-4 mr-1" />
-                      Lihat Detail
-                    </Button>
+                  <h4 class="text-lg font-medium text-slate-900 dark:text-white mb-1">{{ doc.title }}</h4>
+                  <div class="text-sm text-slate-500 dark:text-slate-400">
+                    <p>Pesanan: <span class="font-medium">{{ doc.order?.order_number || 'N/A' }}</span></p>
+                    <p>{{ formatDate(doc.created_at) }}</p>
                   </div>
+                </div>
+                <div class="mt-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    class="w-full"
+                    @click="navigateToDocumentDetail(doc.order_id, doc.id)"
+                  >
+                    <Eye class="h-4 w-4 mr-1" />
+                    Lihat Detail
+                  </Button>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Empty State -->
+          <!-- Empty State - Dokumen Terfilter -->
+          <div v-if="hasDocuments && !hasFilteredDocuments" class="text-center py-12">
+            <div class="mx-auto h-16 w-16 text-slate-300">
+              <Search class="h-16 w-16" />
+            </div>
+            <h3 class="mt-4 text-xl font-medium text-slate-900 dark:text-white">Tidak Ditemukan</h3>
+            <p class="mt-2 text-slate-500 dark:text-slate-400 max-w-md mx-auto">
+              Tidak ada dokumen yang cocok dengan kata kunci "{{ searchQuery }}". Coba dengan kata kunci lain.
+            </p>
+            <div class="mt-4">
+              <Button @click="searchQuery = ''" variant="outline">Reset Pencarian</Button>
+            </div>
+          </div>
+
+          <!-- Empty State - Tidak Ada Dokumen -->
           <div v-if="!hasDocuments" class="text-center py-12">
             <div class="mx-auto h-16 w-16 text-slate-300">
               <File class="h-16 w-16" />
@@ -263,7 +308,10 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle, Download, Eye, File, RefreshCw, AlertTriangle, Key, Globe } from 'lucide-vue-next';
+import { 
+  CheckCircle, Download, Eye, File, RefreshCw, AlertTriangle, Key, Globe,
+  Search, X
+} from 'lucide-vue-next';
 
 const props = defineProps({
   documents: {
@@ -282,25 +330,42 @@ const props = defineProps({
 const { documents } = toRefs(props);
 const { toast } = useToast();
 
+// Search state
+const searchQuery = ref('');
+
+// Filter dokumen berdasarkan kata kunci pencarian
+const filteredDocuments = computed(() => {
+  if (!searchQuery.value.trim()) return documents.value || [];
+  
+  const query = searchQuery.value.toLowerCase().trim();
+  return (documents.value || []).filter(doc => {
+    const matchTitle = doc.title?.toLowerCase().includes(query);
+    const matchOrderNumber = doc.order?.order_number?.toLowerCase().includes(query);
+    const matchType = getDocumentTypeLabel(doc.type).toLowerCase().includes(query);
+    
+    return matchTitle || matchOrderNumber || matchType;
+  });
+});
+
 // Computed properties untuk filter dokumen berdasarkan tipe
 const filteredCredentials = computed(() => {
-  return (documents.value || []).filter(doc => doc.type === 'credential' && doc.is_read);
+  return filteredDocuments.value.filter(doc => doc.type === 'credential' && doc.is_read);
 });
 
 const filteredDomainInfo = computed(() => {
-  return (documents.value || []).filter(doc => doc.type === 'domain' && doc.is_read);
+  return filteredDocuments.value.filter(doc => doc.type === 'domain' && doc.is_read);
 });
 
 const filteredUpdates = computed(() => {
-  return (documents.value || []).filter(doc => doc.type === 'update' && doc.is_read);
+  return filteredDocuments.value.filter(doc => doc.type === 'update' && doc.is_read);
 });
 
 const filteredDownloads = computed(() => {
-  return (documents.value || []).filter(doc => doc.type === 'download' && doc.is_read);
+  return filteredDocuments.value.filter(doc => doc.type === 'download' && doc.is_read);
 });
 
-const unreadDocuments = computed(() => {
-  return (documents.value || []).filter(doc => !doc.is_read);
+const filteredUnreadDocuments = computed(() => {
+  return filteredDocuments.value.filter(doc => !doc.is_read);
 });
 
 const totalDocuments = computed(() => {
@@ -308,11 +373,20 @@ const totalDocuments = computed(() => {
 });
 
 const totalUnread = computed(() => {
-  return unreadDocuments.value.length;
+  return (documents.value || []).filter(doc => !doc.is_read).length;
 });
 
 const hasDocuments = computed(() => {
   return totalDocuments.value > 0;
+});
+
+// Cek apakah ada dokumen yang terfilter
+const hasFilteredDocuments = computed(() => {
+  return filteredCredentials.value.length > 0 || 
+         filteredDomainInfo.value.length > 0 || 
+         filteredUpdates.value.length > 0 || 
+         filteredDownloads.value.length > 0 || 
+         filteredUnreadDocuments.value.length > 0;
 });
 
 // Fungsi untuk mendapatkan label tipe dokumen sesuai bahasa Indonesia

@@ -259,7 +259,7 @@ class OrderDocumentController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return Inertia::render('admin/orders/AllDocuments', [
+        return Inertia::render('admin/orders/documents/AllDocuments', [
             'documents' => $documents,
             'filters' => [
                 'search' => $request->search,
@@ -286,5 +286,22 @@ class OrderDocumentController extends Controller
             Storage::path($document->file_path),
             $filename
         );
+    }
+
+    /**
+     * Menampilkan detail dokumen
+     */
+    public function show(Order $order, OrderDocument $document)
+    {
+        return Inertia::render('admin/orders/documents/Show', [
+            'order' => $order,
+            'document' => $document,
+            'documentTypes' => [
+                OrderDocument::TYPE_CREDENTIAL => 'Kredensial Login',
+                OrderDocument::TYPE_DOMAIN => 'Informasi Domain',
+                OrderDocument::TYPE_UPDATE => 'Pembaruan',
+                OrderDocument::TYPE_DOWNLOAD => 'File Unduhan',
+            ],
+        ]);
     }
 } 
