@@ -12,6 +12,8 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\OrderDocumentController;
 use App\Http\Controllers\Admin\PaymentMethodController;
+use App\Http\Controllers\Admin\AdminWhatsappController;
+use App\Http\Controllers\Admin\SocialMediaController;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\Product;
@@ -60,6 +62,26 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         Route::post('settings/logo', [SettingController::class, 'uploadLogo'])->name('settings.upload-logo');
         Route::post('settings/favicon', [SettingController::class, 'uploadFavicon'])->name('settings.upload-favicon');
         Route::post('settings/og-image', [SettingController::class, 'uploadOgImage'])->name('settings.upload-og-image');
+        
+        // WhatsApp Admin routes
+        Route::resource('settings/whatsapp', AdminWhatsappController::class)
+            ->except(['create', 'edit', 'show'])
+            ->names([
+                'index' => 'settings.whatsapp.index',
+                'store' => 'settings.whatsapp.store',
+                'update' => 'settings.whatsapp.update',
+                'destroy' => 'settings.whatsapp.destroy',
+            ]);
+            
+        // Social Media routes
+        Route::resource('settings/social-media', SocialMediaController::class)
+            ->except(['create', 'edit', 'show'])
+            ->names([
+                'index' => 'settings.social-media.index',
+                'store' => 'settings.social-media.store',
+                'update' => 'settings.social-media.update',
+                'destroy' => 'settings.social-media.destroy',
+            ]);
         
         // Deprecated - akan dihapus setelah migrasi selesai
         Route::get('email-settings', [EmailSettingController::class, 'edit'])->name('email-settings.edit');

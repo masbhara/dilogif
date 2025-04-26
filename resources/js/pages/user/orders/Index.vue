@@ -240,6 +240,8 @@ const formatDate = (dateString) => {
 };
 
 const getStatusLabel = (status) => {
+  if (!status) return '';
+  if (!props.statuses) return status;
   return props.statuses[status] || status;
 };
 

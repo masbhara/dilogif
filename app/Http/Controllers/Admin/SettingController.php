@@ -17,6 +17,10 @@ class SettingController extends Controller
     {
         $settings = WebsiteSetting::getSettings();
         
+        // Ambil data WhatsApp Admin dan Social Media
+        $whatsappAdmins = \App\Models\AdminWhatsapp::orderBy('order')->get();
+        $socialMedia = \App\Models\SocialMedia::orderBy('order')->get();
+        
         return Inertia::render('admin/settings/Index', [
             'settings' => $settings,
             'mediaUrls' => [
@@ -24,6 +28,8 @@ class SettingController extends Controller
                 'favicon' => $settings->getFaviconUrl(),
                 'og_image' => $settings->getOgImageUrl(),
             ],
+            'whatsappAdmins' => $whatsappAdmins,
+            'socialMedia' => $socialMedia,
             'title' => 'Pengaturan Website',
         ]);
     }

@@ -302,7 +302,7 @@ const getStatusLabel = (status) => {
     'cancelled': 'Dibatalkan'
   };
   
-  return statusMap[status] || status;
+  return status ? (statusMap[status] || status) : '';
 };
 
 const getPaymentStatusLabel = (status) => {
@@ -312,7 +312,7 @@ const getPaymentStatusLabel = (status) => {
     'failed': 'Pembayaran Gagal'
   };
   
-  return statusMap[status] || status;
+  return status ? (statusMap[status] || status) : '';
 };
 
 // Fungsi untuk menyalin teks ke clipboard
