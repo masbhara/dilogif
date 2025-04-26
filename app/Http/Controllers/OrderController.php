@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Payment;
 use App\Models\PaymentMethod;
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -253,10 +254,14 @@ class OrderController extends Controller
      */
     public function thankYou($orderId)
     {
-        $order = Order::with(['items.product', 'payment'])->findOrFail($orderId);
+        $order = Order::with(['items.product', 'payment.paymentMethod'])->findOrFail($orderId);
+        
+        // Ambil semua metode pembayaran yang aktif
+        $paymentMethods = PaymentMethod::where('is_active', true)->get();
         
         return Inertia::render('public/cart/ThankYou', [
-            'order' => $order
+            'order' => $order,
+            'paymentMethods' => $paymentMethods
         ]);
     }
 
@@ -271,10 +276,14 @@ class OrderController extends Controller
                 ->where('customer_phone', $request->customer_phone)
                 ->first();
                 
+            // Ambil semua metode pembayaran yang aktif
+            $paymentMethods = PaymentMethod::where('is_active', true)->get();
+                
             if ($order) {
                 return Inertia::render('public/orders/Track', [
                     'order' => $order,
-                    'found' => true
+                    'found' => true,
+                    'paymentMethods' => $paymentMethods
                 ]);
             } else {
                 return Inertia::render('public/orders/Track', [

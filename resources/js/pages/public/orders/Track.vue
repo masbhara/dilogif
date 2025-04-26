@@ -221,51 +221,72 @@
                 <div class="bg-gray-50 rounded-lg p-4">
                   <!-- Payment Method -->
                   <div class="flex flex-col space-y-2">
-                    <div class="mb-2">
-                      <p class="text-xs text-gray-500">Metode Pembayaran</p>
-                      <div class="flex items-center mt-1">
-                        <img 
-                          v-if="order.payment.payment_method?.logo" 
-                          :src="`/storage/${order.payment.payment_method.logo}`" 
-                          class="h-6 mr-2 object-contain" 
-                          :alt="order.payment.payment_method?.name" 
-                        />
-                        <p class="font-medium">
-                          {{ order.payment.payment_method?.name || 'Belum ditentukan' }}
-                        </p>
+                    <!-- Payment Status & Amount -->
+                    <div class="bg-white border border-gray-200 rounded-lg p-3">
+                      <div class="flex justify-between items-start mb-2">
+                        <div>
+                          <p class="text-xs text-gray-500">Status Pembayaran</p>
+                          <Badge 
+                            variant="outline" 
+                            class="text-sm px-3 py-1 mt-1"
+                            :class="{
+                              'border-yellow-400 text-yellow-600 bg-yellow-50': order.payment.status === 'pending',
+                              'border-green-400 text-green-600 bg-green-50': order.payment.status === 'completed',
+                              'border-red-400 text-red-600 bg-red-50': order.payment.status === 'failed'
+                            }"
+                          >
+                            {{ getPaymentStatusLabel(order.payment.status) }}
+                          </Badge>
+                        </div>
+                        
+                        <!-- Total dengan tombol salin -->
+                        <div class="bg-primary-50 border border-primary-100 rounded-lg p-2 flex items-center gap-2">
+                          <div>
+                            <p class="text-xs text-gray-600">Total:</p>
+                            <p class="text-sm font-bold text-primary-600">{{ formatPrice(order.payment.amount) }}</p>
+                          </div>
+                          <button
+                            @click="copyToClipboard(order.payment.amount.toString())"
+                            class="text-primary-600 hover:text-primary-700 p-1 rounded-md hover:bg-primary-100"
+                            title="Salin jumlah pembayaran"
+                          >
+                            <ClipboardCopyIcon class="h-4 w-4" />
+                          </button>
+                        </div>
                       </div>
                     </div>
                     
-                    <!-- Bank Transfer Details -->
-                    <div v-if="order.payment.payment_method?.type === 'bank_transfer'" class="border border-gray-200 rounded-lg p-3 bg-white">
-                      <p class="text-xs text-gray-500 mb-1">Informasi Rekening</p>
-                      <div class="space-y-1 text-sm">
-                        <p><span class="font-medium">Bank:</span> {{ order.payment.payment_method.bank_name }}</p>
-                        <p><span class="font-medium">No. Rekening:</span> {{ order.payment.payment_method.account_number }}</p>
-                        <p><span class="font-medium">Atas Nama:</span> {{ order.payment.payment_method.account_name }}</p>
+                    <!-- Daftar Rekening Pembayaran Aktif -->
+                    <div v-if="paymentMethods && paymentMethods.length > 0">
+                      <p class="text-xs text-gray-500 font-medium mb-2">Rekening Pembayaran:</p>
+                      <div v-for="method in paymentMethods.filter(m => m.type === 'bank_transfer')" :key="method.id" 
+                          class="border border-gray-200 rounded-lg p-3 bg-white mb-2">
+                        <div class="flex items-center mb-2">
+                          <img 
+                            v-if="method.logo" 
+                            :src="`/storage/${method.logo}`" 
+                            class="h-6 mr-2 object-contain" 
+                            :alt="method.name" 
+                          />
+                          <p class="font-medium">{{ method.name }}</p>
+                        </div>
+                        <div class="space-y-2 text-sm">
+                          <p><span class="font-medium">Bank:</span> {{ method.bank_name }}</p>
+                          
+                          <div class="flex items-center justify-between bg-gray-50 rounded p-2">
+                            <p><span class="font-medium">No. Rekening:</span> {{ method.account_number }}</p>
+                            <button
+                              @click="copyToClipboard(method.account_number)"
+                              class="text-primary-600 hover:text-primary-700 p-1 rounded-md hover:bg-primary-50 text-xs"
+                              title="Salin nomor rekening"
+                            >
+                              <ClipboardCopyIcon class="h-4 w-4" />
+                            </button>
+                          </div>
+                          
+                          <p><span class="font-medium">Atas Nama:</span> {{ method.account_name }}</p>
+                        </div>
                       </div>
-                    </div>
-                    
-                    <!-- Payment Status -->
-                    <div class="mt-2">
-                      <p class="text-xs text-gray-500">Status Pembayaran</p>
-                      <Badge 
-                        variant="outline" 
-                        class="text-sm px-3 py-1 mt-1"
-                        :class="{
-                          'border-yellow-400 text-yellow-600 bg-yellow-50': order.payment.status === 'pending',
-                          'border-green-400 text-green-600 bg-green-50': order.payment.status === 'completed',
-                          'border-red-400 text-red-600 bg-red-50': order.payment.status === 'failed'
-                        }"
-                      >
-                        {{ getPaymentStatusLabel(order.payment.status) }}
-                      </Badge>
-                    </div>
-                    
-                    <!-- Payment Amount -->
-                    <div class="mt-2">
-                      <p class="text-xs text-gray-500">Jumlah</p>
-                      <p class="font-medium text-primary-600">{{ formatPrice(order.payment.amount) }}</p>
                     </div>
                   </div>
                 </div>
@@ -337,7 +358,8 @@ import {
   ActivityIcon,
   ShoppingCartIcon,
   ClipboardIcon,
-  CheckIcon
+  CheckIcon,
+  ClipboardCopy as ClipboardCopyIcon
 } from 'lucide-vue-next';
 
 const props = defineProps({
@@ -349,7 +371,8 @@ const props = defineProps({
   message: {
     type: String,
     default: 'Pesanan tidak ditemukan dengan nomor pesanan dan nomor telepon yang Anda masukkan.'
-  }
+  },
+  paymentMethods: Array
 });
 
 // State
@@ -425,6 +448,42 @@ const resetForm = () => {
     order_number: '',
     customer_phone: ''
   };
+};
+
+// Fungsi untuk menyalin teks ke clipboard
+const copyToClipboard = (text) => {
+  navigator.clipboard.writeText(text)
+    .then(() => {
+      // Tampilkan notifikasi sukses disalin
+      const notification = document.createElement('div');
+      notification.textContent = 'Berhasil disalin!';
+      notification.className = 'fixed left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-600 text-white px-4 py-2 rounded-md shadow-md z-50';
+      document.body.appendChild(notification);
+      
+      // Tambahkan animasi fade-in dan fade-out
+      notification.style.animation = 'fadeInOut 1.5s ease-in-out';
+      
+      // Buat style untuk animasi
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes fadeInOut {
+          0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+          20% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+          80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+          100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+        }
+      `;
+      document.head.appendChild(style);
+      
+      // Hilangkan notifikasi setelah 2 detik
+      setTimeout(() => {
+        notification.remove();
+        style.remove();
+      }, 1500);
+    })
+    .catch(err => {
+      console.error('Gagal menyalin teks: ', err);
+    });
 };
 
 // Init form values from URL params
