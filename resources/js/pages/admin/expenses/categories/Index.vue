@@ -16,136 +16,80 @@
       
       <div class="bg-white dark:bg-slate-800 text-secondary-900 dark:text-white rounded-xl shadow border border-slate-200 dark:border-slate-700 overflow-hidden">
         <div class="p-6 border-b border-secondary-200 dark:border-slate-700">
-          <div>
-            <h2 class="text-lg font-medium text-secondary-900 dark:text-white">Daftar Kategori Pengeluaran</h2>
-            <p class="text-secondary-600 dark:text-secondary-400 mt-1">Kelola kategori pengeluaran untuk pencatatan keuangan</p>
+          <div class="flex justify-between items-center">
+            <div>
+              <h2 class="text-lg font-medium text-secondary-900 dark:text-white">Daftar Kategori Pengeluaran</h2>
+              <p class="text-secondary-600 dark:text-secondary-400 mt-1">Kelola kategori-kategori untuk pengeluaran bisnis Anda</p>
+            </div>
+            <Button @click="openCreateModal" class="inline-flex items-center gap-1">
+              <PlusIcon class="h-4 w-4" />
+              <span>Tambah Kategori</span>
+            </Button>
           </div>
         </div>
         
-        <!-- Filter dan pencarian -->
-        <div class="p-6 border-b border-secondary-200 dark:border-slate-700">
-          <form @submit.prevent="submit" class="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-            <div class="space-y-2">
-              <Label for="search">Cari</Label>
-              <div class="relative">
-                <Input 
-                  id="search" 
-                  v-model="form.search" 
-                  placeholder="Cari nama kategori"
-                  class="w-full pl-9"
-                />
-                <div class="absolute left-3 top-1/2 -translate-y-1/2 text-secondary-500">
-                  <SearchIcon class="h-4 w-4" />
-                </div>
+        <AdminTable 
+          :columns="columns" 
+          :data="categories" 
+          :loading="loading"
+          emptyMessage="Tidak ada kategori pengeluaran yang tersedia"
+        >
+          <TableRow 
+            v-for="category in categories.data" 
+            :key="category.id" 
+            class="border-b border-secondary-200/60 dark:border-slate-700/60 hover:bg-secondary-100/50 dark:hover:bg-secondary-800/50"
+          >
+            <TableCell class="py-3.5 px-6 align-middle font-medium text-secondary-900 dark:text-white">
+              {{ category.name }}
+            </TableCell>
+            <TableCell class="py-3.5 px-6 align-middle">{{ category.description || '-' }}</TableCell>
+            <TableCell class="py-3.5 px-6 align-middle">
+              <div v-if="category.color" class="w-6 h-6 rounded" :style="{ backgroundColor: category.color }"></div>
+              <span v-else>-</span>
+            </TableCell>
+            <TableCell class="py-3.5 px-6 align-middle">{{ category.expenses_count }}</TableCell>
+            <TableCell class="py-3.5 px-6 align-middle">
+              <div v-if="category.is_active" 
+                   class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-900 dark:bg-green-900 dark:text-green-300 border border-emerald-300 dark:border-green-800 w-fit">
+                <span class="size-2 bg-emerald-600 dark:bg-emerald-400 rounded-full"></span>
+                <span>Aktif</span>
               </div>
-            </div>
-            <div class="space-y-2">
-              <Label for="status">Status</Label>
-              <Select v-model="form.status">
-                <SelectTrigger>
-                  <SelectValue :placeholder="selectedStatusLabel" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem v-for="option in statusOptions" :key="option.value" :value="option.value">
-                    {{ option.label }}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div class="flex gap-2 items-end">
-              <Button type="submit" variant="action" class="h-9">Filter</Button>
-              <Button variant="action-outline" @click="resetFilters" class="h-9">Reset</Button>
-            </div>
-          </form>
-        </div>
-        
-        <!-- Daftar Kategori Pengeluaran -->
-        <div class="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow class="hover:bg-transparent border-b border-secondary-200 dark:border-slate-700">
-                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Nama</TableHead>
-                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Deskripsi</TableHead>
-                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Warna</TableHead>
-                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Jumlah Pengeluaran</TableHead>
-                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Status</TableHead>
-                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400 text-right">Aksi</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow 
-                v-for="category in categories.data" 
-                :key="category.id" 
-                class="border-b border-secondary-200/60 dark:border-slate-700/60 hover:bg-secondary-100/50 dark:hover:bg-secondary-800/50"
-              >
-                <TableCell class="py-3.5 px-6 align-middle font-medium text-secondary-900 dark:text-white">
-                  {{ category.name }}
-                </TableCell>
-                <TableCell class="py-3.5 px-6 align-middle">{{ category.description || '-' }}</TableCell>
-                <TableCell class="py-3.5 px-6 align-middle">
-                  <div v-if="category.color" class="w-6 h-6 rounded" :style="{ backgroundColor: category.color }"></div>
-                  <span v-else>-</span>
-                </TableCell>
-                <TableCell class="py-3.5 px-6 align-middle">{{ category.expenses_count }}</TableCell>
-                <TableCell class="py-3.5 px-6 align-middle">
-                  <div v-if="category.is_active" 
-                       class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-900 dark:bg-green-900 dark:text-green-300 border border-emerald-300 dark:border-green-800 w-fit">
-                    <span class="size-2 bg-emerald-600 dark:bg-emerald-400 rounded-full"></span>
-                    <span>Aktif</span>
-                  </div>
-                  <div v-else
-                       class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-900 dark:bg-yellow-900 dark:text-yellow-300 border border-amber-300 dark:border-yellow-800 w-fit">
-                    <span class="size-2 bg-amber-600 dark:bg-amber-400 rounded-full"></span>
-                    <span>Nonaktif</span>
-                  </div>
-                </TableCell>
-                <TableCell class="py-3.5 px-6 align-middle text-right">
-                  <div class="flex justify-end">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="action" size="icon" class="h-8 w-8 rounded-md">
-                          <MoreHorizontal class="h-4 w-4" />
-                          <span class="sr-only">Menu</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" class="w-[160px]">
-                        <DropdownMenuItem @click="viewCategory(category)" class="flex items-center gap-2 cursor-pointer py-1.5">
-                          <Eye class="h-4 w-4" />
-                          <span>Lihat</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem @click="editCategory(category)" class="flex items-center gap-2 cursor-pointer py-1.5">
-                          <Pencil class="h-4 w-4" />
-                          <span>Edit</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          v-if="category.expenses_count === 0"
-                          @click="openDeleteDialog(category)" 
-                          variant="destructive" 
-                          class="flex items-center gap-2 cursor-pointer py-1.5 text-red-600 dark:text-red-400"
-                        >
-                          <Trash class="h-4 w-4" />
-                          <span>Hapus</span>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                </TableCell>
-              </TableRow>
-              <TableRow v-if="categories.data.length === 0">
-                <TableCell colspan="6" class="py-6 text-center text-secondary-600 dark:text-secondary-400">
-                  Tidak ada data kategori pengeluaran
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </div>
-        
-        <div v-if="categories.links && categories.links.length > 0" class="py-4 px-6 flex items-center justify-between border-t border-secondary-200 dark:border-slate-700">
-          <div>
-            Menampilkan {{ categories.from || 0 }} - {{ categories.to || 0 }} dari {{ categories.total }} data
-          </div>
-          <Pagination :links="categories.links" />
-        </div>
+              <div v-else
+                   class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-900 dark:bg-yellow-900 dark:text-yellow-300 border border-amber-300 dark:border-yellow-800 w-fit">
+                <span class="size-2 bg-amber-600 dark:bg-amber-400 rounded-full"></span>
+                <span>Nonaktif</span>
+              </div>
+            </TableCell>
+            <TableCell class="py-3.5 px-6 align-middle text-right">
+              <div class="flex justify-end gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  @click="viewCategory(category)"
+                  class="h-8 px-2"
+                >
+                  <Eye class="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  @click="editCategory(category)"
+                  class="h-8 px-2"
+                >
+                  <Pencil class="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  @click="confirmDelete(category)" 
+                  class="h-8 px-2 text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 hover:border-red-300 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-950 dark:hover:text-red-300"
+                >
+                  <Trash class="h-4 w-4" />
+                </Button>
+              </div>
+            </TableCell>
+          </TableRow>
+        </AdminTable>
       </div>
     </div>
 
@@ -179,6 +123,7 @@ import Pagination from '@/components/ui/pagination/Pagination.vue';
 import { ref, computed } from 'vue';
 import ConfirmationDialog from '@/components/ui/ConfirmationDialog.vue';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import AdminTable from '@/components/AdminTable.vue';
 
 // Definisikan tipe
 interface ExpenseCategory {
@@ -301,6 +246,16 @@ const breadcrumbs: BreadcrumbItem[] = [
     title: 'Expense Categories',
     href: route('admin.expense-categories.index'),
   },
+];
+
+// Add columns definition for AdminTable
+const columns = [
+  { label: 'Nama' },
+  { label: 'Deskripsi' },
+  { label: 'Warna' },
+  { label: 'Jumlah Pengeluaran' },
+  { label: 'Status' },
+  { label: 'Aksi', headerClass: 'text-right' }
 ];
 </script>
 

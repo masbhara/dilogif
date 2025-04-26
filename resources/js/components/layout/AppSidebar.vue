@@ -5,7 +5,7 @@ import NavUser from "@/components/layout/NavUser.vue";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
-import { LayoutGrid, UsersIcon, ShieldIcon, KeyIcon, Settings, Package, FolderTree, ShoppingBag, BarChart3, Receipt, Wallet, Mail, CreditCard } from 'lucide-vue-next';
+import { LayoutGrid, UsersIcon, ShieldIcon, KeyIcon, Settings, Package, FolderTree, ShoppingBag, BarChart3, Receipt, Wallet, Mail, CreditCard, CheckSquare } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 import { computed } from 'vue';
 
@@ -57,6 +57,11 @@ const mainNavItems: NavItem[] = [
         title: 'Documents',
         href: route('my-documents'),
         icon: Mail,
+    },
+    {
+        title: 'Konfirmasi Pembayaran',
+        href: route('orders.payment.index'),
+        icon: CheckSquare,
     }
 ];
 
@@ -101,6 +106,13 @@ const adminNavItems: NavItem[] = [
         href: route('admin.payment-methods.index'),
         icon: CreditCard,
         requiresRole: 'admin',
+    },
+    {
+        title: 'Konfirmasi Pembayaran',
+        href: route('admin.payment-confirmations.index'),
+        icon: Receipt,
+        requiresRole: 'admin',
+        requiresPermission: 'manage payments',
     },
     {
         title: 'Expenses',

@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Models\Order;
 use App\Http\Controllers\OrderDocumentController;
+use App\Http\Controllers\PaymentConfirmationController;
 
 Route::middleware(['auth'])->group(function () {
     // Dashboard Route
@@ -62,6 +63,10 @@ Route::middleware(['auth'])->group(function () {
     
     // User Orders
     Route::get('/orders', [OrderController::class, 'userOrders'])->name('orders.index');
+    
+    // PENTING: Route untuk konfirmasi pembayaran user harus didefinisikan sebelum route dengan parameter {order}
+    Route::get('/orders/payment', [PaymentConfirmationController::class, 'userIndex'])->name('orders.payment.index');
+    
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::get('/orders/{order}/documents', [OrderDocumentController::class, 'index'])->name('orders.documents.index');
     Route::get('/orders/{order}/documents/{document}', [OrderDocumentController::class, 'show'])->name('orders.documents.show');
@@ -72,6 +77,27 @@ Route::middleware(['auth'])->group(function () {
     // Payment Routes
     Route::get('/orders/{order}/payment', [PaymentController::class, 'showOptions'])->name('orders.payment');
     Route::post('/orders/{order}/payment', [PaymentController::class, 'updateMethod'])->name('orders.payment.update');
+
+    // Payment Confirmation Routes
+    Route::get('/orders/{order}/payment/confirm', [PaymentConfirmationController::class, 'create'])->name('orders.payment.confirm');
+    Route::post('/orders/{order}/payment/confirm', [PaymentConfirmationController::class, 'store'])->name('orders.payment.confirm.store');
+    
+    // Cart Routes
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+    Route::patch('/cart/{id}', [CartController::class, 'updateQuantity'])->name('cart.update');
+    Route::delete('/cart/{id}', [CartController::class, 'removeFromCart'])->name('cart.remove');
+    Route::delete('/cart', [CartController::class, 'clearCart'])->name('cart.clear');
+    Route::get('/cart/count', [CartController::class, 'getCartCount'])->name('cart.count');
+    
+    // Order Routes
+    Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
+    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+    Route::get('/orders/thankyou/{order}', [OrderController::class, 'thankYou'])->name('orders.thankyou');
+    Route::get('/track-order', [OrderController::class, 'trackOrder'])->name('orders.track');
+    
+    // Public Payment Routes
+    Route::get('/payment-methods', [PaymentController::class, 'getPaymentMethods'])->name('payment.methods');
 });
 
 // Public Routes
@@ -100,23 +126,6 @@ Route::middleware(['http-cache'])->group(function () {
 
 // Detail produk tanpa cache untuk menghindari masalah JSON
 Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
-
-// Cart Routes
-Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
-Route::patch('/cart/{id}', [CartController::class, 'updateQuantity'])->name('cart.update');
-Route::delete('/cart/{id}', [CartController::class, 'removeFromCart'])->name('cart.remove');
-Route::delete('/cart', [CartController::class, 'clearCart'])->name('cart.clear');
-Route::get('/cart/count', [CartController::class, 'getCartCount'])->name('cart.count');
-
-// Order Routes
-Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
-Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
-Route::get('/orders/thankyou/{order}', [OrderController::class, 'thankYou'])->name('orders.thankyou');
-Route::get('/track-order', [OrderController::class, 'trackOrder'])->name('orders.track');
-
-// Public Payment Routes
-Route::get('/payment-methods', [PaymentController::class, 'getPaymentMethods'])->name('payment.methods');
 
 // Admin Routes
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {

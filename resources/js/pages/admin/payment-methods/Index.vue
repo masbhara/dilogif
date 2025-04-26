@@ -22,110 +22,85 @@
                     </div>
                 </div>
                 
-                <div class="overflow-x-auto">
-                    <Table>
-                        <TableHeader>
-                            <TableRow class="hover:bg-transparent border-b border-secondary-200 dark:border-slate-700">
-                                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Logo</TableHead>
-                                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Nama</TableHead>
-                                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Tipe</TableHead>
-                                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Status</TableHead>
-                                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400">Urutan</TableHead>
-                                <TableHead class="py-3 px-6 font-medium text-secondary-600 dark:text-secondary-400 text-right">Tindakan</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            <TableRow v-for="method in paymentMethods.data" :key="method.id" class="border-b border-secondary-200/60 dark:border-slate-700/60 hover:bg-secondary-100/50 dark:hover:bg-secondary-800/50">
-                                <TableCell class="py-3.5 px-6 align-middle">
-                                    <img
-                                        v-if="method.logo"
-                                        :src="'/storage/' + method.logo"
-                                        :alt="method.name"
-                                        class="w-10 h-10 object-cover rounded-md"
-                                    />
-                                    <div v-else class="w-10 h-10 bg-secondary-100 dark:bg-secondary-800 rounded-md flex items-center justify-center">
-                                        <CreditCard class="w-6 h-6 text-secondary-400 dark:text-secondary-500" />
-                                    </div>
-                                </TableCell>
-                                <TableCell class="py-3.5 px-6 align-middle">
-                                    <div class="font-medium">{{ method.name }}</div>
-                                    <div class="text-xs text-secondary-500 dark:text-secondary-400">
-                                        {{ method.code }}
-                                    </div>
-                                </TableCell>
-                                <TableCell class="py-3.5 px-6 align-middle">
-                                    <Badge variant="outline" :class="{
-                                        'bg-blue-50 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700': method.type === 'bank_transfer',
-                                        'bg-purple-50 text-purple-800 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-700': method.type === 'payment_gateway'
-                                    }">
-                                        {{ method.type === 'bank_transfer' ? 'Transfer Bank' : 'Payment Gateway' }}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell class="py-3.5 px-6 align-middle">
-                                    <div v-if="method.is_active" 
-                                         class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-900 dark:bg-green-900 dark:text-green-300 border border-emerald-300 dark:border-green-800 w-fit">
-                                        <span class="size-2 bg-emerald-600 dark:bg-emerald-400 rounded-full"></span>
-                                        <span>Aktif</span>
-                                    </div>
-                                    <div v-else
-                                         class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-900 dark:bg-yellow-900 dark:text-yellow-300 border border-amber-300 dark:border-yellow-800 w-fit">
-                                        <span class="size-2 bg-amber-600 dark:bg-amber-400 rounded-full"></span>
-                                        <span>Nonaktif</span>
-                                    </div>
-                                </TableCell>
-                                <TableCell class="py-3.5 px-6 align-middle">{{ method.sort_order }}</TableCell>
-                                <TableCell class="py-3.5 px-6 align-middle text-right">
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button variant="action" size="icon" class="h-8 w-8 rounded-md">
-                                                <MoreHorizontal class="h-4 w-4" />
-                                                <span class="sr-only">Menu</span>
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end" class="w-[160px]">
-                                            <DropdownMenuItem @click="viewMethod(method)" class="flex items-center gap-2 cursor-pointer py-1.5">
-                                                <Eye class="h-4 w-4" />
-                                                <span>Detail</span>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem @click="editMethod(method)" class="flex items-center gap-2 cursor-pointer py-1.5">
-                                                <Pencil class="h-4 w-4" />
-                                                <span>Edit</span>
-                                            </DropdownMenuItem>
-                                         
-                                            <DropdownMenuItem 
-                                                @click="showHapusDialog(method)" 
-                                                variant="destructive" 
-                                                class="flex items-center gap-2 cursor-pointer py-1.5">
-                                                <Trash class="h-4 w-4" />
-                                                <span>Hapus</span>
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </TableCell>
-                            </TableRow>
-                            
-                            <!-- Jika tidak ada data -->
-                            <TableRow v-if="paymentMethods.data && paymentMethods.data.length === 0">
-                                <TableCell colspan="6" class="py-10 px-6 text-center text-secondary-500 dark:text-secondary-400">
-                                    <div class="flex flex-col items-center">
-                                        <CreditCard class="w-12 h-12 mb-2 text-secondary-400 dark:text-secondary-500" />
-                                        <p>Belum ada metode pembayaran</p>
-                                        <Link :href="route('admin.payment-methods.create')" class="mt-2 cursor-pointer">
-                                            <Button variant="outline" size="sm" class="gap-1">
-                                                <PlusIcon class="w-3 h-3" />
-                                                Tambah Metode Pembayaran
-                                            </Button>
-                                        </Link>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-                </div>
-                
-                <div v-if="paymentMethods.links && paymentMethods.links.length > 0" class="py-4 px-6 flex items-center justify-between border-t border-secondary-200 dark:border-slate-700">
-                    <Pagination :links="paymentMethods.links" />
-                </div>
+                <AdminTable 
+                    :columns="columns" 
+                    :data="paymentMethods" 
+                    :loading="loading"
+                    emptyMessage="Belum ada metode pembayaran"
+                >
+                    <TableRow v-for="method in paymentMethods.data" :key="method.id" class="border-b border-secondary-200/60 dark:border-slate-700/60 hover:bg-secondary-100/50 dark:hover:bg-secondary-800/50">
+                        <TableCell class="py-3.5 px-6 align-middle">
+                            <img
+                                v-if="method.logo"
+                                :src="'/storage/' + method.logo"
+                                :alt="method.name"
+                                class="w-10 h-10 object-cover rounded-md"
+                            />
+                            <div v-else class="w-10 h-10 bg-secondary-100 dark:bg-secondary-800 rounded-md flex items-center justify-center">
+                                <CreditCard class="w-6 h-6 text-secondary-400 dark:text-secondary-500" />
+                            </div>
+                        </TableCell>
+                        <TableCell class="py-3.5 px-6 align-middle">
+                            <div class="font-medium">{{ method.name }}</div>
+                            <div class="text-xs text-secondary-500 dark:text-secondary-400">
+                                {{ method.code }}
+                            </div>
+                        </TableCell>
+                        <TableCell class="py-3.5 px-6 align-middle">
+                            <Badge variant="outline" :class="{
+                                'bg-blue-50 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700': method.type === 'bank_transfer',
+                                'bg-purple-50 text-purple-800 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-700': method.type === 'payment_gateway'
+                            }">
+                                {{ method.type === 'bank_transfer' ? 'Transfer Bank' : 'Payment Gateway' }}
+                            </Badge>
+                        </TableCell>
+                        <TableCell class="py-3.5 px-6 align-middle">
+                            <div v-if="method.is_active" 
+                                    class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-900 dark:bg-green-900 dark:text-green-300 border border-emerald-300 dark:border-green-800 w-fit">
+                                <span class="size-2 bg-emerald-600 dark:bg-emerald-400 rounded-full"></span>
+                                <span>Aktif</span>
+                            </div>
+                            <div v-else
+                                    class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-900 dark:bg-yellow-900 dark:text-yellow-300 border border-amber-300 dark:border-yellow-800 w-fit">
+                                <span class="size-2 bg-amber-600 dark:bg-amber-400 rounded-full"></span>
+                                <span>Nonaktif</span>
+                            </div>
+                        </TableCell>
+                        <TableCell class="py-3.5 px-6 align-middle">{{ method.sort_order }}</TableCell>
+                        <TableCell class="py-3.5 px-6 align-middle text-right">
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="action" size="icon" class="h-8 w-8 rounded-md">
+                                        <MoreHorizontal class="h-4 w-4" />
+                                        <span class="sr-only">Menu</span>
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" class="w-[160px]">
+                                    <DropdownMenuItem @click="viewMethod(method)" class="flex items-center gap-2 cursor-pointer py-1.5">
+                                        <Eye class="h-4 w-4" />
+                                        <span>Detail</span>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem @click="editMethod(method)" class="flex items-center gap-2 cursor-pointer py-1.5">
+                                        <Pencil class="h-4 w-4" />
+                                        <span>Edit</span>
+                                    </DropdownMenuItem>
+                                    
+                                    <DropdownMenuItem 
+                                        @click="showHapusDialog(method)" 
+                                        variant="destructive" 
+                                        class="flex items-center gap-2 cursor-pointer py-1.5">
+                                        <Trash class="h-4 w-4" />
+                                        <span>Hapus</span>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </TableCell>
+                    </TableRow>
+                </AdminTable>
+            </div>
+            
+            <div v-if="paymentMethods.links && paymentMethods.links.length > 0" class="py-4 px-6 flex items-center justify-between border-t border-secondary-200 dark:border-slate-700">
+                <Pagination :links="paymentMethods.links" />
             </div>
         </div>
 
@@ -153,13 +128,14 @@ import { Head, Link } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { PlusIcon, MoreHorizontal, Pencil, Trash, CreditCard, Eye, Trash2 } from 'lucide-vue-next';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { TableRow, TableCell } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import Pagination from '@/components/ui/pagination/Pagination.vue';
 import ConfirmationDialog from '@/components/ui/ConfirmationDialog.vue';
 import StatusBadge from '@/components/ui/StatusBadge.vue';
+import AdminTable from '@/components/AdminTable.vue';
 import { router } from '@inertiajs/vue3';
 import { toast } from 'vue-sonner';
 
@@ -219,4 +195,14 @@ const hapusMethod = () => {
         }
     });
 };
+
+// Columns definition for AdminTable
+const columns = [
+    { label: 'Logo' },
+    { label: 'Nama' },
+    { label: 'Tipe' },
+    { label: 'Status' },
+    { label: 'Urutan' },
+    { label: 'Tindakan', headerClass: 'text-right' }
+];
 </script> 

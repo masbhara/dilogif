@@ -22,6 +22,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use App\Http\Controllers\PaymentConfirmationController;
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     // Dashboard Admin
@@ -137,5 +138,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         // Route untuk melihat semua dokumen order (cocok dengan URL /admin/order-documents)
         Route::get('order-documents', [OrderDocumentController::class, 'allDocuments'])->name('documents.all');
         Route::get('documents/{document}/download', [OrderDocumentController::class, 'download'])->name('documents.download');
+    });
+
+    // Payment Confirmations
+    Route::middleware('permission:manage payments')->group(function () {
+        Route::get('payment-confirmations', [PaymentConfirmationController::class, 'index'])->name('payment-confirmations.index');
+        Route::get('payment-confirmations/{confirmation}', [PaymentConfirmationController::class, 'show'])->name('payment-confirmations.show');
+        Route::patch('payment-confirmations/{confirmation}/status', [PaymentConfirmationController::class, 'updateStatus'])->name('payment-confirmations.status.update');
     });
 });
