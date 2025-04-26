@@ -125,14 +125,7 @@
                           <Eye class="h-4 w-4" />
                           <span>Lihat Detail</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          v-if="document.file_path"
-                          @click="downloadDocument(document.id)" 
-                          class="flex items-center gap-2 cursor-pointer py-1.5"
-                        >
-                          <Download class="h-4 w-4" />
-                          <span>Unduh</span>
-                        </DropdownMenuItem>
+
                         <DropdownMenuItem 
                           @click="editDocument(document)" 
                           class="flex items-center gap-2 cursor-pointer py-1.5"
@@ -141,13 +134,21 @@
                           <span>Edit</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem 
+                          v-if="!document.is_sent"
                           @click="showSendModal = true; selectedDocument = document" 
                           class="flex items-center gap-2 cursor-pointer py-1.5"
                         >
                           <Mail class="h-4 w-4" />
                           <span>Kirim</span>
                         </DropdownMenuItem>
-                       
+                        <DropdownMenuItem 
+                          v-if="document.is_sent"
+                          disabled
+                          class="flex items-center gap-2 py-1.5 opacity-50 cursor-not-allowed"
+                        >
+                          <CheckCircle class="h-4 w-4" />
+                          <span>Sudah Terkirim</span>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
@@ -276,7 +277,9 @@ import {
     Search,
     Loader2,
     ChevronDown,
-    MoreHorizontal
+    MoreHorizontal,
+    CheckCircle,
+    XCircle
 } from 'lucide-vue-next';
 
 // Breadcrumbs untuk navigasi
@@ -537,8 +540,23 @@ onUnmounted(() => {
 const sendDocument = () => {
     if (!selectedDocument.value) return;
     
+    // Pastikan dokumen belum terkirim sebelum mengirim
+    if (selectedDocument.value.is_sent) {
+        const { toast } = useToast();
+        toast({
+            title: 'Dokumen sudah terkirim',
+            description: 'Dokumen ini sudah dikirim ke pelanggan sebelumnya.',
+            variant: 'destructive',
+        });
+        showSendModal.value = false;
+        return;
+    }
+    
     isSubmitting.value = true;
     const { toast } = useToast();
+    
+    // Simpan referensi dokumen untuk update lokal
+    const docToUpdate = selectedDocument.value;
     
     // Menggunakan pendekatan Inertia.post dengan opsi sederhana
     router.post(
@@ -546,16 +564,24 @@ const sendDocument = () => {
         {}, // data payload kosong
         {
             preserveScroll: true,
-            onSuccess: () => {
+            onSuccess: (page) => {
                 showSendModal.value = false;
+                
+                // Update dokumen secara lokal jika server berhasil mengirim
+                const docIndex = props.documents.data.findIndex(doc => doc.id === docToUpdate.id);
+                if (docIndex !== -1) {
+                    // Perbarui status dokumen secara lokal
+                    props.documents.data[docIndex].is_sent = true;
+                    props.documents.data[docIndex].sent_at = new Date().toISOString();
+                }
+                
                 toast({
                     title: 'Dokumen terkirim',
                     description: 'Dokumen berhasil dikirim ke pelanggan',
                 });
                 
-                // Gunakan visiting untuk navigasi penuh ke halaman yang sama
-                // ini akan memuat ulang semua data
-                router.visit(window.location.href);
+                // Paksa reload halaman tanpa cache
+                window.location.href = route('admin.documents.all');
             },
             onError: () => {
                 toast({

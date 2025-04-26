@@ -61,7 +61,7 @@
             </div>
             <div>
               <h3 class="text-sm font-medium text-secondary-500 dark:text-secondary-400">Customer</h3>
-              <p class="mt-1 text-secondary-900 dark:text-white text-base">{{ order.user ? order.user.name : 'Tanpa Nama' }}</p>
+              <p class="mt-1 text-secondary-900 dark:text-white text-base">{{ getCustomerName(order) }}</p>
             </div>
             <div>
               <h3 class="text-sm font-medium text-secondary-500 dark:text-secondary-400">Dibuat Pada</h3>
@@ -312,6 +312,18 @@ const handleDownload = () => {
       description: 'Terjadi kesalahan saat mengunduh dokumen',
       variant: 'destructive',
     });
+  }
+};
+
+// Tambahkan fungsi getCustomerName
+const getCustomerName = (order) => {
+  // Cek nama customer dengan prioritas
+  if (order.customer_name && order.customer_name.trim() !== '') {
+    return order.customer_name;
+  } else if (order.user && order.user.name && order.user.name.trim() !== '') {
+    return order.user.name;
+  } else {
+    return 'Tanpa Nama';
   }
 };
 </script> 

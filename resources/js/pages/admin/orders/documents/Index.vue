@@ -41,7 +41,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Pelanggan</p>
-            <p class="text-base font-medium">{{ order.user_id && order.user ? order.user.name : order.customer_name }}</p>
+            <p class="text-base font-medium">{{ getCustomerName(order) }}</p>
             <p class="text-sm text-slate-500 dark:text-slate-400">{{ order.customer_email }}</p>
             <p class="text-sm text-slate-500 dark:text-slate-400">{{ order.customer_phone }}</p>
           </div>
@@ -120,6 +120,14 @@
                         >
                           <Mail class="h-4 w-4" />
                           <span>Kirim</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          v-if="document.is_sent"
+                          disabled
+                          class="flex items-center gap-2 py-1.5 opacity-50 cursor-not-allowed"
+                        >
+                          <CheckCircle class="h-4 w-4" />
+                          <span>Sudah Terkirim</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem 
                           @click="editDocument(document)"
@@ -390,5 +398,17 @@ const sendDocument = (document) => {
       isSubmitting.value = false;
     }
   });
+};
+
+// Tambahkan fungsi getCustomerName
+const getCustomerName = (order) => {
+  // Cek nama customer dengan prioritas
+  if (order.customer_name && order.customer_name.trim() !== '') {
+    return order.customer_name;
+  } else if (order.user && order.user.name && order.user.name.trim() !== '') {
+    return order.user.name;
+  } else {
+    return 'Tanpa Nama';
+  }
 };
 </script> 

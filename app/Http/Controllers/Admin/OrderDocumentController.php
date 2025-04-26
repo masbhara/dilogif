@@ -25,6 +25,9 @@ class OrderDocumentController extends Controller
      */
     public function index(Order $order)
     {
+        // Pastikan data order lengkap dengan user jika ada
+        $order->load('user');
+        
         $order->load(['documents' => function($query) {
             $query->latest();
         }]);
@@ -281,14 +284,31 @@ class OrderDocumentController extends Controller
                 break;
         }
         
-        // Refresh dokumen untuk mendapatkan data terbaru
-        $document->refresh();
+        // Pastikan status dokumen diperbarui secara eksplisit
+        if ($success) {
+            // Update status dokumen secara manual untuk memastikan perubahan tersimpan
+            $document->update([
+                'is_sent' => true,
+                'sent_at' => now(),
+            ]);
+            
+            // Refresh dokumen untuk mendapatkan data terbaru setelah update
+            $document->refresh();
+        }
+        
+        // Log informasi status dokumen untuk debugging
+        \Log::info('Dokumen status:', [
+            'document_id' => $document->id,
+            'is_sent' => $document->is_sent,
+            'sent_at' => $document->sent_at
+        ]);
         
         // Untuk Inertia requests, selalu gunakan redirect
         if ($success) {
             return redirect()->back()->with([
                 'message' => 'Dokumen berhasil dikirim',
                 'success' => true,
+                'document' => $document, // Sertakan dokumen yang sudah diupdate
             ]);
         } else {
             return redirect()->back()->with([
@@ -381,6 +401,9 @@ class OrderDocumentController extends Controller
      */
     public function show(Order $order, OrderDocument $document)
     {
+        // Pastikan data order lengkap dengan user jika ada
+        $order->load('user');
+        
         return Inertia::render('admin/orders/documents/Show', [
             'order' => $order,
             'document' => $document,
