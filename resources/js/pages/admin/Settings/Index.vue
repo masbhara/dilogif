@@ -262,17 +262,26 @@ const navigateToEmailSettings = () => {
 
       <!-- Tab Navigation dengan Komponen Shadcn UI -->
       <Tabs default-value="general" class="w-full">
-        <div class="bg-white dark:bg-slate-800 p-6 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm mb-5">
-          <TabsList class="w-full grid grid-cols-3 md:w-auto mb-0">
-            <TabsTrigger value="general" class="flex items-center gap-2 px-4 py-2.5">
+        <div class="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm mb-5 overflow-hidden">
+          <TabsList class="w-full flex p-0 h-auto bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
+            <TabsTrigger 
+              value="general" 
+              class="flex-1 items-center gap-2 rounded-none px-6 py-3.5 text-sm font-medium data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 transition-all"
+            >
               <Globe class="h-4 w-4" />
               <span>Umum</span>
             </TabsTrigger>
-            <TabsTrigger value="media" class="flex items-center gap-2 px-4 py-2.5">
+            <TabsTrigger 
+              value="media" 
+              class="flex-1 items-center gap-2 rounded-none px-6 py-3.5 text-sm font-medium data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 transition-all"
+            >
               <ImageIcon class="h-4 w-4" />
               <span>Media</span>
             </TabsTrigger>
-            <TabsTrigger value="scripts" class="flex items-center gap-2 px-4 py-2.5">
+            <TabsTrigger 
+              value="scripts" 
+              class="flex-1 items-center gap-2 rounded-none px-6 py-3.5 text-sm font-medium data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 transition-all"
+            >
               <FileCode class="h-4 w-4" />
               <span>Skrip</span>
             </TabsTrigger>
