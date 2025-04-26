@@ -483,11 +483,35 @@ const confirmDelete = (document: any) => {
 // Hapus dokumen
 const deleteDocument = () => {
     isSubmitting.value = true;
+    const { toast } = useToast();
     
     router.delete(route('admin.orders.documents.destroy', [selectedDocument.value.order_id, selectedDocument.value.id]), {
+        data: {
+            from_all_documents: true
+        },
         onSuccess: () => {
             showDeleteModal.value = false;
             selectedDocument.value = null;
+            
+            // Tampilkan notifikasi sukses
+            toast({
+                title: 'Dokumen dihapus',
+                description: 'Dokumen berhasil dihapus',
+            });
+            
+            // Menggunakan router.visit langsung dengan preserveState: false
+            // untuk memastikan halaman all documents dimuat ulang sepenuhnya
+            router.visit(route('admin.documents.all'), { 
+                preserveScroll: true,
+                preserveState: false 
+            });
+        },
+        onError: () => {
+            toast({
+                title: 'Gagal menghapus',
+                description: 'Terjadi kesalahan saat menghapus dokumen',
+                variant: 'destructive',
+            });
         },
         onFinish: () => {
             isSubmitting.value = false;
@@ -516,32 +540,35 @@ const sendDocument = () => {
     isSubmitting.value = true;
     const { toast } = useToast();
     
-    router.post(route('admin.orders.documents.send', [selectedDocument.value.order_id, selectedDocument.value.id]), {}, {
-        onSuccess: () => {
-            showSendModal.value = false;
-            // Update status dokumen di UI
-            if (selectedDocument.value) {
-                selectedDocument.value.is_sent = true;
-                selectedDocument.value.sent_at = new Date().toISOString();
+    // Menggunakan pendekatan Inertia.post dengan opsi sederhana
+    router.post(
+        route('admin.orders.documents.send', [selectedDocument.value.order_id, selectedDocument.value.id]), 
+        {}, // data payload kosong
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                showSendModal.value = false;
+                toast({
+                    title: 'Dokumen terkirim',
+                    description: 'Dokumen berhasil dikirim ke pelanggan',
+                });
+                
+                // Gunakan visiting untuk navigasi penuh ke halaman yang sama
+                // ini akan memuat ulang semua data
+                router.visit(window.location.href);
+            },
+            onError: () => {
+                toast({
+                    title: 'Gagal mengirim dokumen',
+                    description: 'Terjadi kesalahan saat mengirim dokumen',
+                    variant: 'destructive',
+                });
+            },
+            onFinish: () => {
+                isSubmitting.value = false;
             }
-            // Tampilkan toast notification sukses
-            toast({
-                title: 'Dokumen terkirim',
-                description: 'Dokumen berhasil dikirim ke pelanggan',
-            });
-        },
-        onError: (errors: any) => {
-            // Tampilkan toast notification error
-            toast({
-                title: 'Gagal mengirim dokumen',
-                description: errors.message || 'Terjadi kesalahan saat mengirim dokumen',
-                variant: 'destructive',
-            });
-        },
-        onFinish: () => {
-            isSubmitting.value = false;
         }
-    });
+    );
 };
 
 // Handle pagination

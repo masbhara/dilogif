@@ -151,7 +151,14 @@
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem>
                           <Link :href="route('admin.orders.show', order.id)" class="flex w-full">
+                            <EyeIcon class="h-4 w-4 mr-2" />
                             Lihat detail
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Link :href="route('admin.orders.documents.index', order.id)" class="flex w-full items-center">
+                            <FileText class="h-4 w-4 mr-2" />
+                            Lihat dokumen
                           </Link>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -187,7 +194,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Pagination from '@/components/Pagination.vue';
-import { SearchIcon, EyeIcon, BarChart3Icon, MoreHorizontal } from 'lucide-vue-next';
+import { SearchIcon, EyeIcon, BarChart3Icon, MoreHorizontal, FileText } from 'lucide-vue-next';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { MenuTriggerButton } from '@/components/ui/menu';
 import currencies from "@/lib/currency.js";

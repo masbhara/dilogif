@@ -242,8 +242,19 @@ class OrderDocumentController extends Controller
             Storage::delete($document->file_path);
         }
         
+        // Cek apakah request berasal dari halaman "All Documents" 
+        // dengan memeriksa parameter yang dikirim dari frontend
+        $fromAllDocuments = request()->boolean('from_all_documents', false);
+        
         $document->delete();
         
+        // Jika request berasal dari halaman "All Documents", redirect ke halaman tersebut
+        if ($fromAllDocuments) {
+            return redirect()->route('admin.documents.all')
+                ->with('message', 'Dokumen berhasil dihapus');
+        }
+        
+        // Jika tidak, redirect ke halaman dokumen order
         return redirect()->route('admin.orders.documents.index', $order)
             ->with('message', 'Dokumen berhasil dihapus');
     }
@@ -270,12 +281,20 @@ class OrderDocumentController extends Controller
                 break;
         }
         
+        // Refresh dokumen untuk mendapatkan data terbaru
+        $document->refresh();
+        
+        // Untuk Inertia requests, selalu gunakan redirect
         if ($success) {
-            return redirect()->route('admin.orders.documents.index', $order)
-                ->with('message', 'Dokumen berhasil dikirim');
+            return redirect()->back()->with([
+                'message' => 'Dokumen berhasil dikirim',
+                'success' => true,
+            ]);
         } else {
-            return redirect()->route('admin.orders.documents.index', $order)
-                ->with('error', 'Gagal mengirim dokumen');
+            return redirect()->back()->with([
+                'error' => 'Gagal mengirim dokumen',
+                'success' => false,
+            ]);
         }
     }
 
