@@ -62,45 +62,45 @@
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Nomor Pesanan</h4>
-                  <p class="text-base font-semibold">{{ confirmation?.order?.order_number || '-' }}</p>
+                  <p class="text-base font-semibold">{{ confirmation?.payment?.order?.order_number || '-' }}</p>
                 </div>
                 <div>
                   <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Status Pesanan</h4>
                   <Badge 
                     variant="outline" 
                     :class="{
-                      'border-yellow-400 text-yellow-600 bg-yellow-50 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-700': confirmation?.order?.status === 'pending',
-                      'border-blue-400 text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700': confirmation?.order?.status === 'processing',
-                      'border-green-400 text-green-600 bg-green-50 dark:bg-green-900/30 dark:text-green-300 dark:border-green-700': confirmation?.order?.status === 'completed',
-                      'border-red-400 text-red-600 bg-red-50 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700': confirmation?.order?.status === 'cancelled'
+                      'border-yellow-400 text-yellow-600 bg-yellow-50 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-700': confirmation?.payment?.order?.status === 'pending',
+                      'border-blue-400 text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700': confirmation?.payment?.order?.status === 'processing',
+                      'border-green-400 text-green-600 bg-green-50 dark:bg-green-900/30 dark:text-green-300 dark:border-green-700': confirmation?.payment?.order?.status === 'completed',
+                      'border-red-400 text-red-600 bg-red-50 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700': confirmation?.payment?.order?.status === 'cancelled'
                     }"
                   >
-                    {{ getOrderStatusLabel(confirmation?.order?.status) }}
+                    {{ getOrderStatusLabel(confirmation?.payment?.order?.status) }}
                   </Badge>
                 </div>
                 <div>
                   <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Total</h4>
-                  <p class="text-base font-semibold">{{ formatPrice(confirmation?.order?.total_amount || 0) }}</p>
+                  <p class="text-base font-semibold">{{ formatPrice(confirmation?.payment?.order?.total_amount || 0) }}</p>
                 </div>
                 <div>
                   <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Tanggal Pesanan</h4>
-                  <p class="text-base">{{ formatDate(confirmation?.order?.created_at) }}</p>
+                  <p class="text-base">{{ formatDate(confirmation?.payment?.order?.created_at) }}</p>
                 </div>
                 <div>
                   <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Metode Pembayaran</h4>
-                  <p class="text-base">{{ confirmation?.order?.payment?.payment_method?.name || '-' }}</p>
+                  <p class="text-base">{{ confirmation?.payment?.payment_method?.name || '-' }}</p>
                 </div>
                 <div>
                   <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Status Pembayaran</h4>
                   <Badge 
                     variant="outline" 
                     :class="{
-                      'border-yellow-400 text-yellow-600 bg-yellow-50 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-700': confirmation?.order?.payment?.status === 'pending',
-                      'border-green-400 text-green-600 bg-green-50 dark:bg-green-900/30 dark:text-green-300 dark:border-green-700': confirmation?.order?.payment?.status === 'paid',
-                      'border-red-400 text-red-600 bg-red-50 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700': confirmation?.order?.payment?.status === 'failed'
+                      'border-yellow-400 text-yellow-600 bg-yellow-50 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-700': confirmation?.payment?.status === 'pending',
+                      'border-green-400 text-green-600 bg-green-50 dark:bg-green-900/30 dark:text-green-300 dark:border-green-700': confirmation?.payment?.status === 'paid',
+                      'border-red-400 text-red-600 bg-red-50 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700': confirmation?.payment?.status === 'failed'
                     }"
                   >
-                    {{ getPaymentStatusLabel(confirmation?.order?.payment?.status) }}
+                    {{ getPaymentStatusLabel(confirmation?.payment?.status) }}
                   </Badge>
                 </div>
               </div>
@@ -116,19 +116,19 @@
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Nama</h4>
-                  <p class="text-base font-semibold">{{ confirmation?.order?.user?.name || '-' }}</p>
+                  <p class="text-base font-semibold">{{ confirmation?.payment?.order?.user?.name || '-' }}</p>
                 </div>
                 <div>
                   <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Email</h4>
-                  <p class="text-base">{{ confirmation?.order?.user?.email || '-' }}</p>
+                  <p class="text-base">{{ confirmation?.payment?.order?.user?.email || '-' }}</p>
                 </div>
                 <div>
                   <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Telepon</h4>
-                  <p class="text-base">{{ confirmation?.order?.user?.phone || '-' }}</p>
+                  <p class="text-base">{{ confirmation?.payment?.order?.user?.phone || '-' }}</p>
                 </div>
                 <div>
                   <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Alamat</h4>
-                  <p class="text-base">{{ confirmation?.order?.shipping_address || '-' }}</p>
+                  <p class="text-base">{{ confirmation?.payment?.order?.shipping_address || '-' }}</p>
                 </div>
               </div>
             </CardContent>
@@ -200,35 +200,21 @@
             </CardHeader>
             <CardContent>
               <div v-if="confirmation?.proof_image" class="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
-                <a :href="`/storage/${confirmation?.proof_image}`" target="_blank" class="block">
-                  <img 
-                    :src="`/storage/${confirmation?.proof_image}`" 
-                    alt="Bukti Transfer" 
-                    class="w-full h-auto object-cover"
-                  />
-                </a>
+                <img 
+                  :src="`/storage/${confirmation?.proof_image}`" 
+                  alt="Bukti Transfer" 
+                  class="w-full h-auto object-cover cursor-pointer" 
+                  @click="openImageLightbox(`/storage/${confirmation?.proof_image}`)"
+                />
               </div>
               <div v-else class="py-10 text-center text-gray-500 border border-dashed rounded-lg">
                 Tidak ada bukti transfer yang diunggah
               </div>
               <div v-if="confirmation?.proof_image" class="mt-4 text-center">
-                <a 
-                  :href="`/storage/${confirmation?.proof_image}`" 
-                  target="_blank" 
-                  class="inline-flex"
-                >
-                  <Button variant="outline" size="sm">
-                    <ExternalLinkIcon class="h-4 w-4 mr-2" />
-                    Lihat Gambar Asli
-                  </Button>
-                </a>
-              </div>
-              
-              <!-- Debug info (hapus saat sudah berfungsi dengan baik) -->
-              <div class="mt-4 p-2 bg-gray-100 dark:bg-gray-800 rounded-md text-xs">
-                <p><strong>Debug Info:</strong></p>
-                <p>Proof Image: {{ confirmation?.proof_image || 'Tidak ada' }}</p>
-                <p>URL: {{ confirmation?.proof_image ? `/storage/${confirmation?.proof_image}` : '-' }}</p>
+                <Button variant="outline" size="sm" @click="openImageLightbox(`/storage/${confirmation?.proof_image}`)">
+                  <Maximize class="h-4 w-4 mr-2" />
+                  Lihat Gambar Penuh
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -258,11 +244,11 @@
           <div class="grid grid-cols-2 gap-4">
             <div>
               <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Nomor Pesanan</h4>
-              <p class="font-medium">{{ confirmation?.order?.order_number || '-' }}</p>
+              <p class="font-medium">{{ confirmation?.payment?.order?.order_number || '-' }}</p>
             </div>
             <div>
               <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Pesanan</h4>
-              <p class="font-medium">{{ formatPrice(confirmation?.order?.total_amount || 0) }}</p>
+              <p class="font-medium">{{ formatPrice(confirmation?.payment?.order?.total_amount || 0) }}</p>
             </div>
             <div>
               <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Jumlah Transfer</h4>
@@ -366,11 +352,29 @@
         </DialogFooter>
       </DialogContent>
     </Dialog>
+
+    <!-- Tambahkan modal lightbox di dekat bagian bawah template -->
+    <Dialog :open="showImageLightbox" @update:open="showImageLightbox = $event">
+      <DialogContent class="max-w-4xl p-0 overflow-hidden">
+        <div class="relative">
+          <div class="absolute top-2 right-2 z-10">
+            <Button variant="ghost" size="icon" class="h-8 w-8 rounded-full bg-black/30 hover:bg-black/50 text-white" @click="showImageLightbox = false">
+              <XIcon class="h-5 w-5" />
+            </Button>
+          </div>
+          <img 
+            :src="lightboxImageSrc" 
+            alt="Bukti Transfer" 
+            class="w-full h-auto max-h-[80vh]" 
+          />
+        </div>
+      </DialogContent>
+    </Dialog>
   </AppLayout>
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { toast } from 'vue-sonner';
 import AppLayout from '@/layouts/AppLayout.vue';
@@ -382,7 +386,8 @@ import {
   XIcon, 
   ExternalLinkIcon,
   AlertCircleIcon,
-  Loader2Icon
+  Loader2Icon,
+  Maximize
 } from 'lucide-vue-next';
 import { 
   Card, 
@@ -400,6 +405,17 @@ const props = defineProps({
   confirmation: Object,
 });
 
+onMounted(() => {
+  console.log('Confirmation data:', props.confirmation);
+  // Log the payment and order data to help debug structure
+  if (props.confirmation) {
+    console.log('Payment data:', props.confirmation.payment);
+    if (props.confirmation.payment) {
+      console.log('Order data:', props.confirmation.payment.order);
+    }
+  }
+});
+
 // Data untuk dialog
 const showVerifyDialog = ref(false);
 const showRejectDialog = ref(false);
@@ -413,6 +429,10 @@ const rejectForm = reactive({
   admin_notes: ''
 });
 const rejectErrors = reactive({});
+
+// Tambahkan state untuk lightbox
+const showImageLightbox = ref(false);
+const lightboxImageSrc = ref('');
 
 // Breadcrumbs
 const breadcrumbs = [
@@ -486,6 +506,14 @@ const getConfirmationStatusLabel = (status) => {
 
 // Verifikasi pembayaran
 const verifyConfirmation = () => {
+  // Tambahkan validasi sebelum melakukan verifikasi
+  if (!props.confirmation) {
+    toast.error("Gagal!", {
+      description: "Data konfirmasi tidak tersedia."
+    });
+    return;
+  }
+  
   verifyProcessing.value = true;
   
   router.post(route('admin.payment-confirmations.verify', props.confirmation?.id), verifyForm, {
@@ -530,5 +558,11 @@ const rejectConfirmation = () => {
       });
     }
   });
+};
+
+// Fungsi untuk membuka lightbox
+const openImageLightbox = (imageSrc) => {
+  lightboxImageSrc.value = imageSrc;
+  showImageLightbox.value = true;
 };
 </script> 
