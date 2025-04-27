@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineComponent as _defineComponent } from "vue";
+import { defineComponent as _defineComponent, ref, computed } from "vue";
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/vue3';
@@ -9,8 +9,9 @@ import { Badge } from '@/components/ui/badge';
 import { 
     ShoppingBag, Package, Truck, CheckCircle, Clock, 
     ArrowLeft, FileText, User, Phone, Mail,
-    CreditCard, ExternalLink
+    CreditCard, ExternalLink, ClipboardIcon, Info
 } from 'lucide-vue-next';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 interface Product {
     id: number;
@@ -32,12 +33,22 @@ interface OrderItem {
     product: Product;
 }
 
+interface PaymentMethod {
+    id: number;
+    type: string;
+    name: string;
+    bank_name?: string;
+    account_number?: string;
+    account_name?: string;
+    is_active: boolean;
+}
+
 interface Payment {
     id: number;
     order_id: number;
     amount: number;
     status: string;
-    payment_method: string;
+    payment_method: PaymentMethod;
     payment_date: string;
 }
 
@@ -62,6 +73,7 @@ interface Order {
 
 interface Props {
     order: Order;
+    allPaymentMethods?: PaymentMethod[];
 }
 
 const props = defineProps<Props>();
@@ -142,8 +154,8 @@ const getStatusIcon = (status: string) => {
 };
 
 // Tambahkan fungsi baru untuk status pembayaran
-const getPaymentStatusLabel = (status) => {
-    const labels = {
+const getPaymentStatusLabel = (status: string): string => {
+    const labels: Record<string, string> = {
         'pending': 'Menunggu Pembayaran',
         'completed': 'Pembayaran Diterima',
         'failed': 'Pembayaran Gagal'
@@ -152,14 +164,72 @@ const getPaymentStatusLabel = (status) => {
     return labels[status] || status;
 };
 
-const getPaymentStatusColor = (status) => {
-    const colors = {
+const getPaymentStatusColor = (status: string): string => {
+    const colors: Record<string, string> = {
         'pending': 'border-yellow-400 text-yellow-600 bg-yellow-50 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-700',
         'completed': 'border-green-400 text-green-600 bg-green-50 dark:bg-green-900/30 dark:text-green-300 dark:border-green-700',
         'failed': 'border-red-400 text-red-600 bg-red-50 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700'
     };
 
     return colors[status] || 'border-gray-400 text-gray-600 bg-gray-50 dark:bg-gray-900/30 dark:text-gray-300 dark:border-gray-700';
+};
+
+// Get available bank accounts
+const activeBankAccounts = computed(() => {
+    if (props.allPaymentMethods && props.allPaymentMethods.length > 0) {
+        return props.allPaymentMethods.filter(
+            method => method.type === 'bank_transfer' && method.is_active
+        );
+    }
+    
+    // Fallback to default accounts if no data provided
+    return [
+        {
+            id: 1,
+            type: 'bank_transfer',
+            name: 'Bank BCA',
+            bank_name: 'Bank BCA',
+            account_number: '1234567890',
+            account_name: 'PT Dilogif Indonesia',
+            is_active: true
+        },
+        {
+            id: 2,
+            type: 'bank_transfer',
+            name: 'Bank Mandiri',
+            bank_name: 'Bank Mandiri',
+            account_number: '9876543210',
+            account_name: 'PT Dilogif Indonesia',
+            is_active: true
+        },
+        {
+            id: 3,
+            type: 'bank_transfer',
+            name: 'Bank BNI',
+            bank_name: 'Bank BNI',
+            account_number: '5678901234',
+            account_name: 'PT Dilogif Indonesia',
+            is_active: true
+        }
+    ];
+});
+
+// Copy to clipboard functionality
+const copiedText = ref('');
+
+const copyToClipboard = (text: string | undefined): void => {
+    if (!text) return;
+    
+    navigator.clipboard.writeText(text).then(() => {
+        copiedText.value = text;
+        // Toast notification could be added here if available
+        
+        setTimeout(() => {
+            copiedText.value = '';
+        }, 2000);
+    }).catch(err => {
+        console.error('Gagal menyalin teks: ', err);
+    });
 };
 </script>
 
@@ -325,115 +395,7 @@ const getPaymentStatusColor = (status) => {
                 </div>
             </div>
             
-            <!-- Payment Information -->
-            <div v-if="order.payment">
-                <Card>
-                    <CardHeader class="flex flex-row items-center justify-between">
-                        <CardTitle>Informasi Pembayaran</CardTitle>
-                        <Badge 
-                            variant="outline" 
-                            class="text-sm px-3 py-1"
-                            :class="getPaymentStatusColor(order.payment.status)"
-                        >
-                            {{ getPaymentStatusLabel(order.payment.status) }}
-                        </Badge>
-                    </CardHeader>
-                    <CardContent>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Payment Details -->
-                            <div class="space-y-3">
-                                <div class="flex justify-between">
-                                    <p class="text-sm text-slate-500 dark:text-slate-400">Metode Pembayaran:</p>
-                                    <p class="text-sm font-medium">{{ order.payment.payment_method?.name || 'Belum dipilih' }}</p>
-                                </div>
-                                
-                                <div class="flex justify-between">
-                                    <p class="text-sm text-slate-500 dark:text-slate-400">Jumlah:</p>
-                                    <p class="text-sm font-medium">{{ formatPrice(order.payment.amount) }}</p>
-                                </div>
-                                
-                                <!-- Bank Details jika metode pembayaran adalah bank transfer -->
-                                <div v-if="order.payment.payment_method?.type === 'bank_transfer'" class="mt-4">
-                                    <div class="rounded-lg border p-4 bg-slate-50 dark:bg-slate-800/60">
-                                        <h4 class="font-medium text-sm mb-3">Informasi Rekening</h4>
-                                        <div class="space-y-2">
-                                            <div class="flex justify-between">
-                                                <p class="text-xs text-slate-500 dark:text-slate-400">Bank:</p>
-                                                <p class="text-sm font-medium">{{ order.payment.payment_method.bank_name }}</p>
-                                            </div>
-                                            <div class="flex justify-between">
-                                                <p class="text-xs text-slate-500 dark:text-slate-400">No. Rekening:</p>
-                                                <p class="text-sm font-medium">{{ order.payment.payment_method.account_number }}</p>
-                                            </div>
-                                            <div class="flex justify-between">
-                                                <p class="text-xs text-slate-500 dark:text-slate-400">Atas Nama:</p>
-                                                <p class="text-sm font-medium">{{ order.payment.payment_method.account_name }}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Payment Actions -->
-                            <div class="space-y-3">
-                                <div v-if="order.payment.status === 'pending'" class="rounded-lg border border-yellow-200 p-4 bg-yellow-50 dark:bg-yellow-900/20 dark:border-yellow-800">
-                                    <div class="flex items-start gap-2">
-                                        <Clock class="h-5 w-5 text-yellow-500 dark:text-yellow-400 mt-0.5 flex-shrink-0" />
-                                        <div>
-                                            <h4 class="font-medium text-yellow-700 dark:text-yellow-300">Menunggu Pembayaran</h4>
-                                            <p class="text-sm text-yellow-600 dark:text-yellow-400 mt-1">
-                                                Silakan lakukan pembayaran dan konfirmasi pembayaran Anda untuk memproses pesanan.
-                                            </p>
-                                            
-                                            <div class="mt-3">
-                                                <Link :href="route('orders.payment.confirm', order.id)">
-                                                    <Button variant="default" size="sm">
-                                                        <CreditCard class="h-4 w-4 mr-1.5" />
-                                                        Konfirmasi Pembayaran
-                                                    </Button>
-                                                </Link>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div v-else-if="order.payment.status === 'completed'" class="rounded-lg border border-green-200 p-4 bg-green-50 dark:bg-green-900/20 dark:border-green-800">
-                                    <div class="flex items-start gap-2">
-                                        <CheckCircle class="h-5 w-5 text-green-500 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                                        <div>
-                                            <h4 class="font-medium text-green-700 dark:text-green-300">Pembayaran Diterima</h4>
-                                            <p class="text-sm text-green-600 dark:text-green-400 mt-1">
-                                                Pembayaran Anda telah diterima. Pesanan sedang diproses.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div v-else-if="order.payment.status === 'failed'" class="rounded-lg border border-red-200 p-4 bg-red-50 dark:bg-red-900/20 dark:border-red-800">
-                                    <div class="flex items-start gap-2">
-                                        <Clock class="h-5 w-5 text-red-500 dark:text-red-400 mt-0.5 flex-shrink-0" />
-                                        <div>
-                                            <h4 class="font-medium text-red-700 dark:text-red-300">Pembayaran Gagal</h4>
-                                            <p class="text-sm text-red-600 dark:text-red-400 mt-1">
-                                                Pembayaran Anda gagal. Silakan lakukan pembayaran ulang.
-                                            </p>
-                                            
-                                            <div class="mt-3">
-                                                <Link :href="route('orders.payment.confirm', order.id)">
-                                                    <Button variant="default" size="sm">
-                                                        <CreditCard class="h-4 w-4 mr-1.5" />
-                                                        Konfirmasi Pembayaran
-                                                    </Button>
-                                                </Link>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
+
         </div>
     </AppLayout>
 </template> 

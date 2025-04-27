@@ -1,7 +1,7 @@
 <template>
   <Head title="Konfirmasi Pembayaran" />
   
-  <AppLayout>
+  <AppLayout :breadcrumbs="breadcrumbs">
     <template #header>
       <div class="flex items-center justify-between">
         <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
@@ -23,6 +23,15 @@
               <Button variant="outline" size="sm" @click="refreshData">
                 <RefreshCcw class="h-4 w-4 mr-2" />
                 Refresh
+              </Button>
+              
+              <!-- Debug button -->
+              <Button 
+                variant="destructive" 
+                size="sm" 
+                @click="debugVerifyDialog()"
+              >
+                Debug Dialog Verifikasi
               </Button>
             </div>
           </CardHeader>
@@ -90,9 +99,11 @@
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem @click="viewConfirmation(confirmation)">
-                          <Eye class="h-4 w-4 mr-2" />
-                          Detail
+                        <DropdownMenuItem asChild>
+                          <Link :href="route('admin.payment-confirmations.show', confirmation.id)">
+                            <Eye class="h-4 w-4 mr-2" />
+                            Lihat Detail
+                          </Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem 
@@ -178,33 +189,50 @@
     </div>
     
     <!-- Dialog Verifikasi -->
-    <Dialog :open="showVerifyDialog" @update:open="showVerifyDialog = $event">
-      <DialogContent>
+    <Dialog 
+      :open="showVerifyDialog" 
+      @update:open="showVerifyDialog = $event"
+    >
+      <DialogContent class="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>Verifikasi Konfirmasi Pembayaran</DialogTitle>
           <DialogDescription>
             Pastikan Anda telah memeriksa bukti pembayaran dan detail konfirmasi dengan benar.
           </DialogDescription>
         </DialogHeader>
-        <div class="space-y-4">
-          <div v-if="selectedConfirmation">
-            <div class="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4 mb-4">
-              <div class="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <p class="text-gray-500 dark:text-gray-400">Nomor Pesanan:</p>
-                  <p class="font-medium">{{ selectedConfirmation.payment?.order?.order_number }}</p>
+        <div class="space-y-4 py-4">
+          <!-- Loading State -->
+          <div v-if="!selectedConfirmation || processing" class="flex flex-col items-center justify-center py-6">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
+            <p class="text-sm text-muted-foreground">Memuat data...</p>
+          </div>
+          
+          <!-- Content -->
+          <div v-else>
+            <div class="p-4 border rounded-lg mb-4">
+              <h4 class="font-semibold mb-2">Informasi Konfirmasi</h4>
+              <div class="grid grid-cols-1 gap-2">
+                <div class="flex flex-col">
+                  <span class="text-sm text-muted-foreground">Status</span>
+                  <Badge :color="confirmationStatusColor(selectedConfirmation?.status)">
+                    {{ confirmationStatusLabel(selectedConfirmation?.status) }}
+                  </Badge>
                 </div>
-                <div>
-                  <p class="text-gray-500 dark:text-gray-400">Total Pesanan:</p>
-                  <p class="font-medium">{{ formatPrice(selectedConfirmation.payment?.order?.total_amount) }}</p>
+                <div class="flex flex-col">
+                  <span class="text-sm text-muted-foreground">Bank</span>
+                  <span>{{ selectedConfirmation?.bank_name || '-' }}</span>
                 </div>
-                <div>
-                  <p class="text-gray-500 dark:text-gray-400">Bank Pengirim:</p>
-                  <p class="font-medium">{{ selectedConfirmation.bank_name }}</p>
+                <div class="flex flex-col">
+                  <span class="text-sm text-muted-foreground">Pemilik Rekening</span>
+                  <span>{{ selectedConfirmation?.account_name || '-' }}</span>
                 </div>
-                <div>
-                  <p class="text-gray-500 dark:text-gray-400">Jumlah Transfer:</p>
-                  <p class="font-medium">{{ formatPrice(selectedConfirmation.amount) }}</p>
+                <div class="flex flex-col">
+                  <span class="text-sm text-muted-foreground">No. Rekening</span>
+                  <span>{{ selectedConfirmation?.account_number || '-' }}</span>
+                </div>
+                <div class="flex flex-col">
+                  <span class="text-sm text-muted-foreground">Tanggal Transfer</span>
+                  <span>{{ formatDate(selectedConfirmation?.transfer_date) || '-' }}</span>
                 </div>
               </div>
             </div>
@@ -222,7 +250,7 @@
         </div>
         <DialogFooter>
           <Button variant="outline" @click="showVerifyDialog = false">Batal</Button>
-          <Button @click="updateStatus('verified')" :loading="processing" :disabled="processing">
+          <Button @click="updateStatus('verified')" :loading="processing" :disabled="processing || !selectedConfirmation">
             <CheckCircle class="h-4 w-4 mr-2" />
             Verifikasi
           </Button>
@@ -287,155 +315,25 @@
       </DialogContent>
     </Dialog>
     
-    <!-- Dialog Detail -->
-    <Dialog :open="showDetailDialog" @update:open="showDetailDialog = $event">
-      <DialogContent class="sm:max-w-3xl">
+    <!-- Dialog Full Image -->
+    <Dialog :open="showFullImageDialog" @update:open="showFullImageDialog = $event">
+      <DialogContent class="max-w-4xl">
         <DialogHeader>
-          <DialogTitle>Detail Konfirmasi Pembayaran</DialogTitle>
+          <DialogTitle>Bukti Transfer</DialogTitle>
         </DialogHeader>
-        <div v-if="selectedConfirmation" class="space-y-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Detail Pesanan</h3>
-              <div class="space-y-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4">
-                <div class="flex justify-between text-sm">
-                  <span class="text-gray-500 dark:text-gray-400">Nomor Pesanan:</span>
-                  <span class="font-medium">{{ selectedConfirmation.payment?.order?.order_number }}</span>
-                </div>
-                <div class="flex justify-between text-sm">
-                  <span class="text-gray-500 dark:text-gray-400">Status Pesanan:</span>
-                  <Badge 
-                    variant="outline" 
-                    :class="{
-                      'border-yellow-400 text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20 dark:text-yellow-400': selectedConfirmation.payment?.order?.status === 'pending',
-                      'border-blue-400 text-blue-600 bg-blue-50 dark:bg-blue-900/20 dark:text-blue-400': selectedConfirmation.payment?.order?.status === 'processing',
-                      'border-purple-400 text-purple-600 bg-purple-50 dark:bg-purple-900/20 dark:text-purple-400': selectedConfirmation.payment?.order?.status === 'review',
-                      'border-green-400 text-green-600 bg-green-50 dark:bg-green-900/20 dark:text-green-400': selectedConfirmation.payment?.order?.status === 'completed',
-                      'border-red-400 text-red-600 bg-red-50 dark:bg-red-900/20 dark:text-red-400': selectedConfirmation.payment?.order?.status === 'cancelled',
-                    }"
-                  >
-                    {{ getOrderStatusLabel(selectedConfirmation.payment?.order?.status) }}
-                  </Badge>
-                </div>
-                <div class="flex justify-between text-sm">
-                  <span class="text-gray-500 dark:text-gray-400">Status Pembayaran:</span>
-                  <Badge 
-                    variant="outline" 
-                    :class="{
-                      'border-yellow-400 text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20 dark:text-yellow-400': selectedConfirmation.payment?.status === 'pending',
-                      'border-green-400 text-green-600 bg-green-50 dark:bg-green-900/20 dark:text-green-400': selectedConfirmation.payment?.status === 'completed',
-                      'border-red-400 text-red-600 bg-red-50 dark:bg-red-900/20 dark:text-red-400': selectedConfirmation.payment?.status === 'failed',
-                    }"
-                  >
-                    {{ getPaymentStatusLabel(selectedConfirmation.payment?.status) }}
-                  </Badge>
-                </div>
-                <div class="flex justify-between text-sm">
-                  <span class="text-gray-500 dark:text-gray-400">Total Pesanan:</span>
-                  <span class="font-medium">{{ formatPrice(selectedConfirmation.payment?.order?.total_amount) }}</span>
-                </div>
-                <div class="flex justify-between text-sm">
-                  <span class="text-gray-500 dark:text-gray-400">Tanggal Pesanan:</span>
-                  <span class="font-medium">{{ formatDate(selectedConfirmation.payment?.order?.created_at) }}</span>
-                </div>
-              </div>
-            </div>
-            
-            <div>
-              <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Detail Konfirmasi</h3>
-              <div class="space-y-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4">
-                <div class="flex justify-between text-sm">
-                  <span class="text-gray-500 dark:text-gray-400">Bank Pengirim:</span>
-                  <span class="font-medium">{{ selectedConfirmation.bank_name }}</span>
-                </div>
-                <div class="flex justify-between text-sm">
-                  <span class="text-gray-500 dark:text-gray-400">Nama Rekening:</span>
-                  <span class="font-medium">{{ selectedConfirmation.account_name }}</span>
-                </div>
-                <div class="flex justify-between text-sm">
-                  <span class="text-gray-500 dark:text-gray-400">Nomor Rekening:</span>
-                  <span class="font-medium">{{ selectedConfirmation.account_number }}</span>
-                </div>
-                <div class="flex justify-between text-sm">
-                  <span class="text-gray-500 dark:text-gray-400">Jumlah Transfer:</span>
-                  <span class="font-medium">{{ formatPrice(selectedConfirmation.amount) }}</span>
-                </div>
-                <div class="flex justify-between text-sm">
-                  <span class="text-gray-500 dark:text-gray-400">Tanggal Transfer:</span>
-                  <span class="font-medium">{{ formatDate(selectedConfirmation.transfer_date) }}</span>
-                </div>
-                <div class="flex justify-between text-sm">
-                  <span class="text-gray-500 dark:text-gray-400">Status Konfirmasi:</span>
-                  <Badge 
-                    variant="outline" 
-                    :class="{
-                      'border-yellow-400 text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20 dark:text-yellow-400': selectedConfirmation.status === 'pending',
-                      'border-green-400 text-green-600 bg-green-50 dark:bg-green-900/20 dark:text-green-400': selectedConfirmation.status === 'verified',
-                      'border-red-400 text-red-600 bg-red-50 dark:bg-red-900/20 dark:text-red-400': selectedConfirmation.status === 'rejected',
-                    }"
-                  >
-                    {{ getStatusLabel(selectedConfirmation.status) }}
-                  </Badge>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div>
-            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Bukti Transfer</h3>
-            <div class="flex justify-center bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4">
-              <img 
-                v-if="selectedConfirmation.proof_image" 
-                :src="`/storage/${selectedConfirmation.proof_image}`" 
-                class="max-h-96 rounded-lg shadow-sm"
-                alt="Bukti Transfer"
-              />
-              <p v-else class="py-8 text-center text-gray-500 dark:text-gray-400">
-                Tidak ada bukti transfer yang diunggah
-              </p>
-            </div>
-          </div>
-          
-          <div v-if="selectedConfirmation.notes || selectedConfirmation.admin_notes">
-            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Catatan</h3>
-            <div class="space-y-4">
-              <div v-if="selectedConfirmation.notes" class="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4">
-                <h4 class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Catatan Customer:</h4>
-                <p class="text-sm">{{ selectedConfirmation.notes }}</p>
-              </div>
-              <div v-if="selectedConfirmation.admin_notes" class="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-4">
-                <h4 class="text-xs font-medium text-orange-700 dark:text-orange-300 mb-1">Catatan Admin:</h4>
-                <p class="text-sm text-orange-600 dark:text-orange-400">{{ selectedConfirmation.admin_notes }}</p>
-              </div>
-            </div>
-          </div>
-          
-          <div class="pt-4 flex justify-end space-x-3">
-            <Button variant="outline" @click="showDetailDialog = false">Tutup</Button>
-            <Button 
-              v-if="selectedConfirmation.status === 'pending'" 
-              @click="verifyConfirmation(selectedConfirmation); showDetailDialog = false"
-            >
-              <CheckCircle class="h-4 w-4 mr-2" />
-              Verifikasi
-            </Button>
-            <Button 
-              v-if="selectedConfirmation.status === 'pending'" 
-              variant="destructive" 
-              @click="rejectConfirmation(selectedConfirmation); showDetailDialog = false"
-            >
-              <XCircle class="h-4 w-4 mr-2" />
-              Tolak
-            </Button>
-          </div>
+        <div class="flex justify-center">
+          <img :src="fullImageSrc" alt="Bukti Transfer" class="max-w-full max-h-[80vh]" />
         </div>
+        <DialogFooter>
+          <Button @click="showFullImageDialog = false">Tutup</Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   </AppLayout>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Button } from '@/components/ui/button';
@@ -450,7 +348,7 @@ import Pagination from '@/components/Pagination.vue';
 import AdminTable from '@/components/AdminTable.vue';
 import { toast } from 'vue-sonner';
 import { 
-  MoreHorizontal, Eye, CheckCircle, XCircle, RefreshCcw,
+  MoreHorizontal, Eye, CheckCircle, XCircle, RefreshCcw, Maximize, X, XIcon,
 } from 'lucide-vue-next';
 
 const props = defineProps({
@@ -458,14 +356,33 @@ const props = defineProps({
   pendingOrders: Array,
 });
 
+// Breadcrumbs untuk navigasi
+const breadcrumbs = [
+  {
+    title: 'Admin',
+    href: route('admin.dashboard'),
+  },
+  {
+    title: 'Konfirmasi Pembayaran',
+    href: route('admin.payment-confirmations.index'),
+  },
+];
+
 // State
 const showVerifyDialog = ref(false);
 const showRejectDialog = ref(false);
-const showDetailDialog = ref(false);
+const showFullImageDialog = ref(false);
 const selectedConfirmation = ref(null);
 const adminNotes = ref('');
 const processing = ref(false);
 const showNoteError = ref(false);
+const fullImageSrc = ref('');
+const isLoadingDetails = ref(false);
+
+// Debugging untuk trace perubahan showVerifyDialog
+watch(showVerifyDialog, (newVal, oldVal) => {
+  console.log(`showVerifyDialog berubah dari ${oldVal} menjadi ${newVal}`);
+});
 
 // Columns for AdminTable
 const confirmationColumns = [
@@ -518,9 +435,9 @@ const getStatusLabel = (status) => {
 
 const getOrderStatusLabel = (status) => {
   const statusMap = {
-    'pending': 'Menunggu Konfirmasi',
-    'processing': 'Sedang Diproses',
-    'review': 'Review',
+    'pending': 'Menunggu',
+    'processing': 'Diproses',
+    'review': 'Review', 
     'completed': 'Selesai',
     'cancelled': 'Dibatalkan',
   };
@@ -538,22 +455,66 @@ const getPaymentStatusLabel = (status) => {
   return statusMap[status] || status;
 };
 
-const viewConfirmation = (confirmation) => {
-  selectedConfirmation.value = confirmation;
-  showDetailDialog.value = true;
+// Buka dialog verifikasi
+const openVerifyDialog = (confirmation) => {
+  console.log('openVerifyDialog dipanggil dengan:', confirmation);
+  
+  // Reset state
+  selectedConfirmation.value = {...confirmation};
+  adminNotes.value = '';
+  
+  // Buka dialog
+  console.log('Sebelum set showVerifyDialog:', showVerifyDialog.value);
+  setTimeout(() => {
+    showVerifyDialog.value = true;
+    console.log('Setelah set showVerifyDialog (dalam timeout):', showVerifyDialog.value);
+  }, 10);
 };
 
-const verifyConfirmation = (confirmation) => {
-  selectedConfirmation.value = confirmation;
+// Buka dialog penolakan
+const openRejectDialog = (confirmation) => {
+  // Reset state
+  selectedConfirmation.value = {...confirmation};
   adminNotes.value = '';
-  showVerifyDialog.value = true;
+  showNoteError.value = false;
+  
+  // Buka dialog
+  setTimeout(() => {
+    showRejectDialog.value = true;
+  }, 10);
+};
+
+// Fungsi yang dipanggil dari dropdown
+const verifyConfirmation = (confirmation) => {
+  console.log('verifyConfirmation dipanggil:', confirmation);
+  
+  // Reset state
+  selectedConfirmation.value = {...confirmation};
+  adminNotes.value = '';
+  
+  // Jika data tidak lengkap, fetch data detail konfirmasi
+  if (!confirmation.payment?.order || !confirmation.user) {
+    viewConfirmation(confirmation.id);
+  }
+  
+  // Buka dialog setelah state di-reset
+  setTimeout(() => {
+    console.log('Membuka dialog verifikasi...');
+    showVerifyDialog.value = true;
+    console.log('Dialog verifikasi seharusnya terbuka. Status showVerifyDialog =', showVerifyDialog.value);
+  }, 50);
 };
 
 const rejectConfirmation = (confirmation) => {
-  selectedConfirmation.value = confirmation;
+  selectedConfirmation.value = {...confirmation};
   adminNotes.value = '';
   showNoteError.value = false;
   showRejectDialog.value = true;
+  
+  // Jika data tidak lengkap, fetch data detail konfirmasi
+  if (!confirmation.payment?.order || !confirmation.user) {
+    viewConfirmation(confirmation.id);
+  }
 };
 
 const updateStatus = (status) => {
@@ -609,5 +570,98 @@ const refreshData = () => {
       });
     },
   });
+};
+
+const showFullImage = (imageSrc) => {
+  console.log('Membuka gambar penuh:', imageSrc);
+  fullImageSrc.value = imageSrc;
+  showFullImageDialog.value = true;
+};
+
+const getBadgeVariant = (status) => {
+  const statusMap = {
+    'pending': 'default',
+    'verified': 'default',
+    'rejected': 'destructive',
+  };
+  
+  return statusMap[status] || 'default';
+};
+
+const getConfirmationBadgeVariant = (status) => {
+  const statusMap = {
+    'pending': 'default',
+    'verified': 'default',
+    'rejected': 'destructive',
+  };
+  
+  return statusMap[status] || 'default';
+};
+
+const getConfirmationStatusLabel = (status) => {
+  const statusMap = {
+    'pending': 'Menunggu Verifikasi',
+    'verified': 'Terverifikasi',
+    'rejected': 'Ditolak',
+  };
+  
+  return statusMap[status] || status;
+};
+
+const getOrderStatusVariant = (status) => {
+  const variants = {
+    'pending': 'outline',
+    'processing': 'secondary',
+    'completed': 'success',
+    'cancelled': 'destructive'
+  };
+  return variants[status] || 'outline';
+};
+
+const getConfirmationStatusVariant = (status) => {
+  const variants = {
+    'pending': 'outline',
+    'verified': 'success',
+    'rejected': 'destructive'
+  };
+  return variants[status] || 'outline';
+};
+
+// Debug function
+const debugVerifyDialog = () => {
+  console.log('=== DEBUG DIALOG VERIFIKASI ===');
+  console.log('showVerifyDialog before:', showVerifyDialog.value);
+  
+  // Gunakan confirmation pertama jika ada, atau buat mock data
+  if (props.confirmations && props.confirmations.data && props.confirmations.data.length > 0) {
+    const confirmation = props.confirmations.data[0];
+    console.log('Using confirmation:', confirmation);
+    selectedConfirmation.value = confirmation ? {...confirmation} : null;
+  } else {
+    console.log('Creating mock confirmation');
+    selectedConfirmation.value = {
+      id: 999,
+      bank_name: 'DEBUG BANK',
+      account_name: 'DEBUG USER',
+      amount: 100000,
+      payment: {
+        order: {
+          order_number: 'DBG123',
+          total_amount: 150000,
+          status: 'pending'
+        }
+      },
+      status: 'pending'
+    };
+  }
+  
+  // Reset admin notes
+  adminNotes.value = '';
+  
+  // Trigger dialog
+  setTimeout(() => {
+    showVerifyDialog.value = true;
+    console.log('showVerifyDialog after:', showVerifyDialog.value);
+  }, 100);
 };
 </script> 

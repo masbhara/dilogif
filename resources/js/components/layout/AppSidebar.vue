@@ -59,7 +59,7 @@ const mainNavItems: NavItem[] = [
         icon: Mail,
     },
     {
-        title: 'Konfirmasi Pembayaran',
+        title: 'Payment Confirmations',
         href: route('orders.payment.index'),
         icon: CheckSquare,
     }
@@ -102,13 +102,13 @@ const adminNavItems: NavItem[] = [
         requiresPermission: 'manage_products',
     },
     {
-        title: 'Payment',
+        title: 'Payment Methods',
         href: route('admin.payment-methods.index'),
         icon: CreditCard,
         requiresRole: 'admin',
     },
     {
-        title: 'Konfirmasi Pembayaran',
+        title: 'Payment Confirmations',
         href: route('admin.payment-confirmations.index'),
         icon: Receipt,
         requiresRole: 'admin',
