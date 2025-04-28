@@ -104,6 +104,39 @@
                   </Badge>
                 </div>
               </div>
+
+              <!-- Produk Pesanan -->
+              <div class="mt-6">
+                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Produk yang Dibeli</h3>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Produk</TableHead>
+                      <TableHead>Harga</TableHead>
+                      <TableHead>Jumlah</TableHead>
+                      <TableHead class="text-right">Subtotal</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow v-for="item in confirmation?.payment?.order?.order_items" :key="item.id">
+                      <TableCell>
+                        <div class="font-medium">{{ item?.product?.name }}</div>
+                        <div v-if="item?.product_variant" class="text-sm text-gray-500">
+                          Variasi: {{ item?.product_variant?.name }}
+                        </div>
+                      </TableCell>
+                      <TableCell>{{ formatPrice(item?.price || 0) }}</TableCell>
+                      <TableCell>{{ item?.quantity }}</TableCell>
+                      <TableCell class="text-right">{{ formatPrice((item?.price || 0) * (item?.quantity || 0)) }}</TableCell>
+                    </TableRow>
+                    <TableRow v-if="!confirmation?.payment?.order?.order_items?.length">
+                      <TableCell colspan="4" class="text-center py-6 text-gray-500">
+                        Tidak ada data produk
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           </Card>
 
@@ -116,19 +149,15 @@
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Nama</h4>
-                  <p class="text-base font-semibold">{{ confirmation?.payment?.order?.user?.name || '-' }}</p>
+                  <p class="text-base font-semibold">{{ confirmation?.user?.name || '-' }}</p>
                 </div>
                 <div>
                   <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Email</h4>
-                  <p class="text-base">{{ confirmation?.payment?.order?.user?.email || '-' }}</p>
+                  <p class="text-base">{{ confirmation?.user?.email || '-' }}</p>
                 </div>
-                <div>
-                  <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Telepon</h4>
-                  <p class="text-base">{{ confirmation?.payment?.order?.user?.phone || '-' }}</p>
-                </div>
-                <div>
-                  <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Alamat</h4>
-                  <p class="text-base">{{ confirmation?.payment?.order?.shipping_address || '-' }}</p>
+                <div class="md:col-span-2">
+                  <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Whatsapp</h4>
+                  <p class="text-base">{{ confirmation?.user?.whatsapp || '-' }}</p>
                 </div>
               </div>
             </CardContent>
@@ -389,8 +418,8 @@ import {
   Loader2Icon,
   Maximize
 } from 'lucide-vue-next';
-import { 
-  Card, 
+import {
+  Card,
   CardHeader, 
   CardTitle, 
   CardDescription, 
@@ -400,15 +429,24 @@ import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogD
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const props = defineProps({
   confirmation: Object,
 });
 
+// Log the payment, order, and user data to help debug structure
 onMounted(() => {
   console.log('Confirmation data:', props.confirmation);
-  // Log the payment and order data to help debug structure
   if (props.confirmation) {
+    console.log('User data:', props.confirmation.user);
     console.log('Payment data:', props.confirmation.payment);
     if (props.confirmation.payment) {
       console.log('Order data:', props.confirmation.payment.order);
@@ -516,35 +554,52 @@ const verifyConfirmation = () => {
   
   verifyProcessing.value = true;
   
-  router.post(route('admin.payment-confirmations.verify', props.confirmation?.id), verifyForm, {
+  router.patch(route('admin.payment-confirmations.status.update', props.confirmation?.id), {
+    status: 'verified',
+    admin_notes: verifyForm.admin_notes
+  }, {
     onSuccess: () => {
       showVerifyDialog.value = false;
       verifyProcessing.value = false;
       toast.success("Berhasil!", {
         description: "Konfirmasi pembayaran telah diverifikasi."
       });
+      // Refresh halaman untuk menampilkan perubahan
+      router.reload();
     },
     onError: (errors) => {
       verifyProcessing.value = false;
       toast.error("Gagal!", {
         description: "Terjadi kesalahan saat memverifikasi pembayaran."
       });
+      console.error('Error verifying payment:', errors);
     }
   });
 };
 
 // Tolak pembayaran
 const rejectConfirmation = () => {
+  // Validasi input
+  if (!rejectForm.rejection_reason?.trim()) {
+    rejectErrors.rejection_reason = 'Alasan penolakan harus diisi';
+    return;
+  }
+  
   rejectProcessing.value = true;
   rejectErrors.rejection_reason = '';
   
-  router.post(route('admin.payment-confirmations.reject', props.confirmation?.id), rejectForm, {
+  router.patch(route('admin.payment-confirmations.status.update', props.confirmation?.id), {
+    status: 'rejected',
+    admin_notes: rejectForm.admin_notes || rejectForm.rejection_reason // Gunakan admin_notes atau rejection_reason sebagai catatan
+  }, {
     onSuccess: () => {
       showRejectDialog.value = false;
       rejectProcessing.value = false;
       toast.success("Berhasil!", {
         description: "Konfirmasi pembayaran telah ditolak."
       });
+      // Refresh halaman untuk menampilkan perubahan
+      router.reload();
     },
     onError: (errors) => {
       rejectProcessing.value = false;
@@ -556,6 +611,7 @@ const rejectConfirmation = () => {
       toast.error("Gagal!", {
         description: "Terjadi kesalahan saat menolak pembayaran."
       });
+      console.error('Error rejecting payment:', errors);
     }
   });
 };

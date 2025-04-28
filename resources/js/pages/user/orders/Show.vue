@@ -12,6 +12,7 @@ import {
     CreditCard, ExternalLink, ClipboardIcon, Info
 } from 'lucide-vue-next';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 interface Product {
     id: number;
@@ -328,19 +329,19 @@ const copyToClipboard = (text: string | undefined): void => {
                         </CardHeader>
                         <CardContent>
                             <!-- Products Table -->
-                            <div class="rounded-lg border overflow-hidden">
-                                <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-                                    <thead class="bg-slate-50 dark:bg-slate-800">
-                                        <tr>
-                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Produk</th>
-                                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Harga</th>
-                                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Jumlah</th>
-                                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Subtotal</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
-                                        <tr v-for="item in order.items" :key="item.id" class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
-                                            <td class="px-6 py-4">
+                            <div class="rounded-lg border">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead class="w-[50%]">Produk</TableHead>
+                                            <TableHead class="text-center">Harga</TableHead>
+                                            <TableHead class="text-center">Jumlah</TableHead>
+                                            <TableHead class="text-right">Subtotal</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        <TableRow v-for="item in order.items" :key="item.id" class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                                            <TableCell>
                                                 <div class="flex items-center">
                                                     <div class="h-12 w-12 flex-shrink-0 overflow-hidden rounded-md border border-slate-200 dark:border-slate-700">
                                                         <img 
@@ -354,19 +355,19 @@ const copyToClipboard = (text: string | undefined): void => {
                                                         <div v-if="item.product.category" class="text-xs text-slate-500 dark:text-slate-400">{{ item.product.category.name }}</div>
                                                     </div>
                                                 </div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-slate-500 dark:text-slate-400">
+                                            </TableCell>
+                                            <TableCell class="text-center text-sm text-slate-500 dark:text-slate-400">
                                                 {{ formatPrice(item.price) }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-slate-500 dark:text-slate-400">
+                                            </TableCell>
+                                            <TableCell class="text-center text-sm text-slate-500 dark:text-slate-400">
                                                 {{ item.quantity }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-slate-900 dark:text-white">
+                                            </TableCell>
+                                            <TableCell class="text-right text-sm font-medium text-slate-900 dark:text-white">
                                                 {{ formatPrice(item.subtotal) }}
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                            </TableCell>
+                                        </TableRow>
+                                    </TableBody>
+                                </Table>
                             </div>
                             
                             <!-- Order Summary -->
