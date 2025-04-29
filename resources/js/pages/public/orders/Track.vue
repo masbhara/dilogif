@@ -2,17 +2,17 @@
   <Head title="Lacak Pesanan" />
 
   <MainLayout>
-    <div class="bg-gray-50 py-12">
+    <div class="bg-slate-50 dark:bg-slate-900 py-12">
       <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Breadcrumb -->
-        <div class="bg-white p-4 rounded-lg shadow-sm mb-8">
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm mb-8">
           <Breadcrumb :items="breadcrumbItems" />
         </div>
         
-        <h1 class="text-3xl font-bold mb-8 text-center">Lacak Pesanan</h1>
+        <h1 class="text-3xl font-bold mb-8 text-center text-slate-900 dark:text-white">Lacak Pesanan</h1>
         
         <!-- Tracking Form -->
-        <div class="bg-white rounded-xl shadow-sm p-8 mb-8">
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-8 mb-8">
           <form @submit.prevent="trackOrder">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div>
@@ -56,7 +56,7 @@
         <!-- Order Not Found -->
         <div 
           v-if="found === false" 
-          class="bg-white rounded-xl shadow-sm p-8 text-center"
+          class="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-8 text-center"
         >
           <div class="mb-4">
             <div class="mx-auto h-20 w-20 flex items-center justify-center rounded-full bg-red-100">
@@ -71,7 +71,7 @@
         <!-- Order Found -->
         <div v-if="found === true">
           <!-- Order Status Card -->
-          <div class="bg-white rounded-xl shadow-sm p-8 mb-8">
+          <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-8 mb-8">
             <div class="text-center mb-8">
               <div class="mb-4">
                 <div 
@@ -167,7 +167,7 @@
           </div>
           
           <!-- Order Details -->
-          <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+          <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm overflow-hidden">
             <div class="p-6 border-b border-gray-200">
               <h3 class="text-lg font-medium">Detail Pesanan</h3>
             </div>

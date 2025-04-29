@@ -2,46 +2,46 @@
   <Head title="Keranjang Belanja" />
 
   <MainLayout>
-    <div class="bg-gray-50 py-12">
+    <div class="bg-gray-50 dark:bg-background py-12">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Breadcrumb -->
-        <div class="bg-white p-4 rounded-lg shadow-sm mb-8">
+        <div class="bg-white dark:bg-slate-900 p-4 rounded-lg shadow-sm mb-8">
           <Breadcrumb :items="breadcrumbItems" />
         </div>
         
-        <h1 class="text-3xl font-bold mb-8">Keranjang Belanja</h1>
+        <h1 class="text-3xl font-bold mb-8 dark:text-white">Keranjang Belanja</h1>
         
         <div v-if="cartItems.length > 0" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <!-- Cart Items -->
           <div class="lg:col-span-2">
-            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+            <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm overflow-hidden">
               <!-- Cart Items Table -->
-              <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+              <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead class="bg-gray-50 dark:bg-slate-900">
                   <tr>
-                    <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
                       Produk
                     </th>
-                    <th scope="col" class="px-6 py-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" class="px-6 py-4 text-center text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
                       Harga
                     </th>
-                    <th scope="col" class="px-6 py-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" class="px-6 py-4 text-center text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
                       Jumlah
                     </th>
-                    <th scope="col" class="px-6 py-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" class="px-6 py-4 text-center text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
                       Subtotal
                     </th>
-                    <th scope="col" class="px-6 py-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" class="px-6 py-4 text-center text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
                       Aksi
                     </th>
                   </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
+                <tbody class="bg-white dark:bg-slate-900 divide-y divide-gray-200">
                   <tr v-for="item in cartItems" :key="item.id" class="hover:bg-gray-50">
                     <!-- Product -->
                     <td class="px-6 py-4 whitespace-nowrap">
                       <div class="flex items-center">
-                        <div class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                        <div class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border border-gray-200 dark:border-gray-700">
                           <img 
                             :src="`/storage/${item.product.featured_image}`" 
                             :alt="item.product.name" 
@@ -49,10 +49,10 @@
                           />
                         </div>
                         <div class="ml-4">
-                          <div class="text-sm font-medium text-gray-900 line-clamp-2">
+                          <div class="text-sm font-medium text-gray-900 dark:text-white line-clamp-2">
                             {{ item.product.name }}
                           </div>
-                          <div v-if="item.product.category" class="text-xs text-gray-500">
+                          <div v-if="item.product.category" class="text-xs text-gray-500 dark:text-primary">
                             {{ item.product.category.name }}
                           </div>
                         </div>
@@ -60,12 +60,12 @@
                     </td>
                     
                     <!-- Price -->
-                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500">
+                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500 dark:text-white">
                       {{ formatPrice(item.product.price) }}
                     </td>
                     
                     <!-- Quantity -->
-                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500">
+                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500 dark:text-white">
                       <div class="inline-flex items-center border border-gray-300 rounded-md">
                         <button 
                           @click="decrementQuantity(item)" 
@@ -86,12 +86,12 @@
                     </td>
                     
                     <!-- Subtotal -->
-                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium text-gray-900">
+                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium text-gray-900 dark:text-white">
                       {{ formatPrice(item.product.price * item.quantity) }}
                     </td>
                     
                     <!-- Actions -->
-                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500">
+                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500 dark:text-white">
                       <button 
                         @click="removeItem(item)" 
                         class="text-red-600 hover:text-red-900"
@@ -106,11 +106,11 @@
               </table>
               
               <!-- Cart Actions -->
-              <div class="p-4 border-t border-gray-200 flex justify-between items-center">
+              <div class="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
                 <div>
                   <Button 
-                    variant="outline" 
-                    colorScheme="outline"
+                    variant="secondary" 
+                    colorScheme="secondary"
                     :disabled="isClearingCart"
                     @click="clearCart"
                   >
@@ -119,7 +119,7 @@
                     Kosongkan Keranjang
                   </Button>
                   <Link :href="route('products.index')" class="ml-2">
-                    <Button variant="outline" colorScheme="outline">Lanjut Belanja</Button>
+                    <Button variant="destructive" colorScheme="destructive">Lanjut Belanja</Button>
                   </Link>
                 </div>
                 <div>
@@ -134,29 +134,29 @@
           
           <!-- Order Summary -->
           <div class="lg:col-span-1">
-            <div class="bg-white rounded-xl shadow-sm p-6">
-              <h2 class="text-lg font-medium text-gray-900 mb-4">Ringkasan Pesanan</h2>
+            <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm p-6">
+              <h2 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Ringkasan Pesanan</h2>
               
               <!-- Summary Items -->
               <div class="space-y-3 mb-6">
                 <div class="flex justify-between">
-                  <p class="text-gray-600">Subtotal ({{ summary.itemCount }} item)</p>
+                  <p class="text-gray-600 dark:text-white">Subtotal ({{ summary.itemCount }} item)</p>
                   <p class="font-medium">{{ formatPrice(summary.subtotal) }}</p>
                 </div>
                 <div class="flex justify-between">
-                  <p class="text-gray-600">Biaya Admin</p>
+                  <p class="text-gray-600 dark:text-white">Biaya Admin</p>
                   <p class="font-medium">{{ formatPrice(summary.adminFee) }}</p>
                 </div>
                 <div class="flex justify-between">
-                  <p class="text-gray-600">Diskon</p>
-                  <p class="font-medium text-green-600">-{{ formatPrice(summary.discount) }}</p>
+                  <p class="text-gray-600 dark:text-white">Diskon</p>
+                  <p class="font-medium text-green-600 dark:text-white">-{{ formatPrice(summary.discount) }}</p>
                 </div>
               </div>
               
               <!-- Total -->
-              <div class="flex justify-between pt-4 border-t border-gray-200">
-                <p class="text-lg font-medium text-gray-900">Total</p>
-                <p class="text-lg font-bold text-primary-600">{{ formatPrice(summary.total) }}</p>
+              <div class="flex justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                <p class="text-lg font-medium text-gray-900 dark:text-white">Total</p>
+                <p class="text-lg font-bold text-primary-600 dark:text-white">{{ formatPrice(summary.total) }}</p>
               </div>
               
               <!-- Checkout Button -->

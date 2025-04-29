@@ -1,16 +1,16 @@
 <template>
-  <Head title="Pesanan Berhasil" />
+  <Head title="Terima Kasih" />
 
   <MainLayout>
-    <div class="bg-gray-50 py-12">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="bg-slate-50 dark:bg-slate-900 py-12">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Breadcrumb -->
-        <div class="bg-white p-4 rounded-lg shadow-sm mb-8">
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm mb-8">
           <Breadcrumb :items="breadcrumbItems" />
         </div>
         
         <!-- Success Message -->
-        <div class="bg-white rounded-xl shadow-sm p-8 text-center mb-8">
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-8 text-center mb-8">
           <div class="mb-4">
             <div class="mx-auto h-24 w-24 flex items-center justify-center rounded-full bg-green-100">
               <CheckCircleIcon class="h-16 w-16 text-green-600" />
@@ -40,7 +40,7 @@
         </div>
         
         <!-- Order Details -->
-        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm overflow-hidden">
           <div class="p-6 border-b border-gray-200">
             <h2 class="text-xl font-semibold mb-0">Detail Pesanan</h2>
           </div>

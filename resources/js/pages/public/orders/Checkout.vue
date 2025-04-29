@@ -2,19 +2,19 @@
   <Head title="Checkout" />
 
   <MainLayout>
-    <div class="bg-gray-50 py-12">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="bg-slate-50 dark:bg-slate-900 py-12">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Breadcrumb -->
-        <div class="bg-white p-4 rounded-lg shadow-sm mb-8">
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm mb-8">
           <Breadcrumb :items="breadcrumbItems" />
         </div>
 
-        <h1 class="text-3xl font-bold mb-8">Checkout</h1>
+        <h1 class="text-3xl font-bold mb-8 text-center text-slate-900 dark:text-white">Checkout</h1>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <!-- Order Form -->
           <div class="lg:col-span-2">
-            <div class="bg-white rounded-xl shadow-sm p-6">
+            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-6">
               <h2 class="text-lg font-medium text-gray-900 mb-4">Informasi Pesanan</h2>
               
               <form @submit.prevent="submitOrder">
@@ -115,7 +115,7 @@
 
           <!-- Order Summary -->
           <div class="lg:col-span-1">
-            <div class="bg-white rounded-xl shadow-sm p-6">
+            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-6">
               <h2 class="text-lg font-medium text-gray-900 mb-4">Ringkasan Pesanan</h2>
               
               <!-- Summary Items -->

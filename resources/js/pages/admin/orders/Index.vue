@@ -18,7 +18,7 @@
 
       <!-- Filters -->
       <Card class="border border-slate-200 dark:border-slate-700">
-        <CardContent class="p-4">
+        <CardContent class="p-0">
           <div class="flex flex-col md:flex-row gap-4">
             <!-- Search Filter -->
             <div class="flex-1">

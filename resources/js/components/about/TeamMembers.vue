@@ -19,14 +19,14 @@ const team = [
 </script>
 
 <template>
-  <section class="py-12 bg-background ">
+  <section class="py-12 bg-slate-50 dark:bg-background ">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center">
         <h2 class="text-3xl font-bold text-foreground sm:text-4xl">Our Team</h2>
         <p class="mt-4 text-lg text-muted-foreground">Meet the amazing people behind our success</p>
       </div>
       <div class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        <div v-for="member in team" :key="member.name" class="bg-background rounded-lg shadow-lg overflow-hidden">
+        <div v-for="member in team" :key="member.name" class="bg-slate-100 dark:bg-slate-900 rounded-lg shadow-lg overflow-hidden">
           <img :src="member.image" :alt="member.name" class="w-full h-64 object-cover">
           <div class="p-6">
             <h3 class="text-xl font-semibold text-foreground">{{ member.name }}</h3>
@@ -39,10 +39,10 @@ const team = [
   </section>
 
     <!-- CTA Section -->
-    <section class="py-20 bg-background ">
+    <section class="py-20 bg-slate-50 dark:bg-background">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="bg-gradient-to-r from-primary to-primary/90 rounded-2xl overflow-hidden shadow-lg">
-        <div class="grid grid-cols-1 lg:grid-cols-2 items-center">
+        <div class="grid grid-cols-1 lg:grid-cols-2 items-center bg-slate-50 dark:bg-slate-900">
           <!-- CTA Content -->
           <div class="p-8 lg:p-12">
             <h2 class="text-3xl font-bold text-white mb-4">Siap Memulai Perjalanan Digital Anda?</h2>

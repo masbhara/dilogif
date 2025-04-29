@@ -4,6 +4,7 @@
     <WebDevelopment />
     <LogoDesign />
     <ContentCreation />
+    <ServiceList />
   </MainLayout>
 </template>
 

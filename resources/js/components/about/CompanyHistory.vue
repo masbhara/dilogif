@@ -1,27 +1,26 @@
 <template>
   <!-- Company Profile Banner -->
-  <section class="bg-background py-16 lg:py-20">
+  <section class="bg-slate-50 dark:bg-background py-8 lg:py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-center mb-10">
         <div class="bg-primary/10 rounded-full px-6 py-1.5 inline-flex items-center gap-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
-          <span class="text-sm font-medium text-primary">Tentang Kami</span>
+        
         </div>
       </div>
       
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-16">
         <!-- Text Content -->
         <div>
-          <h1 class="text-4xl lg:text-5xl font-bold text-foreground leading-tight mb-8">
-            Menghadirkan <span class="text-primary">Solusi Digital</span> untuk Bisnis Anda
+          <h1 class="text-3xl lg:text-4xl font-bold text-foreground leading-tight mb-8">
+            Menghadirkan <span class="text-blue-500">Solusi Digital</span> untuk Bisnis Anda
           </h1>
           
           <div class="prose prose-lg text-muted-foreground max-w-none mb-8">
-            <p>Dilogif didirikan dengan visi untuk membantu bisnis berkembang di era digital. Kami percaya bahwa teknologi yang tepat dapat mendorong pertumbuhan dan kesuksesan bisnis Anda.</p>
-            <p>Tim kami terdiri dari para ahli yang berpengalaman dalam berbagai bidang digital. Dengan pendekatan yang kolaboratif, kami bekerja sama dengan klien untuk menciptakan solusi yang sesuai dengan kebutuhan mereka.</p>
+            <p class="my-2">Dilogif didirikan dengan visi untuk membantu bisnis berkembang di era digital. Kami percaya bahwa teknologi yang tepat dapat mendorong pertumbuhan dan kesuksesan bisnis Anda.</p>
+            <p class="my-2">Tim kami terdiri dari para ahli yang berpengalaman dalam berbagai bidang digital. Dengan pendekatan yang kolaboratif, kami bekerja sama dengan klien untuk menciptakan solusi yang sesuai dengan kebutuhan mereka.</p>
           </div>
           
-          <div class="grid grid-cols-2 gap-8">
+          <!-- <div class="grid grid-cols-2 gap-8">
             <div>
               <div class="text-3xl font-bold text-primary mb-1">5+</div>
               <div class="text-sm text-foreground">Tahun Pengalaman</div>
@@ -30,7 +29,7 @@
               <div class="text-3xl font-bold text-primary mb-1">200+</div>
               <div class="text-sm text-foreground">Klien Puas</div>
             </div>
-          </div>
+          </div> -->
         </div>
         
         <!-- Visual Content -->
@@ -65,17 +64,14 @@
 
 
   <!-- Values Section - Redesigned -->
-  <section id="values" class="py-16 bg-background">
+  <section id="values" class="py-8 bg-slate-50 dark:bg-background">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Section Header with Brand Colors -->
       <div class="flex flex-col items-center mb-16">
-        <div class="bg-primary/10 rounded-full px-6 py-1.5 mb-4 inline-flex items-center gap-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
-          <span class="text-sm font-medium text-primary">Nilai Kami</span>
-        </div>
+       
         <h2 class="text-3xl font-bold text-foreground mb-4 text-center">Nilai-Nilai yang Kami Pegang Teguh</h2>
-        <div class="w-20 h-1 bg-primary mb-6"></div>
-        <p class="text-muted-foreground max-w-2xl text-center">
+        <div class="w-20 h-1 bg-primary"></div>
+        <p class="text-muted-foreground text-center text-lg">
           Prinsip-prinsip yang menjadi pondasi Dilogif dalam memberikan layanan terbaik kepada klien.
         </p>
       </div>
@@ -83,7 +79,7 @@
       <!-- Values Cards with Improved Visual Design -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div v-for="(value, index) in values" :key="index" class="group">
-          <div class="bg-background border border-border rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md hover:border-primary/20 h-full">
+          <div class="bg-slate-100 dark:bg-slate-900 border border-border rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md hover:border-primary/20 h-full">
             <!-- Top Colored Bar -->
             <div class="h-2 bg-primary"></div>
             
