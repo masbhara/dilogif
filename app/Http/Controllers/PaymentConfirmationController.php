@@ -113,7 +113,12 @@ class PaymentConfirmationController extends Controller
             abort(403);
         }
         
-        $confirmation->load(['payment.order', 'user']);
+        $confirmation->load([
+            'payment.order.orderItems.product',
+            'payment.order',
+            'user',
+            'payment.paymentMethod',
+        ]);
         
         return Inertia::render('admin/payment-confirmations/Show', [
             'confirmation' => $confirmation,

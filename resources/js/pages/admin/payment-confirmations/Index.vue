@@ -19,21 +19,6 @@
             <CardDescription>
               Daftar konfirmasi pembayaran dari pelanggan yang memerlukan verifikasi.
             </CardDescription>
-            <div class="flex items-center space-x-2 pt-2">
-              <Button variant="outline" size="sm" @click="refreshData">
-                <RefreshCcw class="h-4 w-4 mr-2" />
-                Refresh
-              </Button>
-              
-              <!-- Debug button -->
-              <Button 
-                variant="destructive" 
-                size="sm" 
-                @click="debugVerifyDialog()"
-              >
-                Debug Dialog Verifikasi
-              </Button>
-            </div>
           </CardHeader>
           
           <CardContent>
@@ -551,27 +536,6 @@ const updateStatus = (status) => {
   });
 };
 
-const refreshData = () => {
-  router.reload({
-    preserveScroll: true,
-    onStart: () => {
-      toast.info('Memuat', {
-        description: 'Memuat ulang data konfirmasi pembayaran',
-      });
-    },
-    onSuccess: () => {
-      toast.success('Berhasil', {
-        description: 'Data konfirmasi pembayaran berhasil dimuat ulang',
-      });
-    },
-    onError: () => {
-      toast.error('Gagal', {
-        description: 'Terjadi kesalahan saat memuat ulang data',
-      });
-    },
-  });
-};
-
 const showFullImage = (imageSrc) => {
   console.log('Membuka gambar penuh:', imageSrc);
   fullImageSrc.value = imageSrc;
@@ -625,43 +589,5 @@ const getConfirmationStatusVariant = (status) => {
     'rejected': 'destructive'
   };
   return variants[status] || 'outline';
-};
-
-// Debug function
-const debugVerifyDialog = () => {
-  console.log('=== DEBUG DIALOG VERIFIKASI ===');
-  console.log('showVerifyDialog before:', showVerifyDialog.value);
-  
-  // Gunakan confirmation pertama jika ada, atau buat mock data
-  if (props.confirmations && props.confirmations.data && props.confirmations.data.length > 0) {
-    const confirmation = props.confirmations.data[0];
-    console.log('Using confirmation:', confirmation);
-    selectedConfirmation.value = confirmation ? {...confirmation} : null;
-  } else {
-    console.log('Creating mock confirmation');
-    selectedConfirmation.value = {
-      id: 999,
-      bank_name: 'DEBUG BANK',
-      account_name: 'DEBUG USER',
-      amount: 100000,
-      payment: {
-        order: {
-          order_number: 'DBG123',
-          total_amount: 150000,
-          status: 'pending'
-        }
-      },
-      status: 'pending'
-    };
-  }
-  
-  // Reset admin notes
-  adminNotes.value = '';
-  
-  // Trigger dialog
-  setTimeout(() => {
-    showVerifyDialog.value = true;
-    console.log('showVerifyDialog after:', showVerifyDialog.value);
-  }, 100);
 };
 </script> 

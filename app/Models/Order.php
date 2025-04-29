@@ -123,4 +123,9 @@ class Order extends Model
         
         return $this;
     }
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
 }
