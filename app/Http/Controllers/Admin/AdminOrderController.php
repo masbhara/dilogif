@@ -29,9 +29,12 @@ class AdminOrderController extends Controller
         
         // Filter by search terms (order number, customer name, customer phone)
         if ($request->has('search') && !empty($request->search)) {
-            $search = $request->search;
+            $search = trim($request->search);
             $query->where(function($q) use ($search) {
-                $q->where('order_number', 'like', "%{$search}%")
+                // Mencari dengan exact match untuk nomor pesanan
+                $q->where('order_number', $search)
+                  // Mencari dengan partial match jika nomor pesanan tidak ditemukan
+                  ->orWhere('order_number', 'like', "%{$search}%")
                   ->orWhere('customer_name', 'like', "%{$search}%")
                   ->orWhere('customer_phone', 'like', "%{$search}%");
             });

@@ -23,18 +23,21 @@
             <!-- Search Filter -->
             <div class="flex-1">
               <label for="search" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Cari</label>
-              <div class="relative">
+              <div class="relative flex items-center">
                 <input 
                   id="search"
                   v-model="search" 
                   type="text" 
                   placeholder="Nomor pesanan atau nama pelanggan" 
                   class="w-full h-9 pl-10 px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
-                  @keyup.enter="applyFilters"
                 />
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <SearchIcon class="h-4 w-4 text-slate-400" />
                 </div>
+                <Button @click="applyFilters" size="sm" class="ml-2 h-9" :disabled="loading">
+                  <LoaderIcon v-if="loading" class="h-4 w-4 mr-2 animate-spin" />
+                  Cari
+                </Button>
               </div>
             </div>
             
@@ -71,7 +74,7 @@
             
             <!-- Filter Buttons -->
             <div class="flex items-end gap-2">
-              <Button @click="resetFilters" variant="outline" class="h-9">Reset</Button>
+              <Button @click="resetFilters" variant="outline" class="h-9" :disabled="loading">Reset</Button>
             </div>
           </div>
         </CardContent>
@@ -171,16 +174,20 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { TableRow, TableCell } from '@/components/ui/table';
 import Pagination from '@/components/Pagination.vue';
-import { SearchIcon, EyeIcon, BarChart3Icon, MoreHorizontal, FileText } from 'lucide-vue-next';
+import { SearchIcon, EyeIcon, BarChart3Icon, MoreHorizontal, FileText, LoaderIcon } from 'lucide-vue-next';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import AdminTable from '@/components/AdminTable.vue';
 import currencies from "@/lib/currency.js";
+import { debounce } from 'lodash';
+import { useToast } from '@/composables/useToast';
 
 const props = defineProps({
   orders: Object,
   filters: Object,
   statuses: Object
 });
+
+const { toast } = useToast();
 
 // Breadcrumbs untuk navigasi
 const breadcrumbs = [
@@ -197,6 +204,7 @@ const breadcrumbs = [
 // State
 const search = ref(props.filters?.search || '');
 const selectedStatus = ref(props.filters?.status || '');
+const loading = ref(false);
 
 // Status dropdown state
 const isStatusSelectOpen = ref(false);
@@ -278,27 +286,73 @@ const getStatusLabel = (status) => {
   return props.statuses[status] || status;
 };
 
+const buildFilterPayload = () => {
+  const payload = {};
+  if (search.value) payload.search = search.value;
+  if (selectedStatus.value) payload.status = selectedStatus.value;
+  return payload;
+};
+
+const updateSearch = debounce((value) => {
+    router.get(route('admin.orders.index'), buildFilterPayload(), {
+        preserveState: true,
+        replace: true,
+        onSuccess: (page) => {
+            if (page.props.orders && page.props.orders.data && page.props.orders.data.length === 0) {
+                toast({
+                    title: 'Tidak ada hasil',
+                    description: 'Data pesanan tidak ditemukan.',
+                    variant: 'destructive',
+                });
+            }
+        }
+    });
+}, 500);
+
+watch(search, (value) => {
+    updateSearch(value);
+});
+
 const applyFilters = () => {
-  router.get(route('admin.orders.index'), {
-    search: search.value,
-    status: selectedStatus.value
-  }, {
-    preserveState: true,
-    replace: true
-  });
+    loading.value = true;
+    router.get(route('admin.orders.index'), buildFilterPayload(), {
+        preserveState: true,
+        replace: true,
+        onSuccess: (page) => {
+            if (page.props.orders && page.props.orders.data && page.props.orders.data.length === 0) {
+                toast({
+                    title: 'Tidak ada hasil',
+                    description: 'Data pesanan tidak ditemukan.',
+                    variant: 'destructive',
+                });
+            }
+        },
+        onFinish: () => {
+            loading.value = false;
+        }
+    });
 };
 
 const resetFilters = () => {
-  search.value = '';
-  selectedStatus.value = '';
-  
-  // Pastikan UI diupdate sebelum mengirim request
-  nextTick(() => {
-    // Gunakan router.visit untuk memuat ulang halaman tanpa filter
-    router.visit(route('admin.orders.index'), {
-      preserveScroll: false
+    search.value = '';
+    selectedStatus.value = '';
+    loading.value = true;
+    router.get(route('admin.orders.index'), {}, {
+        preserveState: true,
+        replace: true,
+        onSuccess: (page) => {
+            if (page.props.orders && page.props.orders.data && page.props.orders.data.length === 0) {
+                toast({
+                    title: 'Tidak ada hasil',
+                    description: 'Data pesanan tidak ditemukan.',
+                    variant: 'destructive',
+                });
+            }
+        },
+        onFinish: () => {
+            loading.value = false;
+        }
     });
-  });
 };
 
 // Initialize filters from URL
@@ -318,9 +372,6 @@ const columns = [
   { label: 'Tanggal', headerClass: 'text-center' },
   { label: 'Aksi', headerClass: 'text-center' }
 ];
-
-// Loading state
-const loading = ref(false);
 </script>
 
 <style>
