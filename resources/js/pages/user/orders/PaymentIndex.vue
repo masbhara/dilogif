@@ -36,7 +36,14 @@
                 </TableCell>
                 <TableCell class="py-3.5 px-6 align-middle">{{ formatDate(order.created_at) }}</TableCell>
                 <TableCell class="py-3.5 px-6 align-middle">{{ formatPrice(order.total_amount) }}</TableCell>
-                <TableCell class="py-3.5 px-6 align-middle">{{ order.payment?.payment_method?.name || 'Belum dipilih' }}</TableCell>
+                <TableCell class="py-3.5 px-6 align-middle">
+                  <Badge 
+                    variant="outline" 
+                    class="border-blue-400 text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700"
+                  >
+                    {{ order.payment?.payment_method?.type === 'payment_gateway' ? 'Payment Gateway' : 'Transfer Bank' }}
+                  </Badge>
+                </TableCell>
                 <TableCell class="py-3.5 px-6 align-middle">
                   <Badge 
                     variant="outline" 

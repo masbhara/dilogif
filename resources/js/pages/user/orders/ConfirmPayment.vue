@@ -53,6 +53,12 @@
                 <p class="text-base font-semibold">{{ formatPrice(orderData.total_amount) }}</p>
               </div>
               <div>
+                <h4 class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Metode Pembayaran</h4>
+                <Badge variant="outline" class="border-blue-400 text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700">
+                  {{ orderData.payment_method === 'payment_gateway' ? 'Payment Gateway' : 'Transfer Bank' }}
+                </Badge>
+              </div>
+              <div>
                 <h4 class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Status Pembayaran</h4>
                 <Badge 
                   variant="outline" 
@@ -89,7 +95,7 @@
               </AlertDescription>
             </Alert>
 
-            <!-- Daftar Bank yang tersedia dengan tampilan yang lebih baik -->
+            <!-- Daftar Bank yang tersedia  -->
             <div class="space-y-4">
               <div v-for="method in displayPaymentMethods" :key="method.id" class="border rounded-md p-4 bg-slate-50 dark:bg-slate-800/50">
                 <div class="flex items-center justify-between mb-3">
