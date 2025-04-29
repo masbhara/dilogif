@@ -1,7 +1,11 @@
 <template>
   <nav :class="[
     'fixed w-full z-50 transition-all duration-300',
-    isScrolled ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm shadow-md' : 'bg-transparent'
+    isHomePage 
+      ? isScrolled 
+        ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm shadow-md' 
+        : 'bg-transparent'
+      : 'bg-white dark:bg-gray-900 shadow-md'
   ]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
@@ -11,7 +15,11 @@
             <Link :href="route('home')">
               <ApplicationLogo :class="[
                 'block h-9 w-auto fill-current transition-colors duration-300',
-                isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'
+                isHomePage 
+                  ? isScrolled 
+                    ? 'text-gray-800 dark:text-white' 
+                    : 'text-white'
+                  : 'text-gray-800 dark:text-white'
               ]" />
             </Link>
           </div>
@@ -20,25 +28,51 @@
           <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
             <NavLink :href="route('home')" :active="route().current('home')" :class="[
               'transition-colors duration-300',
-              isScrolled ? 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300' : 'text-white hover:text-gray-200'
+              isHomePage 
+                ? isScrolled 
+                  ? 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300' 
+                  : 'text-white hover:text-gray-200'
+                : 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300'
             ]">
               Beranda
             </NavLink>
             <NavLink :href="route('products.index')" :active="route().current('products.index')" :class="[
               'transition-colors duration-300',
-              isScrolled ? 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300' : 'text-white hover:text-gray-200'
+              isHomePage 
+                ? isScrolled 
+                  ? 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300' 
+                  : 'text-white hover:text-gray-200'
+                : 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300'
             ]">
               Produk
             </NavLink>
+            <NavLink :href="route('services')" :active="route().current('services')" :class="[
+              'transition-colors duration-300',
+              isHomePage 
+                ? isScrolled 
+                  ? 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300' 
+                  : 'text-white hover:text-gray-200'
+                : 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300'
+            ]">
+              Layanan
+            </NavLink>
             <NavLink :href="route('about')" :active="route().current('about')" :class="[
               'transition-colors duration-300',
-              isScrolled ? 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300' : 'text-white hover:text-gray-200'
+              isHomePage 
+                ? isScrolled 
+                  ? 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300' 
+                  : 'text-white hover:text-gray-200'
+                : 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300'
             ]">
               Tentang Kami
             </NavLink>
             <NavLink :href="route('contact')" :active="route().current('contact')" :class="[
               'transition-colors duration-300',
-              isScrolled ? 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300' : 'text-white hover:text-gray-200'
+              isHomePage 
+                ? isScrolled 
+                  ? 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300' 
+                  : 'text-white hover:text-gray-200'
+                : 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300'
             ]">
               Kontak
             </NavLink>
@@ -49,7 +83,11 @@
           <!-- Cart -->
           <Link :href="route('cart.index')" :class="[
             'relative p-2 transition-colors duration-300',
-            isScrolled ? 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300' : 'text-white hover:text-gray-200'
+            isHomePage 
+              ? isScrolled 
+                ? 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300' 
+                : 'text-white hover:text-gray-200'
+              : 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300'
           ]">
             <ShoppingCartIcon class="h-6 w-6" />
             <span v-if="cartCount > 0" class="absolute -top-1 -right-1 bg-primary-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
@@ -67,7 +105,11 @@
                       type="button"
                       :class="[
                         'inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md focus:outline-none transition-colors duration-300',
-                        isScrolled ? 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300' : 'text-white hover:text-gray-200'
+                        isHomePage 
+                          ? isScrolled 
+                            ? 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300' 
+                            : 'text-white hover:text-gray-200'
+                          : 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300'
                       ]"
                     >
                       {{ $page.props.auth.user.name }}
@@ -106,7 +148,11 @@
                 :href="route('login')"
                 :class="[
                   'text-sm underline transition-colors duration-300',
-                  isScrolled ? 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300' : 'text-white hover:text-gray-200'
+                  isHomePage 
+                    ? isScrolled 
+                      ? 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300' 
+                      : 'text-white hover:text-gray-200'
+                    : 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300'
                 ]"
               >
                 Login
@@ -116,7 +162,11 @@
                 :href="route('register')"
                 :class="[
                   'ml-4 text-sm underline transition-colors duration-300',
-                  isScrolled ? 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300' : 'text-white hover:text-gray-200'
+                  isHomePage 
+                    ? isScrolled 
+                      ? 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300' 
+                      : 'text-white hover:text-gray-200'
+                    : 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300'
                 ]"
               >
                 Register
@@ -131,7 +181,11 @@
             @click="showingNavigationDropdown = !showingNavigationDropdown"
             :class="[
               'inline-flex items-center justify-center p-2 rounded-md focus:outline-none transition duration-150 ease-in-out',
-              isScrolled ? 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800' : 'text-white hover:text-gray-200 hover:bg-white/10'
+              isHomePage 
+                ? isScrolled 
+                  ? 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800' 
+                  : 'text-white hover:text-gray-200 hover:bg-white/10'
+                : 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
             ]"
           >
             <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -173,6 +227,9 @@
         <ResponsiveNavLink :href="route('products.index')" :active="route().current('products.index')">
           Produk
         </ResponsiveNavLink>
+        <ResponsiveNavLink :href="route('services')" :active="route().current('services')">
+          Layanan
+        </ResponsiveNavLink>
         <ResponsiveNavLink :href="route('about')" :active="route().current('about')">
           Tentang Kami
         </ResponsiveNavLink>
@@ -213,8 +270,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
-import { Link } from '@inertiajs/vue3';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
 import ApplicationLogo from '@/components/ApplicationLogo.vue';
 import Dropdown from '@/components/Dropdown.vue';
 import DropdownLink from '@/components/DropdownLink.vue';
@@ -224,6 +281,11 @@ import { ShoppingCartIcon } from '@heroicons/vue/24/outline';
 
 const showingNavigationDropdown = ref(false);
 const isScrolled = ref(false);
+
+// Deteksi apakah halaman saat ini adalah homepage
+const isHomePage = computed(() => {
+  return route().current('home');
+});
 
 const handleScroll = () => {
   isScrolled.value = window.scrollY > 0;
