@@ -1,41 +1,41 @@
 <template>
   <!-- Company Profile Banner -->
-  <section class="bg-white py-16 lg:py-20">
+  <section class="bg-background py-16 lg:py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-center mb-10">
-        <div class="bg-[#3B8BEE]/10 rounded-full px-6 py-1.5 inline-flex items-center gap-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-[#3B8BEE]"></span>
-          <span class="text-sm font-medium text-[#3B8BEE]">Tentang Kami</span>
+        <div class="bg-primary/10 rounded-full px-6 py-1.5 inline-flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+          <span class="text-sm font-medium text-primary">Tentang Kami</span>
         </div>
       </div>
       
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-16">
         <!-- Text Content -->
         <div>
-          <h1 class="text-4xl lg:text-5xl font-bold text-[#343434] leading-tight mb-8">
-            Menghadirkan <span class="text-[#3B8BEE]">Solusi Digital</span> untuk Bisnis Anda
+          <h1 class="text-4xl lg:text-5xl font-bold text-foreground leading-tight mb-8">
+            Menghadirkan <span class="text-primary">Solusi Digital</span> untuk Bisnis Anda
           </h1>
           
-          <div class="prose prose-lg text-[#343434]/80 max-w-none mb-8">
+          <div class="prose prose-lg text-muted-foreground max-w-none mb-8">
             <p>Dilogif didirikan dengan visi untuk membantu bisnis berkembang di era digital. Kami percaya bahwa teknologi yang tepat dapat mendorong pertumbuhan dan kesuksesan bisnis Anda.</p>
             <p>Tim kami terdiri dari para ahli yang berpengalaman dalam berbagai bidang digital. Dengan pendekatan yang kolaboratif, kami bekerja sama dengan klien untuk menciptakan solusi yang sesuai dengan kebutuhan mereka.</p>
           </div>
           
           <div class="grid grid-cols-2 gap-8">
             <div>
-              <div class="text-3xl font-bold text-[#3B8BEE] mb-1">5+</div>
-              <div class="text-sm text-[#343434]">Tahun Pengalaman</div>
+              <div class="text-3xl font-bold text-primary mb-1">5+</div>
+              <div class="text-sm text-foreground">Tahun Pengalaman</div>
             </div>
             <div>
-              <div class="text-3xl font-bold text-[#3B8BEE] mb-1">200+</div>
-              <div class="text-sm text-[#343434]">Klien Puas</div>
+              <div class="text-3xl font-bold text-primary mb-1">200+</div>
+              <div class="text-sm text-foreground">Klien Puas</div>
             </div>
           </div>
         </div>
         
         <!-- Visual Content -->
         <div class="relative">
-          <div class="bg-[#3B8BEE]/10 rounded-tl-xl rounded-br-xl p-4 relative">
+          <div class="bg-primary/10 rounded-tl-xl rounded-br-xl p-4 relative">
             <img 
               src="/images/hero-dashboard.svg" 
               alt="Tim Dilogif" 
@@ -43,19 +43,19 @@
             />
             
             <!-- Decorative Elements -->
-            <div class="absolute top-0 right-0 w-32 h-32 bg-[#3B8BEE]/20 rounded-full -translate-y-1/4 translate-x-1/4 z-0"></div>
-            <div class="absolute bottom-0 left-0 w-24 h-24 bg-[#3B8BEE]/15 rounded-full translate-y-1/4 -translate-x-1/4 z-0"></div>
+            <div class="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full -translate-y-1/4 translate-x-1/4 z-0"></div>
+            <div class="absolute bottom-0 left-0 w-24 h-24 bg-primary/15 rounded-full translate-y-1/4 -translate-x-1/4 z-0"></div>
           </div>
           
           <!-- Floating Badge -->
-          <div class="absolute bottom-4 right-4 bg-white py-2 px-4 rounded-full shadow-lg flex items-center gap-3">
-            <div class="w-8 h-8 bg-[#3B8BEE] rounded-full flex items-center justify-center">
+          <div class="absolute bottom-4 right-4 bg-background py-2 px-4 rounded-full shadow-lg flex items-center gap-3">
+            <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                 <polyline points="22 4 12 14.01 9 11.01"></polyline>
               </svg>
             </div>
-            <span class="font-medium text-[#343434]">Pengalaman Terpercaya</span>
+            <span class="font-medium text-foreground">Pengalaman Terpercaya</span>
           </div>
         </div>
       </div>
@@ -65,17 +65,17 @@
 
 
   <!-- Values Section - Redesigned -->
-  <section id="values" class="py-16 bg-white">
+  <section id="values" class="py-16 bg-background">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Section Header with Brand Colors -->
       <div class="flex flex-col items-center mb-16">
-        <div class="bg-[#3B8BEE]/10 rounded-full px-6 py-1.5 mb-4 inline-flex items-center gap-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-[#3B8BEE]"></span>
-          <span class="text-sm font-medium text-[#3B8BEE]">Nilai Kami</span>
+        <div class="bg-primary/10 rounded-full px-6 py-1.5 mb-4 inline-flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+          <span class="text-sm font-medium text-primary">Nilai Kami</span>
         </div>
-        <h2 class="text-3xl font-bold text-[#343434] mb-4 text-center">Nilai-Nilai yang Kami Pegang Teguh</h2>
-        <div class="w-20 h-1 bg-[#3B8BEE] mb-6"></div>
-        <p class="text-[#343434]/70 max-w-2xl text-center">
+        <h2 class="text-3xl font-bold text-foreground mb-4 text-center">Nilai-Nilai yang Kami Pegang Teguh</h2>
+        <div class="w-20 h-1 bg-primary mb-6"></div>
+        <p class="text-muted-foreground max-w-2xl text-center">
           Prinsip-prinsip yang menjadi pondasi Dilogif dalam memberikan layanan terbaik kepada klien.
         </p>
       </div>
@@ -83,19 +83,19 @@
       <!-- Values Cards with Improved Visual Design -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div v-for="(value, index) in values" :key="index" class="group">
-          <div class="bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md hover:border-[#3B8BEE]/20 h-full">
+          <div class="bg-background border border-border rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md hover:border-primary/20 h-full">
             <!-- Top Colored Bar -->
-            <div class="h-2 bg-[#3B8BEE]"></div>
+            <div class="h-2 bg-primary"></div>
             
             <div class="p-8">
               <!-- Icon with Colored Background -->
-              <div class="w-16 h-16 bg-[#3B8BEE]/10 rounded-full flex items-center justify-center mb-6 group-hover:bg-[#3B8BEE]/20 transition-colors duration-300">
-                <component :is="value.icon" class="w-8 h-8 text-[#3B8BEE]" />
+              <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors duration-300">
+                <component :is="value.icon" class="w-8 h-8 text-primary" />
               </div>
               
               <!-- Value Title and Description -->
-              <h3 class="text-xl font-bold text-[#343434] mb-3">{{ value.title }}</h3>
-              <p class="text-[#343434]/70">{{ value.description }}</p>
+              <h3 class="text-xl font-bold text-foreground mb-3">{{ value.title }}</h3>
+              <p class="text-muted-foreground">{{ value.description }}</p>
             </div>
           </div>
         </div>
