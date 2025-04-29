@@ -1,20 +1,18 @@
 <template>
-  <div class="min-h-screen bg-[#FCFDFD] text-[#343434]">
-    <Navigation />
+  <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+    <PublicNavigation />
     
+    <!-- Page Content -->
     <main>
       <slot />
     </main>
-
-    <Footer />
     
-    <!-- WhatsApp Floating Button -->
-    <WhatsAppButton />
+    <!-- Footer -->
+    <Footer />
   </div>
 </template>
 
 <script setup>
-import Navigation from '@/components/layout/Navigation.vue'
-import Footer from '@/components/layout/Footer.vue'
-import WhatsAppButton from '@/components/ui/WhatsAppButton.vue'
+import PublicNavigation from '@/components/layout/PublicNavigation.vue';
+import Footer from '@/components/layout/Footer.vue';
 </script> 

@@ -45,7 +45,7 @@ class OrderController extends Controller
         $discount = 0; // Default discount, can be applied later
         $total = $subtotal + $adminFee - $discount;
         
-        return Inertia::render('public/cart/Checkout', [
+        return Inertia::render('public/orders/Checkout', [
             'cartItems' => $cartItems,
             'summary' => [
                 'subtotal' => $subtotal,
