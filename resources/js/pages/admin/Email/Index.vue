@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -89,6 +89,82 @@ const form = useForm({
 const processing = ref(false);
 const showTestEmailDialog = ref(false);
 const testEmail = ref('');
+const isSelectOpen = ref(false);
+const isEncryptionSelectOpen = ref(false);
+const selectRef = ref<HTMLElement | null>(null);
+const encryptionSelectRef = ref<HTMLElement | null>(null);
+
+// Data untuk email drivers
+const emailDrivers = [
+  { value: 'smtp', label: 'SMTP' },
+  { value: 'mailgun', label: 'Mailgun' },
+  { value: 'ses', label: 'Amazon SES' },
+  { value: 'log', label: 'Log (untuk pengujian)' }
+];
+
+// Data untuk opsi enkripsi
+const encryptionOptions = [
+  { value: 'tls', label: 'TLS' },
+  { value: 'ssl', label: 'SSL' },
+  { value: '', label: 'Tidak Ada' }
+];
+
+// Computed property untuk label driver terpilih
+const selectedDriverLabel = computed(() => {
+  const driver = emailDrivers.find(d => d.value === form.mail_driver);
+  return driver ? driver.label : 'Pilih driver...';
+});
+
+// Computed property untuk label enkripsi terpilih
+const selectedEncryptionLabel = computed(() => {
+  const encryption = encryptionOptions.find(e => e.value === form.mail_encryption);
+  return encryption ? encryption.label : 'Pilih enkripsi...';
+});
+
+// Toggle dropdown driver
+const toggleSelect = () => {
+  isSelectOpen.value = !isSelectOpen.value;
+  isEncryptionSelectOpen.value = false;
+};
+
+// Toggle dropdown enkripsi
+const toggleEncryptionSelect = () => {
+  isEncryptionSelectOpen.value = !isEncryptionSelectOpen.value;
+  isSelectOpen.value = false;
+};
+
+// Pilih driver
+const selectDriver = (driverValue: string) => {
+  form.mail_driver = driverValue;
+  isSelectOpen.value = false;
+};
+
+// Pilih enkripsi
+const selectEncryption = (encryptionValue: string) => {
+  form.mail_encryption = encryptionValue;
+  isEncryptionSelectOpen.value = false;
+};
+
+// Handle click outside
+const handleClickOutside = (event: MouseEvent) => {
+  if (selectRef.value && !selectRef.value.contains(event.target as Node)) {
+    isSelectOpen.value = false;
+  }
+  if (encryptionSelectRef.value && !encryptionSelectRef.value.contains(event.target as Node)) {
+    isEncryptionSelectOpen.value = false;
+  }
+};
+
+// Lifecycle hooks untuk select
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+  selectRef.value = document.querySelector('.custom-select-container') as HTMLElement;
+  encryptionSelectRef.value = document.querySelector('.custom-select-container:nth-child(2)') as HTMLElement;
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
 
 const updateEmailSettings = () => {
   processing.value = true;
@@ -144,15 +220,77 @@ const sendTestEmail = () => {
         
         <div class="p-6">
           <form @submit.prevent="updateEmailSettings">
-            <!-- Pengaturan Driver -->
-            <div class="mb-6">
-              <Label for="mail_driver">Driver Email</Label>
-              <select v-model="form.mail_driver" id="mail_driver" class="flex h-10 mt-1.5 w-full rounded-md border border-slate-200 dark:border-slate-700 bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
-                <option value="smtp">SMTP</option>
-                <option value="mailgun">Mailgun</option>
-                <option value="ses">Amazon SES</option>
-                <option value="log">Log (untuk pengujian)</option>
-              </select>
+            <!-- Pengaturan Driver dan Enkripsi -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div>
+                <Label for="mail_driver">Driver Email</Label>
+                <div class="relative mt-1">
+                  <div 
+                    class="custom-select-container" 
+                    :class="{ 'active': isSelectOpen }"
+                  >
+                    <div 
+                      @click="toggleSelect" 
+                      class="custom-select-trigger flex w-full items-center justify-between gap-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-2 text-sm shadow-sm hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer h-9"
+                    >
+                      <span>{{ selectedDriverLabel }}</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-50 transition-transform" :class="{ 'rotate-180': isSelectOpen }">
+                        <path d="m6 9 6 6 6-6"></path>
+                      </svg>
+                    </div>
+                    
+                    <div 
+                      v-if="isSelectOpen" 
+                      class="custom-select-dropdown bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-lg mt-1 overflow-hidden z-50"
+                    >
+                      <div 
+                        v-for="driver in emailDrivers" 
+                        :key="driver.value"
+                        @click="selectDriver(driver.value)"
+                        class="custom-select-option py-2 px-3 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm"
+                        :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': form.mail_driver === driver.value }"
+                      >
+                        {{ driver.label }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <Label for="mail_encryption">Enkripsi</Label>
+                <div class="relative mt-1">
+                  <div 
+                    class="custom-select-container" 
+                    :class="{ 'active': isEncryptionSelectOpen }"
+                  >
+                    <div 
+                      @click="toggleEncryptionSelect" 
+                      class="custom-select-trigger flex w-full items-center justify-between gap-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-2 text-sm shadow-sm hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer h-9"
+                    >
+                      <span>{{ selectedEncryptionLabel }}</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-50 transition-transform" :class="{ 'rotate-180': isEncryptionSelectOpen }">
+                        <path d="m6 9 6 6 6-6"></path>
+                      </svg>
+                    </div>
+                    
+                    <div 
+                      v-if="isEncryptionSelectOpen" 
+                      class="custom-select-dropdown bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-lg mt-1 overflow-hidden z-50"
+                    >
+                      <div 
+                        v-for="encryption in encryptionOptions" 
+                        :key="encryption.value"
+                        @click="selectEncryption(encryption.value)"
+                        class="custom-select-option py-2 px-3 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm"
+                        :class="{ 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-medium': form.mail_encryption === encryption.value }"
+                      >
+                        {{ encryption.label }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
             
             <!-- SMTP Settings -->
@@ -177,15 +315,6 @@ const sendTestEmail = () => {
                   <Label for="mail_password">SMTP Password</Label>
                   <Input v-model="form.mail_password" id="mail_password" type="password" class="mt-1.5 border border-slate-200 dark:border-slate-700" />
                 </div>
-              </div>
-              
-              <div>
-                <Label for="mail_encryption">Enkripsi</Label>
-                <select v-model="form.mail_encryption" id="mail_encryption" class="flex h-10 mt-1.5 w-full rounded-md border border-slate-200 dark:border-slate-700 bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
-                  <option value="tls">TLS</option>
-                  <option value="ssl">SSL</option>
-                  <option value="">Tidak Ada</option>
-                </select>
               </div>
             </div>
             
@@ -270,4 +399,72 @@ const sendTestEmail = () => {
       </p>
     </ConfirmationDialog>
   </AppLayout>
-</template> 
+</template>
+
+<style>
+/* Custom select styling */
+.custom-select-container {
+  position: relative;
+  width: 100%;
+  -webkit-tap-highlight-color: transparent;
+  border-radius: 0.375rem;
+}
+
+.custom-select-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  animation: slideDown 0.15s ease-out;
+  z-index: 50;
+}
+
+.custom-select-option:first-child {
+  border-top-left-radius: 0.375rem;
+  border-top-right-radius: 0.375rem;
+}
+
+.custom-select-option:last-child {
+  border-bottom-left-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Perbaikan outline saat fokus */
+.custom-select-trigger {
+  outline: none !important;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.custom-select-trigger:focus,
+.custom-select-trigger:focus-visible,
+.custom-select-trigger:active,
+.custom-select-trigger:hover,
+.custom-select-trigger:-moz-focusring {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: #0ea5e9 !important;
+}
+
+/* Fix untuk Firefox */
+.custom-select-trigger:-moz-focusring {
+  outline: none !important;
+}
+
+/* Fix untuk Safari dan Chrome */
+.custom-select-trigger::-webkit-focus-inner {
+  border: 0;
+}
+
+/* Fix tambahan untuk Chrome */
+*:focus {
+  outline-color: transparent !important;
+}
+</style> 
