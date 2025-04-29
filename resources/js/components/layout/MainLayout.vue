@@ -1,10 +1,10 @@
 <template>
-  <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+  <div class="min-h-screen bg-background">
     <PublicNavigation />
     
     <!-- Page Content -->
     <main :class="[
-      route().current('home') ? '' : 'pt-16' // Tambah padding-top yang lebih besar (7rem/112px)
+      route().current('home') ? '' : 'pt-16'
     ]">
       <slot />
     </main>

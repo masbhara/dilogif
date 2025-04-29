@@ -2,17 +2,17 @@
   <Head :title="product.name" />
 
   <MainLayout>
-    <div class="bg-gray-50 py-12">
+    <div class="bg-background py-12">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Breadcrumb -->
-        <div class="bg-white p-4 rounded-lg shadow-sm mb-8">
+        <div class="bg-background p-4 rounded-lg shadow-sm mb-8 border border-border">
           <Breadcrumb :items="breadcrumbItems" />
         </div>
 
         <!-- Product Detail -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           <!-- Product Images -->
-          <div class="bg-white rounded-xl shadow-sm p-6">
+          <div class="bg-background rounded-xl shadow-sm p-6 border border-border">
             <!-- Main Image with Lightbox trigger -->
             <div class="mb-6 overflow-hidden rounded-lg cursor-pointer relative group">
               <img 
@@ -25,8 +25,8 @@
                 class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
                 @click="openLightbox(selectedImageIndex)"
               >
-                <div class="bg-white/80 backdrop-blur-sm p-2 rounded-full">
-                  <ExpandIcon class="w-6 h-6 text-gray-700" />
+                <div class="bg-background/80 backdrop-blur-sm p-2 rounded-full">
+                  <ExpandIcon class="w-6 h-6 text-foreground" />
                 </div>
               </div>
             </div>
@@ -39,7 +39,7 @@
               <!-- Featured Image Thumbnail -->
               <div 
                 class="aspect-square overflow-hidden cursor-pointer rounded-md border-2 transition-all duration-200"
-                :class="selectedImageIndex === -1 ? 'border-primary-600 scale-[1.05] shadow-md' : 'border-transparent hover:border-primary-300'"
+                :class="selectedImageIndex === -1 ? 'border-primary scale-[1.05] shadow-md' : 'border-border hover:border-primary'"
                 @click="selectImage(-1)"
               >
                 <img 
@@ -54,7 +54,7 @@
                 v-for="(image, index) in product.gallery" 
                 :key="image.id" 
                 class="aspect-square overflow-hidden cursor-pointer rounded-md border-2 transition-all duration-200"
-                :class="selectedImageIndex === index ? 'border-primary-600 scale-[1.05] shadow-md' : 'border-transparent hover:border-primary-300'"
+                :class="selectedImageIndex === index ? 'border-primary scale-[1.05] shadow-md' : 'border-border hover:border-primary'"
                 @click="selectImage(index)"
               >
                 <img 
@@ -67,23 +67,23 @@
           </div>
           
           <!-- Product Info -->
-          <div class="bg-white rounded-xl shadow-sm p-6">
+          <div class="bg-background rounded-xl shadow-sm p-6 border border-border">
             <!-- Title Produk -->
-            <h1 class="text-2xl md:text-3xl font-bold mb-4">{{ product.name }}</h1>
+            <h1 class="text-2xl md:text-3xl font-bold mb-4 text-foreground">{{ product.name }}</h1>
             
             <!-- Kategori, Ketersediaan, Kode Produk -->
             <div class="flex flex-wrap items-center gap-2 mb-6">
-              <Badge v-if="product.category" variant="outline" class="px-3 py-0.5 bg-gray-50">
+              <Badge v-if="product.category" variant="outline" class="px-3 py-0.5 bg-muted text-foreground">
                 {{ product.category.name }}
               </Badge>
               <Badge 
                 variant="outline" 
-                :class="product.is_active ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'"
+                :class="product.is_active ? 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900 dark:text-green-200 dark:border-green-800' : 'bg-red-100 text-red-700 border-red-200 dark:bg-red-900 dark:text-red-200 dark:border-red-800'"
                 class="px-3 py-0.5"
               >
                 {{ product.is_active ? 'Tersedia' : 'Tidak Tersedia' }}
               </Badge>
-              <div class="border border-gray-200 rounded-md px-3 py-0.5 text-gray-600 text-sm flex items-center">
+              <div class="border border-border rounded-md px-3 py-0.5 text-muted-foreground text-sm flex items-center">
                 <TagIcon class="w-3.5 h-3.5 mr-1.5 opacity-70" />
                 {{ product.product_code || 'Tidak ada kode' }}
               </div>
@@ -91,45 +91,45 @@
             
             <!-- Harga -->
             <div class="mb-5">
-              <p class="text-sm text-gray-500 mb-1">Harga</p>
+              <p class="text-sm text-muted-foreground mb-1">Harga</p>
               <div class="flex items-baseline">
-                <span class="text-3xl font-bold text-gray-800 mr-1">Rp</span>
-                <span class="text-3xl font-bold text-gray-800">{{ formatPriceRaw(product.price) }}</span>
+                <span class="text-3xl font-bold text-foreground mr-1">Rp</span>
+                <span class="text-3xl font-bold text-foreground">{{ formatPriceRaw(product.price) }}</span>
               </div>
             </div>
                        
             <!-- Deskripsi Produk -->
             <div class="mb-8">
-              <h3 class="text-lg font-medium mb-3">Deskripsi Produk</h3>
-              <div class="prose prose-sm max-w-none text-gray-600">
+              <h3 class="text-lg font-medium mb-3 text-foreground">Deskripsi Produk</h3>
+              <div class="prose prose-sm max-w-none text-muted-foreground">
                 <div v-html="product.description"></div>
               </div>
             </div>
             
             <!-- Fitur Produk -->
-            <div v-if="hasProductFeatures" class="mb-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-5 border border-gray-200">
-              <h3 class="text-lg font-medium mb-4 flex items-center text-gray-800">
-                <CheckCircleIcon class="w-5 h-5 mr-2 text-primary-600" />
+            <div v-if="hasProductFeatures" class="mb-8 bg-gradient-to-br from-muted to-background rounded-lg p-5 border border-border">
+              <h3 class="text-lg font-medium mb-4 flex items-center text-foreground">
+                <CheckCircleIcon class="w-5 h-5 mr-2 text-primary" />
                 Spesifikasi Produk
               </h3>
               <div class="grid grid-cols-1 gap-y-3">
                 <div v-for="(feature, index) in product.product_features" :key="index" class="flex items-start">
-                  <CheckIcon class="w-5 h-5 text-primary-600 mr-2.5 mt-0.5 flex-shrink-0" />
-                  <span class="text-gray-700">{{ feature }}</span>
+                  <CheckIcon class="w-5 h-5 text-primary mr-2.5 mt-0.5 flex-shrink-0" />
+                  <span class="text-foreground">{{ feature }}</span>
                 </div>
               </div>
             </div>
             
             <!-- Nilai/Keunggulan Produk -->
-            <div v-if="hasProductValues" class="mb-8 bg-gradient-to-br from-amber-50 to-amber-100/50 rounded-lg p-5 border border-amber-200/50">
-              <h3 class="text-lg font-medium mb-4 flex items-center text-gray-800">
-                <StarIcon class="w-5 h-5 mr-2 text-amber-500" /> 
+            <div v-if="hasProductValues" class="mb-8 bg-gradient-to-br from-yellow-100 to-yellow-50 dark:from-yellow-900 dark:to-yellow-950 rounded-lg p-5 border border-yellow-200/50 dark:border-yellow-900/50">
+              <h3 class="text-lg font-medium mb-4 flex items-center text-yellow-800 dark:text-yellow-200">
+                <StarIcon class="w-5 h-5 mr-2 text-yellow-500" /> 
                 Keunggulan & Manfaat
               </h3>
               <div class="grid grid-cols-1 gap-y-3">
                 <div v-for="(value, index) in product.product_values" :key="index" class="flex items-start">
-                  <ArrowRightIcon class="w-5 h-5 text-amber-500 mr-2.5 mt-0.5 flex-shrink-0" />
-                  <span class="text-gray-700">{{ value }}</span>
+                  <ArrowRightIcon class="w-5 h-5 text-yellow-500 mr-2.5 mt-0.5 flex-shrink-0" />
+                  <span class="text-foreground">{{ value }}</span>
                 </div>
               </div>
             </div>
@@ -160,19 +160,19 @@
             </div>
 
             <!-- Share Product -->
-            <div class="border-t border-gray-200 pt-5">
-              <p class="text-sm font-medium mb-3">Bagikan produk ini:</p>
+            <div class="border-t border-border pt-5">
+              <p class="text-sm font-medium mb-3 text-foreground">Bagikan produk ini:</p>
               <div class="flex items-center gap-2">
-                <Button variant="outline" size="icon" @click="shareOnFacebook" class="rounded-full h-10 w-10 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                <Button variant="outline" size="icon" @click="shareOnFacebook" class="rounded-full h-10 w-10 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900 dark:hover:text-blue-200 transition-colors">
                   <FacebookIcon class="w-5 h-5" />
                 </Button>
-                <Button variant="outline" size="icon" @click="shareOnTwitter" class="rounded-full h-10 w-10 hover:bg-blue-50 hover:text-blue-400 transition-colors">
+                <Button variant="outline" size="icon" @click="shareOnTwitter" class="rounded-full h-10 w-10 hover:bg-blue-50 hover:text-blue-400 dark:hover:bg-blue-900 dark:hover:text-blue-200 transition-colors">
                   <TwitterIcon class="w-5 h-5" />
                 </Button>
-                <Button variant="outline" size="icon" @click="shareOnWhatsApp" class="rounded-full h-10 w-10 hover:bg-green-50 hover:text-green-500 transition-colors">
+                <Button variant="outline" size="icon" @click="shareOnWhatsApp" class="rounded-full h-10 w-10 hover:bg-green-50 hover:text-green-500 dark:hover:bg-green-900 dark:hover:text-green-200 transition-colors">
                   <MessageCircleIcon class="w-5 h-5" />
                 </Button>
-                <Button variant="outline" size="icon" @click="copyLink" class="rounded-full h-10 w-10 hover:bg-gray-100 transition-colors">
+                <Button variant="outline" size="icon" @click="copyLink" class="rounded-full h-10 w-10 hover:bg-muted transition-colors">
                   <LinkIcon class="w-5 h-5" />
                 </Button>
               </div>
@@ -183,18 +183,18 @@
         <!-- Related Products -->
         <div v-if="relatedProducts && relatedProducts.length > 0" class="mb-8">
           <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-bold">Produk Terkait</h2>
-            <Link :href="route('products.index')" class="text-primary-600 hover:text-primary-800 text-sm font-medium">Lihat Semua Produk</Link>
+            <h2 class="text-2xl font-bold text-foreground">Produk Terkait</h2>
+            <Link :href="route('products.index')" class="text-primary hover:text-primary/80 text-sm font-medium">Lihat Semua Produk</Link>
           </div>
           
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             <div 
               v-for="product in relatedProducts" 
               :key="product.id" 
-              class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 group"
+              class="bg-background rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 group border border-border"
             >
               <Link :href="product.url" class="block h-full flex flex-col">
-                <div class="aspect-square overflow-hidden bg-gray-100 relative">
+                <div class="aspect-square overflow-hidden bg-muted relative">
                   <img 
                     :src="`/storage/${product.featured_image}`" 
                     :alt="product.name" 
@@ -206,7 +206,7 @@
                 </div>
                 <div class="p-5 flex flex-col flex-grow">
                   <h3 class="text-lg font-bold mb-2 line-clamp-2 group-hover:text-primary-600 transition-colors">{{ product.name }}</h3>
-                  <p class="text-sm text-gray-500 mb-3 line-clamp-2">
+                  <p class="text-sm text-muted-foreground mb-3 line-clamp-2">
                     {{ truncateDescription(product.description) }}
                   </p>
                   <div class="mt-auto flex justify-between items-center">

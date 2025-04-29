@@ -1,11 +1,11 @@
 <template>
   <nav :class="[
     'fixed w-full z-50 transition-all duration-300',
-    isHomePage 
+    route().current('home')
       ? isScrolled 
-        ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm shadow-md' 
+        ? 'bg-background shadow-sm' 
         : 'bg-transparent'
-      : 'bg-white dark:bg-gray-900 shadow-md'
+      : 'bg-background shadow-sm'
   ]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
@@ -14,255 +14,255 @@
           <div class="shrink-0 flex items-center">
             <Link :href="route('home')">
               <ApplicationLogo :class="[
-                'block h-9 w-auto fill-current transition-colors duration-300',
-                isHomePage 
-                  ? isScrolled 
-                    ? 'text-gray-800 dark:text-white' 
-                    : 'text-white'
-                  : 'text-gray-800 dark:text-white'
+                'block h-9 w-auto fill-current',
+                route().current('home') && !isScrolled
+                  ? 'text-white'
+                  : 'text-primary'
               ]" />
             </Link>
           </div>
 
           <!-- Navigation Links -->
           <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-            <NavLink :href="route('home')" :active="route().current('home')" :class="[
-              'transition-colors duration-300',
-              isHomePage 
-                ? isScrolled 
-                  ? 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300' 
-                  : 'text-white hover:text-gray-200'
-                : 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300'
-            ]">
-              Beranda
-            </NavLink>
-            <NavLink :href="route('products.index')" :active="route().current('products.index')" :class="[
-              'transition-colors duration-300',
-              isHomePage 
-                ? isScrolled 
-                  ? 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300' 
-                  : 'text-white hover:text-gray-200'
-                : 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300'
-            ]">
-              Produk
-            </NavLink>
-            <NavLink :href="route('services')" :active="route().current('services')" :class="[
-              'transition-colors duration-300',
-              isHomePage 
-                ? isScrolled 
-                  ? 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300' 
-                  : 'text-white hover:text-gray-200'
-                : 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300'
-            ]">
-              Layanan
-            </NavLink>
-            <NavLink :href="route('about')" :active="route().current('about')" :class="[
-              'transition-colors duration-300',
-              isHomePage 
-                ? isScrolled 
-                  ? 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300' 
-                  : 'text-white hover:text-gray-200'
-                : 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300'
-            ]">
-              Tentang Kami
-            </NavLink>
-            <NavLink :href="route('contact')" :active="route().current('contact')" :class="[
-              'transition-colors duration-300',
-              isHomePage 
-                ? isScrolled 
-                  ? 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300' 
-                  : 'text-white hover:text-gray-200'
-                : 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300'
-            ]">
-              Kontak
+            <NavLink 
+              v-for="(item, index) in navigation" 
+              :key="index"
+              :href="route(item.route)"
+              :active="route().current(item.route)"
+              class="inline-flex items-center px-1 pt-1 text-sm font-medium leading-5 transition duration-150 ease-in-out"
+              :class="[
+                route().current('home') && !isScrolled
+                  ? [
+                      'text-white',
+                      'hover:text-primary-500',
+                      route().current(item.route)
+                        ? 'border-b-2 border-red-200'
+                        : 'border-b-2 border-transparent'
+                    ]
+                    : [
+                        'text-foreground',
+                        'hover:text-primary',
+                        route().current(item.route)
+                          ? 'border-b-2 border-primary'
+                          : 'border-b-2 border-transparent'
+                      ]
+              ]"
+            >
+              {{ item.name }}
             </NavLink>
           </div>
         </div>
 
-        <div class="hidden sm:flex sm:items-center sm:ml-6">
+        <div class="hidden sm:flex sm:items-center sm:ml-6 space-x-4">
+          <!-- Darkmode Toggle -->
+          <button
+            @click="toggleDarkMode"
+            class="p-2 rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary"
+            :class="[
+              route().current('home') && !isScrolled
+                ? 'text-white hover:bg-white/10'
+                : 'text-foreground hover:bg-muted'
+            ]"
+            aria-label="Toggle dark mode"
+          >
+            <span v-if="isDark" class="block">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.66-13.66l-.71.71M4.05 19.95l-.71.71M21 12h-1M4 12H3m16.66 5.66l-.71-.71M4.05 4.05l-.71-.71M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+            </span>
+            <span v-else class="block">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z" />
+              </svg>
+            </span>
+          </button>
+
           <!-- Cart -->
-          <Link :href="route('cart.index')" :class="[
-            'relative p-2 transition-colors duration-300',
-            isHomePage 
-              ? isScrolled 
-                ? 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300' 
-                : 'text-white hover:text-gray-200'
-              : 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300'
-          ]">
+          <Link 
+            :href="route('cart.index')" 
+            class="relative p-2 rounded-full transition-all duration-300"
+            :class="[
+              route().current('home') && !isScrolled
+                ? 'text-white hover:text-white/80 hover:bg-white/10'
+                : 'text-foreground hover:text-primary hover:bg-muted'
+            ]"
+          >
             <ShoppingCartIcon class="h-6 w-6" />
-            <span v-if="cartCount > 0" class="absolute -top-1 -right-1 bg-primary-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+            <span 
+              v-if="cartCount > 0" 
+              class="absolute -top-1 -right-1 bg-primary text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center"
+            >
               {{ cartCount }}
             </span>
           </Link>
 
           <!-- Login/Register or User Menu -->
-          <div class="ml-3 relative">
-            <div v-if="$page.props.auth.user">
-              <Dropdown align="right" width="48">
-                <template #trigger>
-                  <span class="inline-flex rounded-md">
-                    <button
-                      type="button"
-                      :class="[
-                        'inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md focus:outline-none transition-colors duration-300',
-                        isHomePage 
-                          ? isScrolled 
-                            ? 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300' 
-                            : 'text-white hover:text-gray-200'
-                          : 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300'
-                      ]"
-                    >
-                      {{ $page.props.auth.user.name }}
+          <div v-if="$page.props.auth.user">
+            <Dropdown align="right" width="48">
+              <template #trigger>
+                <button
+                  class="flex items-center transition duration-150 ease-in-out"
+                  :class="[
+                    route().current('home') && !isScrolled
+                      ? 'text-white hover:text-white/80'
+                      : 'text-foreground hover:text-primary'
+                  ]"
+                >
+                  <span class="text-sm font-medium">{{ $page.props.auth.user.name }}</span>
+                  <ChevronDownIcon class="ml-2 h-4 w-4" />
+                </button>
+              </template>
 
-                      <svg
-                        class="ml-2 -mr-0.5 h-4 w-4"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fill-rule="evenodd"
-                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                          clip-rule="evenodd"
-                        />
-                      </svg>
-                    </button>
-                  </span>
-                </template>
-
-                <template #content>
-                  <DropdownLink :href="route('dashboard')">
+              <template #content>
+                <div class="bg-background rounded-lg shadow-lg ring-1 ring-border ring-opacity-5 py-1">
+                  <DropdownLink :href="route('dashboard')" class="block px-4 py-2 text-sm text-foreground hover:bg-muted hover:text-primary">
                     Dashboard
                   </DropdownLink>
-                  <DropdownLink :href="route('orders.index')">
+                  <DropdownLink :href="route('orders.index')" class="block px-4 py-2 text-sm text-foreground hover:bg-muted hover:text-primary">
                     Pesanan Saya
                   </DropdownLink>
-                  <DropdownLink :href="route('logout')" method="post" as="button">
+                  <DropdownLink :href="route('logout')" method="post" as="button" class="block w-full text-left px-4 py-2 text-sm text-foreground hover:bg-muted hover:text-primary">
                     Logout
                   </DropdownLink>
-                </template>
-              </Dropdown>
-            </div>
-            <div v-else>
-              <Link
-                :href="route('login')"
-                :class="[
-                  'text-sm underline transition-colors duration-300',
-                  isHomePage 
-                    ? isScrolled 
-                      ? 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300' 
-                      : 'text-white hover:text-gray-200'
-                    : 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300'
-                ]"
-              >
-                Login
-              </Link>
-
-              <Link
-                :href="route('register')"
-                :class="[
-                  'ml-4 text-sm underline transition-colors duration-300',
-                  isHomePage 
-                    ? isScrolled 
-                      ? 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300' 
-                      : 'text-white hover:text-gray-200'
-                    : 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300'
-                ]"
-              >
-                Register
-              </Link>
-            </div>
+                </div>
+              </template>
+            </Dropdown>
+          </div>
+          <div v-else class="flex items-center space-x-4">
+            <Link
+              :href="route('login')"
+              class="text-sm font-medium transition-colors duration-300"
+              :class="[
+                route().current('home') && !isScrolled
+                  ? 'text-white hover:text-white/80'
+                  : 'text-foreground hover:text-primary'
+              ]"
+            >
+              Login
+            </Link>
+            <Link
+              :href="route('register')"
+              class="text-sm font-medium px-4 py-2 rounded-lg transition-all duration-300"
+              :class="[
+                route().current('home') && !isScrolled
+                  ? 'bg-white text-primary hover:bg-white/90'
+                  : 'bg-primary text-white hover:bg-primary/90'
+              ]"
+            >
+              Register
+            </Link>
           </div>
         </div>
 
-        <!-- Hamburger -->
-        <div class="-mr-2 flex items-center sm:hidden">
+        <!-- Mobile menu button & darkmode toggle -->
+        <div class="flex items-center sm:hidden gap-2">
+          <!-- Darkmode Toggle Mobile (sebelah hamburger) -->
+          <button
+            @click="toggleDarkMode"
+            class="p-2 rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary text-foreground hover:bg-muted"
+            aria-label="Toggle dark mode"
+          >
+            <span v-if="isDark" class="block">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.66-13.66l-.71.71M4.05 19.95l-.71.71M21 12h-1M4 12H3m16.66 5.66l-.71-.71M4.05 4.05l-.71-.71M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+            </span>
+            <span v-else class="block">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z" />
+              </svg>
+            </span>
+          </button>
+          <!-- Mobile menu button -->
           <button
             @click="showingNavigationDropdown = !showingNavigationDropdown"
+            class="inline-flex items-center justify-center p-2 rounded-lg transition-colors duration-300"
             :class="[
-              'inline-flex items-center justify-center p-2 rounded-md focus:outline-none transition duration-150 ease-in-out',
-              isHomePage 
-                ? isScrolled 
-                  ? 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800' 
-                  : 'text-white hover:text-gray-200 hover:bg-white/10'
-                : 'text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+              route().current('home') && !isScrolled
+                ? 'text-white hover:text-white/80 hover:bg-white/10'
+                : 'text-foreground hover:text-primary hover:bg-muted'
             ]"
           >
-            <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-              <path
-                :class="{
-                  hidden: showingNavigationDropdown,
-                  'inline-flex': !showingNavigationDropdown,
-                }"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-              <path
-                :class="{
-                  hidden: !showingNavigationDropdown,
-                  'inline-flex': showingNavigationDropdown,
-                }"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <span class="sr-only">Open main menu</span>
+            <Bars3Icon v-if="!showingNavigationDropdown" class="h-6 w-6" />
+            <XMarkIcon v-else class="h-6 w-6" />
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Responsive Navigation Menu -->
+    <!-- Mobile menu -->
     <div
       :class="{ block: showingNavigationDropdown, hidden: !showingNavigationDropdown }"
-      class="sm:hidden bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm"
+      class="fixed top-0 left-0 w-full z-50 sm:hidden"
     >
-      <div class="pt-2 pb-3 space-y-1">
-        <ResponsiveNavLink :href="route('home')" :active="route().current('home')">
-          Beranda
-        </ResponsiveNavLink>
-        <ResponsiveNavLink :href="route('products.index')" :active="route().current('products.index')">
-          Produk
-        </ResponsiveNavLink>
-        <ResponsiveNavLink :href="route('services')" :active="route().current('services')">
-          Layanan
-        </ResponsiveNavLink>
-        <ResponsiveNavLink :href="route('about')" :active="route().current('about')">
-          Tentang Kami
-        </ResponsiveNavLink>
-        <ResponsiveNavLink :href="route('contact')" :active="route().current('contact')">
-          Kontak
-        </ResponsiveNavLink>
-      </div>
-
-      <!-- Responsive Settings Options -->
-      <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
-        <div v-if="$page.props.auth.user" class="px-4">
-          <div class="font-medium text-base text-gray-800 dark:text-gray-200">
-            {{ $page.props.auth.user.name }}
-          </div>
-          <div class="font-medium text-sm text-gray-500">{{ $page.props.auth.user.email }}</div>
+      <!-- Tombol Close Mobile -->
+      <button
+        @click="showingNavigationDropdown = false"
+        class="absolute right-4 top-4 z-50 p-2 rounded-full bg-background shadow hover:bg-muted transition-colors"
+        aria-label="Tutup menu"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+      <div class="pb-3 space-y-1 bg-background shadow-lg">
+        <div class="pt-2 pb-3 space-y-1 bg-background shadow-lg">
+          <ResponsiveNavLink 
+            v-for="(item, index) in navigation" 
+            :key="index"
+            :href="route(item.route)"
+            :active="route().current(item.route)"
+            class="block pl-3 pr-4 py-2 text-base font-medium border-l-4 transition duration-150 ease-in-out"
+            :class="[
+              route().current(item.route)
+                ? 'border-primary text-primary bg-muted'
+                : 'border-transparent text-foreground hover:text-primary hover:bg-muted hover:border-primary'
+            ]"
+          >
+            {{ item.name }}
+          </ResponsiveNavLink>
         </div>
 
-        <div class="mt-3 space-y-1">
-          <ResponsiveNavLink v-if="$page.props.auth.user" :href="route('dashboard')">
-            Dashboard
-          </ResponsiveNavLink>
-          <ResponsiveNavLink v-if="$page.props.auth.user" :href="route('orders.index')">
-            Pesanan Saya
-          </ResponsiveNavLink>
-          <ResponsiveNavLink v-if="$page.props.auth.user" :href="route('logout')" method="post" as="button">
-            Logout
-          </ResponsiveNavLink>
-          <ResponsiveNavLink v-else :href="route('login')">
-            Login
-          </ResponsiveNavLink>
-          <ResponsiveNavLink v-else :href="route('register')">
-            Register
-          </ResponsiveNavLink>
+        <!-- Mobile user menu -->
+        <div class="pt-4 pb-1 border-t border-border bg-background">
+          <div v-if="$page.props.auth.user" class="px-4">
+            <div class="font-medium text-base text-foreground">
+              {{ $page.props.auth.user.name }}
+            </div>
+            <div class="font-medium text-sm text-muted-foreground">
+              {{ $page.props.auth.user.email }}
+            </div>
+          </div>
+
+          <div class="mt-3 space-y-1">
+            <template v-if="$page.props.auth.user">
+              <ResponsiveNavLink
+                v-for="(item, index) in userNavigation"
+                :key="index"
+                :href="route(item.route)"
+                :method="item.method"
+                as="button"
+                class="block w-full text-left pl-3 pr-4 py-2 text-base font-medium text-foreground hover:text-primary hover:bg-muted"
+              >
+                {{ item.name }}
+              </ResponsiveNavLink>
+            </template>
+            <template v-else>
+              <ResponsiveNavLink
+                :href="route('login')"
+                class="block pl-3 pr-4 py-2 text-base font-medium text-foreground hover:text-primary hover:bg-muted"
+              >
+                Login
+              </ResponsiveNavLink>
+              <ResponsiveNavLink
+                :href="route('register')"
+                class="block pl-3 pr-4 py-2 text-base font-medium text-foreground hover:text-primary hover:bg-muted"
+              >
+                Register
+              </ResponsiveNavLink>
+            </template>
+          </div>
         </div>
       </div>
     </div>
@@ -277,23 +277,59 @@ import Dropdown from '@/components/Dropdown.vue';
 import DropdownLink from '@/components/DropdownLink.vue';
 import NavLink from '@/components/NavLink.vue';
 import ResponsiveNavLink from '@/components/ResponsiveNavLink.vue';
-import { ShoppingCartIcon } from '@heroicons/vue/24/outline';
+import { ShoppingCartIcon, ChevronDownIcon, Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline';
 
 const showingNavigationDropdown = ref(false);
 const isScrolled = ref(false);
+const isDark = ref(false);
 
-// Deteksi apakah halaman saat ini adalah homepage
-const isHomePage = computed(() => {
-  return route().current('home');
-});
+const navigation = [
+  { name: 'Beranda', route: 'home' },
+  { name: 'Produk', route: 'products.index' },
+  { name: 'Layanan', route: 'services' },
+  { name: 'Tentang Kami', route: 'about' },
+  { name: 'Kontak', route: 'contact' }
+];
+
+const userNavigation = [
+  { name: 'Dashboard', route: 'dashboard' },
+  { name: 'Pesanan Saya', route: 'orders.index' },
+  { name: 'Logout', route: 'logout', method: 'post' }
+];
 
 const handleScroll = () => {
   isScrolled.value = window.scrollY > 0;
 };
 
+function setDarkMode(val) {
+  isDark.value = val;
+  if (val) {
+    document.documentElement.classList.add('dark');
+    localStorage.setItem('theme', 'dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+    localStorage.setItem('theme', 'light');
+  }
+}
+
+function toggleDarkMode() {
+  setDarkMode(!isDark.value);
+}
+
 onMounted(() => {
   window.addEventListener('scroll', handleScroll);
-  handleScroll(); // Check initial scroll position
+  handleScroll();
+  // Cek preferensi user
+  const theme = localStorage.getItem('theme');
+  if (theme === 'dark') setDarkMode(true);
+  else if (theme === 'light') setDarkMode(false);
+  else {
+    // Ikuti preferensi sistem
+    setDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches);
+  }
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+    if (!localStorage.getItem('theme')) setDarkMode(e.matches);
+  });
 });
 
 onUnmounted(() => {

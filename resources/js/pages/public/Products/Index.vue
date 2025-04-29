@@ -2,32 +2,32 @@
   <Head title="Katalog Produk" />
   
   <MainLayout>
-    <div class="bg-gray-50 py-12">
+    <div class="bg-background py-12">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header -->
         <div class="mb-8 text-center">
-          <h1 class="text-4xl font-bold mb-2">Katalog Produk</h1>
-          <p class="text-gray-600 max-w-2xl mx-auto">Temukan koleksi produk terbaik kami dengan beragam pilihan yang sesuai kebutuhan Anda</p>
+          <h1 class="text-4xl font-bold mb-2 text-foreground">Katalog Produk</h1>
+          <p class="text-muted-foreground max-w-2xl mx-auto">Temukan koleksi produk terbaik kami dengan beragam pilihan yang sesuai kebutuhan Anda</p>
         </div>
         
         
         <!-- Filter -->
-        <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+        <div class="bg-background rounded-xl shadow-sm p-6 mb-8 border border-border">
           <div class="flex flex-col md:flex-row items-stretch gap-4">
             <!-- Pencarian -->
             <div class="flex-1">
-              <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Cari Produk</label>
+              <label for="search" class="block text-sm font-medium text-foreground mb-1">Cari Produk</label>
               <div class="relative">
                 <input 
                   id="search"
                   v-model="search" 
                   type="text" 
                   placeholder="Masukkan nama produk..." 
-                  class="w-full pl-10 px-4 py-2 h-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  class="w-full pl-10 px-4 py-2 h-10 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                   @keyup.enter="filterProducts"
                 />
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </div>
@@ -36,11 +36,11 @@
             
             <!-- Kategori -->
             <div class="w-full md:w-72">
-              <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
+              <label for="category" class="block text-sm font-medium text-foreground mb-1">Kategori</label>
               <select 
                 id="category"
                 v-model="selectedCategory" 
-                class="w-full px-4 py-2 h-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                class="w-full px-4 py-2 h-10 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 @change="filterProducts"
               >
                 <option value="">Semua Kategori</option>
@@ -52,7 +52,7 @@
             
             <!-- Tombol -->
             <div class="flex items-end gap-2 mt-auto">
-              <Button @click="filterProducts" class="bg-gray-900 hover:bg-black h-10 px-5">Filter Produk</Button>
+              <Button @click="filterProducts" class="bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-5">Filter Produk</Button>
               <Button @click="resetFilters" variant="outline" class="h-10">Reset</Button>
             </div>
           </div>
@@ -64,10 +64,10 @@
             <div 
               v-for="product in products.data" 
               :key="product.id" 
-              class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 group"
+              class="bg-background rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 group border border-border"
             >
               <Link :href="product.url" class="block h-full flex flex-col">
-                <div class="aspect-square overflow-hidden bg-gray-100 relative">
+                <div class="aspect-square overflow-hidden bg-muted relative">
                   <img 
                     :src="`/storage/${product.featured_image}`" 
                     :alt="product.name" 
@@ -78,15 +78,15 @@
                   </div>
                 </div>
                 <div class="p-5 flex flex-col flex-grow">
-                  <h2 class="text-lg font-bold mb-2 line-clamp-2 group-hover:text-primary-600 transition-colors">{{ product.name }}</h2>
-                  <p class="text-sm text-gray-500 mb-3 line-clamp-2">
+                  <h2 class="text-lg font-bold mb-2 line-clamp-2 group-hover:text-primary transition-colors text-foreground">{{ product.name }}</h2>
+                  <p class="text-sm text-muted-foreground mb-3 line-clamp-2">
                     {{ truncateDescription(product.description) }}
                   </p>
                   <div class="mt-auto flex justify-between items-center">
-                    <div class="text-xl font-bold text-primary-600">
+                    <div class="text-xl font-bold text-primary">
                       {{ formatPrice(product.price) }}
                     </div>
-                    <Button variant="outline" size="sm" class="group-hover:bg-primary group-hover:text-white transition-colors cursor-pointer">
+                    <Button variant="outline" size="sm" class="group-hover:bg-primary group-hover:text-primary-foreground transition-colors cursor-pointer">
                       Lihat Detail
                     </Button>
                   </div>
@@ -102,10 +102,10 @@
         </div>
         
         <!-- Empty State -->
-        <div v-else class="text-center py-16 bg-white rounded-xl shadow-sm">
+        <div v-else class="text-center py-16 bg-background rounded-xl shadow-sm border border-border">
           <div class="text-6xl mb-4">😔</div>
-          <h3 class="text-2xl font-semibold mb-2">Tidak ada produk ditemukan</h3>
-          <p class="text-gray-500 mb-6 max-w-md mx-auto">Coba ubah filter pencarian atau kategori Anda untuk menemukan produk yang Anda cari</p>
+          <h3 class="text-2xl font-semibold mb-2 text-foreground">Tidak ada produk ditemukan</h3>
+          <p class="text-muted-foreground mb-6 max-w-md mx-auto">Coba ubah filter pencarian atau kategori Anda untuk menemukan produk yang Anda cari</p>
           <Button @click="resetFilters">Reset Filter</Button>
         </div>
       </div>
