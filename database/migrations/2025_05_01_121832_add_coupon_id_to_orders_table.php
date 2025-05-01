@@ -12,8 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->foreignId('coupon_id')->nullable()->after('user_id')->constrained()->nullOnDelete();
-            $table->string('coupon_code')->nullable()->after('coupon_id');
+            // Cek apakah kolom sudah ada sebelum mencoba menambahkannya
+            if (!Schema::hasColumn('orders', 'coupon_id')) {
+                $table->foreignId('coupon_id')->nullable()->after('user_id')->constrained()->nullOnDelete();
+            }
+            if (!Schema::hasColumn('orders', 'coupon_code')) {
+                $table->string('coupon_code')->nullable()->after('coupon_id');
+            }
         });
     }
 
@@ -23,8 +28,13 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->dropForeign(['coupon_id']);
-            $table->dropColumn(['coupon_id', 'coupon_code']);
+            // Jangan hapus jika kolom tidak ada
+            if (Schema::hasColumn('orders', 'coupon_code')) {
+                $table->dropColumn('coupon_code');
+            }
+            if (Schema::hasColumn('orders', 'coupon_id')) {
+                $table->dropConstrainedForeignId('coupon_id');
+            }
         });
     }
 };

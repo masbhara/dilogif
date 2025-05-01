@@ -278,8 +278,7 @@ const cleanPhoneNumber = (phone) => {
 const submitOrder = async () => {
   if (isSubmitting.value) return;
   
-  // Debug: Log data yang akan dikirim
-  console.log('=== DEBUG CHECKOUT ===');
+  console.group('=== DEBUG CHECKOUT [START] ===');
   console.log('1. Form Data:', form.value);
   console.log('2. Cart Items:', props.cartItems);
   console.log('3. Summary:', props.summary);
@@ -289,68 +288,182 @@ const submitOrder = async () => {
   // Bersihkan format nomor telepon
   form.value.customer_phone = cleanPhoneNumber(form.value.customer_phone);
   
+  // Debug alert
+  toast.info('Memproses pesanan Anda...');
+  console.log('Memproses pesanan. Form data:', form.value);
+  
+  // Cek jika keranjang kosong, tambahkan ulang ke form data
+  if (!props.cartItems || props.cartItems.length === 0) {
+    console.error('CRITICAL: Cart items are missing!');
+    toast.error('Data keranjang tidak ditemukan. Silakan refresh halaman dan coba lagi.');
+    console.groupEnd();
+    return;
+  }
+
+  // Pastikan data cart dikirim
+  form.value.cart_items = props.cartItems.map(item => ({
+    product_id: item.product_id,
+    quantity: item.quantity,
+    price: item.product.price
+  }));
+  console.log('6. Cart items data attached to form');
+  
   // Validasi form
-  if (!validateForm()) return;
+  console.log('7. Validating form data');
+  if (!validateForm()) {
+    console.error('Form validation failed');
+    console.groupEnd();
+    return;
+  }
   
   try {
+    console.log('8. Form validation passed');
     isSubmitting.value = true;
     
     // Debug: Log request URL dan headers
-    console.log('6. Sending request to:', route('orders.store'));
+    console.log('9. Sending request to:', route('orders.store'));
+    console.log('10. Form data being sent:', form.value);
+    
+    // Tambahkan meta info untuk debugging
+    form.value._meta = {
+      timestamp: Date.now(),
+      browser: navigator.userAgent,
+      cart_count: props.cartItems.length,
+      total: props.summary.total,
+      request_id: Math.random().toString(36).substring(2, 15)
+    };
+    
+    console.log('11. About to send POST request, showing processing...');
     
     // Gunakan Inertia form untuk menangani CSRF token secara otomatis
     const response = await router.post(route('orders.store'), form.value, {
       preserveScroll: true,
       preserveState: true,
       onBefore: () => {
-        // Debug: Log sebelum request
-        console.log('7. Before request - CSRF Token:', document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'));
+        console.log('12. Before request - CSRF Token:', document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'));
+        toast.loading('Mengirim data pesanan ke server...');
       },
       onSuccess: (page) => {
-        // Debug: Log response sukses
-        console.log('8. Success Response:', page);
-        console.log('9. Flash Message:', page.props?.flash);
+        console.log('13. Success Response:', page);
+        console.log('14. Flash Message:', page.props?.flash);
         
-        // Cek flash message untuk data order
-        if (page.props?.flash?.order) {
-          console.log('10. Redirecting to thank you page with order:', page.props.flash.order);
-          router.visit(route('orders.thankyou', { order: page.props.flash.order.id }));
-        } else {
-          console.error('11. Order data not found in flash message:', page.props?.flash);
-          toast.error('Terjadi kesalahan saat memproses pesanan');
+        toast.dismiss();
+        toast.success('Pesanan berhasil diterima!');
+        
+        try {
+          console.log('15. Processing redirect options');
+          // Cek flash message untuk data order
+          if (page.props?.flash?.order) {
+            console.log('16a. Redirecting to thank you page with order:', page.props.flash.order);
+            router.visit(route('orders.thankyou', { order: page.props.flash.order.id }));
+            console.groupEnd();
+            return;
+          } 
+          
+          // Cek flash message untuk order_id (fallback)
+          if (page.props?.flash?.order_id) {
+            console.log('16b. Redirecting to thank you page with order_id:', page.props.flash.order_id);
+            router.visit(route('orders.thankyou', { order: page.props.flash.order_id }));
+            console.groupEnd();
+            return;
+          }
+          
+          if (page.props?.flash?.redirect_url) {
+            console.log('16c. Redirecting using explicit redirect URL:', page.props.flash.redirect_url);
+            window.location.href = page.props.flash.redirect_url;
+            console.groupEnd();
+            return;
+          }
+          
+          if (page.props?.flash?.redirect) {
+            console.log('16d. Redirecting using standard redirect URL:', page.props.flash.redirect);
+            router.visit(page.props.flash.redirect);
+            console.groupEnd();
+            return;
+          }
+          
+          // Coba ekstrak order ID dari URL - jika ada
+          let orderId = null;
+          
+          // Cek apakah ada key 'order' di URL parameters
+          const urlParams = new URLSearchParams(window.location.search);
+          if (urlParams.has('order')) {
+            orderId = urlParams.get('order');
+            console.log('16e. Found order ID in URL parameters:', orderId);
+          }
+          
+          // Jika tidak ditemukan, coba ekstrak dari page URL
+          if (!orderId && page.url && page.url.includes('thank-you')) {
+            const match = page.url.match(/\/orders\/thank-you\/(\d+)/);
+            if (match && match[1]) {
+              orderId = match[1];
+              console.log('16f. Extracted order ID from URL:', orderId);
+            }
+          }
+          
+          // Jika berhasil ekstrak ID, redirect ke halaman thank you
+          if (orderId) {
+            console.log('16g. Redirecting to thank you page with extracted ID:', orderId);
+            router.visit(route('orders.thankyou', { order: orderId }));
+            console.groupEnd();
+            return;
+          }
+
+          // Fallback untuk emergency
+          console.log('16h. EMERGENCY FALLBACK - Redirecting to orders index');
+          toast.success('Pesanan berhasil dibuat! Mengalihkan ke daftar pesanan...');
+          
+          console.groupEnd();
+          // Kembali ke semua order sebagai pilihan terakhir
+          window.location.href = '/orders';
+          
+        } catch (redirectError) {
+          console.error('17. Redirect error:', redirectError);
+          toast.error('Terjadi error pada redirect, mengalihkan ke daftar pesanan');
+          
+          console.groupEnd();
+          window.location.href = '/orders';
         }
       },
       onError: (errors) => {
-        // Debug: Log error detail
-        console.error('12. Error Response:', errors);
-        console.error('13. Error Details:', {
+        console.error('18. Error Response:', errors);
+        console.error('19. Error Details:', {
           message: errors.message,
           errors: errors.errors,
           status: errors.status
         });
+        
+        toast.dismiss();
         
         if (errors.notes) {
           toast.error(errors.notes);
         } else if (errors.cart) {
           toast.error('Terjadi kesalahan pada keranjang belanja');
         } else if (errors.message === 'Sesi Anda telah berakhir. Silakan coba lagi.') {
-          // Refresh halaman jika sesi berakhir
-          window.location.reload();
+          toast.error('Sesi Anda berakhir. Menyegarkan halaman...');
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
         } else {
-          toast.error('Gagal membuat pesanan. Silakan coba lagi.');
+          toast.error('Gagal membuat pesanan: ' + (errors.message || 'Unknown error'));
         }
+        
+        console.groupEnd();
+      },
+      onFinish: () => {
+        console.log('20. Request finished');
+        isSubmitting.value = false;
       }
     });
     
   } catch (error) {
-    // Debug: Log error sistem
-    console.error('14. System Error:', error);
-    console.error('15. Error Stack:', error.stack);
-    console.error('16. Error Response:', error.response?.data);
-    console.error('17. Error Status:', error.response?.status);
+    console.error('21. System Error:', error);
+    console.error('22. Error Stack:', error.stack);
     
-    toast.error('Terjadi kesalahan sistem. Silakan coba lagi.');
-  } finally {
+    toast.dismiss();
+    toast.error('Terjadi kesalahan sistem. Silakan coba lagi dalam beberapa saat.');
+    
+    console.groupEnd();
     isSubmitting.value = false;
   }
 };
