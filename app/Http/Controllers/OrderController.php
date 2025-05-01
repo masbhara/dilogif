@@ -26,6 +26,18 @@ class OrderController extends Controller
      */
     public function checkout()
     {
+        // Debug: Log checkout request
+        \Log::info('Checkout page request', [
+            'user_id' => auth()->id(),
+            'session_id' => Cart::getSessionId()
+        ]);
+
+        // Validasi user login
+        if (!auth()->check()) {
+            return redirect()->route('login')
+                ->with('error', 'Silakan login terlebih dahulu untuk melakukan checkout');
+        }
+
         $sessionId = Cart::getSessionId();
         
         $cartItems = Cart::with('product.category')
@@ -44,6 +56,17 @@ class OrderController extends Controller
         $adminFee = 0; // Default admin fee, can be configurable
         $discount = 0; // Default discount, can be applied later
         $total = $subtotal + $adminFee - $discount;
+
+        // Get user data
+        $user = auth()->user();
+        
+        // Debug: Log data yang akan dikirim ke view
+        \Log::info('Sending data to checkout view', [
+            'user_id' => $user->id,
+            'cart_items_count' => $cartItems->count(),
+            'subtotal' => $subtotal,
+            'total' => $total
+        ]);
         
         return Inertia::render('public/orders/Checkout', [
             'cartItems' => $cartItems,
@@ -53,7 +76,8 @@ class OrderController extends Controller
                 'discount' => $discount,
                 'total' => $total,
                 'itemCount' => $cartItems->sum('quantity'),
-            ]
+            ],
+            'user' => $user
         ]);
     }
 
@@ -62,112 +86,62 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        // Log all incoming data
-        \Log::info('Order data received', ['request_data' => $request->all()]);
-        
-        $validator = Validator::make($request->all(), [
-            'customer_name' => 'required|string|max:255',
-            'customer_phone' => 'required|string|max:20',
-            'customer_email' => 'required|email|max:255',
-            'password' => ['required', 'confirmed', Password::min(8)],
-            'notes' => 'nullable|string',
+        // Debug: Log request data
+        \Log::info('Order creation request', [
+            'user_id' => auth()->id(),
+            'request_data' => $request->all(),
+            'headers' => $request->headers->all(),
+            'csrf_token' => $request->header('X-CSRF-TOKEN')
         ]);
 
-        if ($validator->fails()) {
-            \Log::warning('Validation failed', ['errors' => $validator->errors()->toArray()]);
-            return redirect()->back()->withErrors($validator)->withInput();
+        // Validasi user login
+        if (!auth()->check()) {
+            return back()->with('error', 'Silakan login terlebih dahulu untuk melakukan checkout');
         }
-        
-        $sessionId = Cart::getSessionId();
-        \Log::info('Cart session ID', ['session_id' => $sessionId]);
-        
-        $cartItems = Cart::with('product')
-            ->where('session_id', $sessionId)
-            ->get();
-            
-        \Log::info('Cart items found', ['count' => $cartItems->count()]);
-        
-        if ($cartItems->isEmpty()) {
-            \Log::warning('Cart is empty');
-            return redirect()->route('cart.index')
-                ->with('error', 'Keranjang belanja Anda kosong');
-        }
-        
-        // Calculate order amounts
-        $subtotal = $cartItems->sum(function ($item) {
-            return $item->product->price * $item->quantity;
-        });
-        
-        $adminFee = 0; // Default admin fee, can be configurable
-        $discount = 0; // Default discount, can be applied later
-        $total = $subtotal + $adminFee - $discount;
-        
-        \Log::info('Order amounts calculated', [
-            'subtotal' => $subtotal,
-            'adminFee' => $adminFee,
-            'discount' => $discount,
-            'total' => $total
-        ]);
-        
+
         try {
             DB::beginTransaction();
-            \Log::info('Transaction started');
             
-            // Check if user already exists
-            $user = User::where('email', $request->customer_email)
-                    ->orWhere('whatsapp', $request->customer_phone)
-                    ->first();
-            
-            \Log::info('User existence check', ['exists' => (bool)$user]);
-            
-            // Create user if doesn't exist
-            if (!$user) {
-                \Log::info('Creating new user', [
-                    'name' => $request->customer_name,
-                    'email' => $request->customer_email,
-                    'phone' => $request->customer_phone
-                ]);
+            $sessionId = Cart::getSessionId();
+            $cartItems = Cart::with('product')
+                ->where('session_id', $sessionId)
+                ->get();
                 
-                $user = User::create([
-                    'name' => $request->customer_name,
-                    'email' => $request->customer_email,
-                    'whatsapp' => $request->customer_phone,
-                    'password' => Hash::make($request->password),
-                    'status' => 'active',
-                ]);
-                
-                if (!$user) {
-                    throw new \Exception('Gagal membuat user baru');
-                }
-                
-                \Log::info('User created', ['user_id' => $user->id]);
-                
-                // Check if the role exists before assigning
-                $userRole = \Spatie\Permission\Models\Role::where('name', 'user')->first();
-                if (!$userRole) {
-                    \Log::error('User role does not exist');
-                    throw new \Exception('Role user tidak ditemukan');
-                }
-                
-                // Assign user role
-                \Log::info('Assigning user role');
-                $user->assignRole('user');
-                
-                // Send login credentials via email
-                \Log::info('Sending email with credentials');
-                try {
-                    Mail::to($user->email)->send(new UserCredentials($user, $request->password));
-                    \Log::info('Email sent successfully');
-                } catch (\Exception $e) {
-                    \Log::error('Failed to send email', ['error' => $e->getMessage()]);
-                    // Continue without throwing exception - don't block order creation if email fails
-                }
+            if ($cartItems->isEmpty()) {
+                return back()->with('error', 'Keranjang belanja Anda kosong');
             }
+
+            // Calculate order amounts
+            $subtotal = $cartItems->sum(function ($item) {
+                return $item->product->price * $item->quantity;
+            });
+            
+            $adminFee = 0;
+            $discount = 0;
+            $total = $subtotal + $adminFee - $discount;
+
+            // Get user data
+            $user = auth()->user();
+            
+            // Validasi data customer dari form
+            if (!$request->customer_phone) {
+                return back()->with('error', 'Silakan lengkapi nomor telepon Anda di profil sebelum melakukan checkout');
+            }
+
+            if (!$request->customer_name) {
+                return back()->with('error', 'Silakan lengkapi nama Anda di profil sebelum melakukan checkout');
+            }
+
+            if (!$request->customer_email) {
+                return back()->with('error', 'Silakan lengkapi email Anda di profil sebelum melakukan checkout');
+            }
+
+            // Generate order number
+            $orderNumber = Order::generateOrderNumber();
             
             // Create order
-            \Log::info('Creating order');
             $order = Order::create([
-                'order_number' => Order::generateOrderNumber(),
+                'order_number' => $orderNumber,
                 'user_id' => $user->id,
                 'customer_name' => $request->customer_name,
                 'customer_phone' => $request->customer_phone,
@@ -176,76 +150,52 @@ class OrderController extends Controller
                 'admin_fee' => $adminFee,
                 'discount' => $discount,
                 'total_amount' => $total,
-                'status' => Order::STATUS_PENDING,
                 'notes' => $request->notes,
+                'status' => 'pending'
             ]);
             
-            if (!$order) {
-                throw new \Exception('Gagal membuat order');
-            }
-            
-            \Log::info('Order created', ['order_id' => $order->id, 'order_number' => $order->order_number]);
-            
             // Create order items
-            \Log::info('Creating order items');
-            foreach ($cartItems as $cartItem) {
+            foreach ($cartItems as $item) {
                 OrderItem::create([
                     'order_id' => $order->id,
-                    'product_id' => $cartItem->product_id,
-                    'quantity' => $cartItem->quantity,
-                    'price' => $cartItem->product->price,
-                    'subtotal' => $cartItem->product->price * $cartItem->quantity,
+                    'product_id' => $item->product_id,
+                    'quantity' => $item->quantity,
+                    'price' => $item->product->price,
+                    'subtotal' => $item->product->price * $item->quantity
                 ]);
-            }
-            
-            \Log::info('Order items created');
-            
-            // Get default payment method (Bank BCA)
-            $defaultPaymentMethod = PaymentMethod::where('code', 'bca')->first();
-            
-            if ($defaultPaymentMethod) {
-                // Create initial payment record
-                Payment::create([
-                    'order_id' => $order->id,
-                    'payment_method_id' => $defaultPaymentMethod->id,
-                    'amount' => $total,
-                    'status' => 'pending',
-                    'payment_details' => [
-                        'created_at' => now()->toIso8601String(),
-                        'customer_name' => $request->customer_name,
-                        'customer_phone' => $request->customer_phone,
-                        'customer_email' => $request->customer_email,
-                    ],
-                ]);
-                
-                \Log::info('Payment record created with default payment method');
-            } else {
-                \Log::warning('Default payment method not found');
             }
             
             // Clear cart
-            \Log::info('Clearing cart');
             Cart::where('session_id', $sessionId)->delete();
             
             DB::commit();
-            \Log::info('Transaction committed successfully');
             
-            return redirect()->route('orders.thankyou', $order->id)
-                ->with('success', 'Pesanan berhasil dibuat');
+            // Debug: Log success
+            \Log::info('Order created successfully', [
+                'order_id' => $order->id,
+                'order_number' => $order->order_number,
+                'user_id' => $user->id
+            ]);
+
+            // Return Inertia response
+            return redirect()->route('orders.thankyou', ['order' => $order->id])
+                ->with('success', 'Pesanan berhasil dibuat')
+                ->with('order', [
+                    'id' => $order->id,
+                    'order_number' => $order->order_number
+                ]);
                 
         } catch (\Exception $e) {
             DB::rollBack();
-            
             \Log::error('Order creation failed', [
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString()
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'user_id' => auth()->id(),
+                'session_id' => $sessionId ?? null,
+                'cart_items' => $cartItems ?? []
             ]);
             
-            return redirect()->back()
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
-                ->withInput();
+            return back()->with('error', 'Terjadi kesalahan saat membuat pesanan. Silakan coba lagi.');
         }
     }
 
@@ -268,32 +218,27 @@ class OrderController extends Controller
     /**
      * Display order tracking page.
      */
-    public function trackOrder(Request $request)
+    public function trackOrder($order)
     {
-        if ($request->has('order_number')) {
-            $order = Order::with(['items.product', 'payment.paymentMethod'])
-                ->where('order_number', $request->order_number)
-                ->where('customer_phone', $request->customer_phone)
-                ->first();
-                
-            // Ambil semua metode pembayaran yang aktif
-            $paymentMethods = PaymentMethod::where('is_active', true)->get();
-                
-            if ($order) {
-                return Inertia::render('public/orders/Track', [
-                    'order' => $order,
-                    'found' => true,
-                    'paymentMethods' => $paymentMethods
-                ]);
-            } else {
-                return Inertia::render('public/orders/Track', [
-                    'found' => false,
-                    'message' => 'Pesanan tidak ditemukan dengan nomor pesanan dan nomor telepon yang Anda masukkan.'
-                ]);
-            }
+        $orderModel = Order::with(['items.product', 'payment.paymentMethod'])
+            ->where('order_number', $order)
+            ->first();
+            
+        // Ambil semua metode pembayaran yang aktif
+        $paymentMethods = PaymentMethod::where('is_active', true)->get();
+            
+        if ($orderModel) {
+            return Inertia::render('public/orders/Track', [
+                'order' => $orderModel,
+                'found' => true,
+                'paymentMethods' => $paymentMethods
+            ]);
         }
         
-        return Inertia::render('public/orders/Track');
+        return Inertia::render('public/orders/Track', [
+            'found' => false,
+            'message' => 'Pesanan tidak ditemukan. Silakan periksa kembali nomor pesanan Anda.'
+        ]);
     }
 
     /**

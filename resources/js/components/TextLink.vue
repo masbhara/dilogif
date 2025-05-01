@@ -3,8 +3,7 @@ import { Link } from '@inertiajs/vue3';
 
 interface Props {
   href: string;
-  method?: 'get' | 'post' | 'put' | 'patch' | 'delete';
-  as?: string;
+  className?: string;
 }
 
 defineProps<Props>();
@@ -13,9 +12,10 @@ defineProps<Props>();
 <template>
   <Link 
     :href="href" 
-    :method="method" 
-    :as="as"
-    class="text-primary-600 hover:text-primary-500 underline underline-offset-4"
+    :class="[
+      'text-primary hover:text-primary/80 transition-colors duration-200',
+      className
+    ]"
   >
     <slot />
   </Link>

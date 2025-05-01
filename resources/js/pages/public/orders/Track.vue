@@ -435,7 +435,7 @@ const trackOrder = () => {
   
   isSubmitting.value = true;
   
-  router.get(route('orders.track'), form.value, {
+  router.get(route('orders.track', { order: form.value.order_number }), {
     preserveState: true,
     onFinish: () => {
       isSubmitting.value = false;

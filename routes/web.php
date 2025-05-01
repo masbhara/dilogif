@@ -93,8 +93,8 @@ Route::middleware(['auth'])->group(function () {
     // Order Routes
     Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
     Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
-    Route::get('/orders/thankyou/{order}', [OrderController::class, 'thankYou'])->name('orders.thankyou');
-    Route::get('/track-order', [OrderController::class, 'trackOrder'])->name('orders.track');
+    Route::get('/orders/thank-you/{order}', [OrderController::class, 'thankYou'])->name('orders.thankyou');
+    Route::get('/orders/track/{order}', [OrderController::class, 'trackOrder'])->name('orders.track');
     
     // Public Payment Routes
     Route::get('/payment-methods', [PaymentController::class, 'getPaymentMethods'])->name('payment.methods');
@@ -118,14 +118,6 @@ Route::patch('/cart/{id}', [CartController::class, 'updateQuantity'])->name('car
 Route::delete('/cart/{id}', [CartController::class, 'removeFromCart'])->name('cart.remove');
 Route::delete('/cart', [CartController::class, 'clearCart'])->name('cart.clear');
 Route::get('/cart/count', [CartController::class, 'getCartCount'])->name('cart.count');
-
-// Checkout Routes (Requires Auth)
-Route::middleware(['auth'])->group(function () {
-    Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
-    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
-    Route::get('/orders/thankyou/{order}', [OrderController::class, 'thankYou'])->name('orders.thankyou');
-    Route::get('/track-order', [OrderController::class, 'trackOrder'])->name('orders.track');
-});
 
 // Public routes with caching
 Route::middleware(['http-cache'])->group(function () {

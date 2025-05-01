@@ -90,7 +90,7 @@
             <ShoppingCartIcon class="h-6 w-6" />
             <span 
               v-if="cartCount > 0" 
-              class="absolute -top-1 -right-1 bg-primary text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center"
+              class="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-sm"
             >
               {{ cartCount }}
             </span>
@@ -129,28 +129,14 @@
             </Dropdown>
           </div>
           <div v-else class="flex items-center space-x-4">
-            <Link
+            <Button
               :href="route('login')"
-              class="text-sm font-medium transition-colors duration-300"
-              :class="[
-                route().current('home') && !isScrolled
-                  ? 'text-white hover:text-white/80'
-                  : 'text-foreground hover:text-primary'
-              ]"
+              variant="default"
+              size="sm"
+              class="font-medium"
             >
-              Login
-            </Link>
-            <Link
-              :href="route('register')"
-              class="text-sm font-medium px-4 py-2 rounded-lg transition-all duration-300"
-              :class="[
-                route().current('home') && !isScrolled
-                  ? 'bg-white text-primary hover:bg-white/90'
-                  : 'bg-primary text-white hover:bg-primary/90'
-              ]"
-            >
-              Register
-            </Link>
+              Masuk
+            </Button>
           </div>
         </div>
 
@@ -253,13 +239,7 @@
                 :href="route('login')"
                 class="block pl-3 pr-4 py-2 text-base font-medium text-foreground hover:text-primary hover:bg-muted"
               >
-                Login
-              </ResponsiveNavLink>
-              <ResponsiveNavLink
-                :href="route('register')"
-                class="block pl-3 pr-4 py-2 text-base font-medium text-foreground hover:text-primary hover:bg-muted"
-              >
-                Register
+                Masuk
               </ResponsiveNavLink>
             </template>
           </div>
@@ -279,6 +259,7 @@ import NavLink from '@/components/NavLink.vue';
 import ResponsiveNavLink from '@/components/ResponsiveNavLink.vue';
 import { ShoppingCartIcon, ChevronDownIcon, Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline';
 import { cartCount, initializeCartCount } from '@/event-bus';
+import { Button } from '@/components/ui/button';
 
 const showingNavigationDropdown = ref(false);
 const isScrolled = ref(false);
