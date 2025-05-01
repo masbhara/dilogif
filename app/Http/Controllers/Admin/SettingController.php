@@ -7,6 +7,7 @@ use App\Models\WebsiteSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use App\Models\Setting;
 
 class SettingController extends Controller
 {
@@ -15,7 +16,7 @@ class SettingController extends Controller
      */
     public function index()
     {
-        $settings = WebsiteSetting::getSettings();
+        $settings = Setting::all()->pluck('value', 'key');
         
         // Ambil data WhatsApp Admin dan Social Media
         $whatsappAdmins = \App\Models\AdminWhatsapp::orderBy('order')->get();
@@ -24,9 +25,9 @@ class SettingController extends Controller
         return Inertia::render('admin/settings/Index', [
             'settings' => $settings,
             'mediaUrls' => [
-                'logo' => $settings->getLogoUrl(),
-                'favicon' => $settings->getFaviconUrl(),
-                'og_image' => $settings->getOgImageUrl(),
+                'logo' => $settings['logo'] ?? null,
+                'favicon' => $settings['favicon'] ?? null,
+                'og_image' => $settings['og_image'] ?? null,
             ],
             'whatsappAdmins' => $whatsappAdmins,
             'socialMedia' => $socialMedia,
@@ -37,21 +38,24 @@ class SettingController extends Controller
     /**
      * Menyimpan pengaturan umum website.
      */
-    public function updateGeneral(Request $request)
+    public function store(Request $request)
     {
-        $validated = $request->validate([
-            'site_name' => 'required|string|max:255',
-            'site_subtitle' => 'nullable|string|max:255',
-            'site_description' => 'nullable|string|max:255',
-            'homepage_route' => 'required|string|max:255',
-            'contact_email' => 'nullable|email|max:255',
+        $request->validate([
+            'app_name' => 'required|string|max:255',
+            'app_description' => 'nullable|string',
+            'contact_email' => 'nullable|email',
+            'contact_phone' => 'nullable|string|max:20',
+            'contact_address' => 'nullable|string',
         ]);
 
-        $settings = WebsiteSetting::getSettings();
-        $settings->update($validated);
+        foreach ($request->all() as $key => $value) {
+            Setting::updateOrCreate(
+                ['key' => $key],
+                ['value' => $value]
+            );
+        }
 
-        return redirect()->back()
-            ->with('message', 'Pengaturan umum berhasil disimpan');
+        return back()->with('success', 'Pengaturan berhasil disimpan');
     }
 
     /**

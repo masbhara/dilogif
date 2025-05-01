@@ -20,6 +20,16 @@ export function formatCurrency(amount: number): string {
 }
 
 /**
+ * Format price
+ */
+export function formatPrice(amount: number): string {
+    return new Intl.NumberFormat('id-ID', {
+        style: 'decimal',
+        minimumFractionDigits: 0
+    }).format(amount);
+}
+
+/**
  * Format date to Indonesian format
  */
 export function formatDate(date: string | Date): string {

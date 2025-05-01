@@ -123,8 +123,11 @@
                   <p class="text-gray-600 dark:text-gray-300">Biaya Admin</p>
                   <p class="font-medium dark:text-white">{{ formatPrice(summary.adminFee) }}</p>
                 </div>
-                <div class="flex justify-between">
-                  <p class="text-gray-600 dark:text-gray-300">Diskon</p>
+                <div v-if="summary.discount > 0" class="flex justify-between">
+                  <div class="flex flex-col">
+                    <p class="text-gray-600 dark:text-gray-300">Diskon</p>
+                    <p v-if="coupon" class="text-xs text-gray-500 dark:text-gray-400">{{ coupon.name }}</p>
+                  </div>
                   <p class="font-medium text-green-600 dark:text-green-400">-{{ formatPrice(summary.discount) }}</p>
                 </div>
               </div>
@@ -167,6 +170,10 @@ const props = defineProps({
     }
   },
   user: {
+    type: Object,
+    default: null
+  },
+  coupon: {
     type: Object,
     default: null
   }

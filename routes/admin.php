@@ -57,12 +57,17 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         
         // Pengaturan Website
         Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
+        Route::post('settings', [SettingController::class, 'store'])->name('settings.store');
         Route::put('settings/general', [SettingController::class, 'updateGeneral'])->name('settings.update-general');
         Route::put('settings/footer', [SettingController::class, 'updateFooter'])->name('settings.update-footer');
         Route::put('settings/scripts', [SettingController::class, 'updateScripts'])->name('settings.update-scripts');
         Route::post('settings/logo', [SettingController::class, 'uploadLogo'])->name('settings.upload-logo');
         Route::post('settings/favicon', [SettingController::class, 'uploadFavicon'])->name('settings.upload-favicon');
         Route::post('settings/og-image', [SettingController::class, 'uploadOgImage'])->name('settings.upload-og-image');
+        
+        // Coupon Routes
+        Route::resource('coupons', \App\Http\Controllers\Admin\CouponController::class);
+        Route::patch('coupons/{coupon}/toggle-active', [\App\Http\Controllers\Admin\CouponController::class, 'toggleActive'])->name('coupons.toggle-active');
         
         // WhatsApp Admin routes
         Route::resource('settings/whatsapp', AdminWhatsappController::class)

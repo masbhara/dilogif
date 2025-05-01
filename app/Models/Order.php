@@ -22,12 +22,15 @@ class Order extends Model
     protected $fillable = [
         'order_number',
         'user_id',
+        'coupon_id',
+        'coupon_code',
         'customer_name',
         'customer_phone',
         'customer_email',
         'subtotal',
+        'discount_amount',
+        'total_after_discount',
         'admin_fee',
-        'discount',
         'total_amount',
         'status',
         'notes',
@@ -36,14 +39,20 @@ class Order extends Model
 
     protected $casts = [
         'subtotal' => 'decimal:2',
+        'discount_amount' => 'decimal:2',
+        'total_after_discount' => 'decimal:2',
         'admin_fee' => 'decimal:2',
-        'discount' => 'decimal:2',
         'total_amount' => 'decimal:2',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function coupon()
+    {
+        return $this->belongsTo(Coupon::class);
     }
 
     public function items()
@@ -119,7 +128,50 @@ class Order extends Model
     public function calculateTotal()
     {
         $this->subtotal = $this->items->sum('subtotal');
-        $this->total_amount = $this->subtotal + $this->admin_fee - $this->discount;
+        
+        // Calculate discount if coupon is applied
+        if ($this->coupon_id && $this->coupon) {
+            $this->discount_amount = $this->coupon->calculateDiscount($this->subtotal);
+        } else {
+            $this->discount_amount = 0;
+        }
+        
+        $this->total_after_discount = $this->subtotal - $this->discount_amount;
+        $this->total_amount = $this->total_after_discount + $this->admin_fee;
+        
+        return $this;
+    }
+
+    /**
+     * Apply coupon to the order
+     */
+    public function applyCoupon(Coupon $coupon)
+    {
+        if (!$coupon->isValid($this->subtotal)) {
+            return false;
+        }
+
+        $this->coupon_id = $coupon->id;
+        $this->coupon_code = $coupon->code;
+        $this->discount_amount = $coupon->calculateDiscount($this->subtotal);
+        $this->total_after_discount = $this->subtotal - $this->discount_amount;
+        $this->total_amount = $this->total_after_discount + $this->admin_fee;
+        
+        $coupon->incrementUsage();
+        
+        return true;
+    }
+
+    /**
+     * Remove coupon from the order
+     */
+    public function removeCoupon()
+    {
+        $this->coupon_id = null;
+        $this->coupon_code = null;
+        $this->discount_amount = 0;
+        $this->total_after_discount = $this->subtotal;
+        $this->total_amount = $this->total_after_discount + $this->admin_fee;
         
         return $this;
     }

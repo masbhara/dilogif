@@ -54,7 +54,23 @@ class OrderController extends Controller
         });
         
         $adminFee = 0; // Default admin fee, can be configurable
-        $discount = 0; // Default discount, can be applied later
+        $discount = 0;
+        $coupon = session('coupon');
+        
+        // Jika ada kupon yang diterapkan
+        if ($coupon) {
+            $couponModel = \App\Models\Coupon::find($coupon['id']);
+            if ($couponModel && $couponModel->isValid($subtotal)) {
+                $discount = $couponModel->calculateDiscount($subtotal);
+                $coupon['discount'] = $discount;
+                session(['coupon' => $coupon]);
+            } else {
+                // Jika kupon sudah tidak valid, hapus dari session
+                session()->forget('coupon');
+                $coupon = null;
+            }
+        }
+        
         $total = $subtotal + $adminFee - $discount;
 
         // Get user data
@@ -70,6 +86,7 @@ class OrderController extends Controller
         
         return Inertia::render('public/orders/Checkout', [
             'cartItems' => $cartItems,
+            'coupon' => $coupon,
             'summary' => [
                 'subtotal' => $subtotal,
                 'adminFee' => $adminFee,
@@ -118,6 +135,23 @@ class OrderController extends Controller
             
             $adminFee = 0;
             $discount = 0;
+            $couponId = null;
+            $couponCode = null;
+            
+            // Proses kupon jika ada
+            $couponSession = session('coupon');
+            if ($couponSession) {
+                $coupon = \App\Models\Coupon::find($couponSession['id']);
+                if ($coupon && $coupon->isValid($subtotal)) {
+                    $discount = $coupon->calculateDiscount($subtotal);
+                    $couponId = $coupon->id;
+                    $couponCode = $coupon->code;
+                    
+                    // Increment penggunaan kupon
+                    $coupon->incrementUsage();
+                }
+            }
+            
             $total = $subtotal + $adminFee - $discount;
 
             // Get user data
@@ -143,6 +177,8 @@ class OrderController extends Controller
             $order = Order::create([
                 'order_number' => $orderNumber,
                 'user_id' => $user->id,
+                'coupon_id' => $couponId,
+                'coupon_code' => $couponCode,
                 'customer_name' => $request->customer_name,
                 'customer_phone' => $request->customer_phone,
                 'customer_email' => $request->customer_email,
@@ -150,8 +186,8 @@ class OrderController extends Controller
                 'admin_fee' => $adminFee,
                 'discount' => $discount,
                 'total_amount' => $total,
+                'status' => Order::STATUS_PENDING,
                 'notes' => $request->notes,
-                'status' => 'pending'
             ]);
             
             // Create order items
@@ -159,40 +195,32 @@ class OrderController extends Controller
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $item->product_id,
-                    'quantity' => $item->quantity,
+                    'name' => $item->product->name,
                     'price' => $item->product->price,
-                    'subtotal' => $item->product->price * $item->quantity
+                    'quantity' => $item->quantity,
+                    'subtotal' => $item->product->price * $item->quantity,
                 ]);
             }
             
-            // Clear cart
+            // Hapus item dari keranjang
             Cart::where('session_id', $sessionId)->delete();
             
+            // Hapus kupon dari session
+            session()->forget('coupon');
+            
+            // Commit transaction
             DB::commit();
             
-            // Debug: Log success
-            \Log::info('Order created successfully', [
-                'order_id' => $order->id,
-                'order_number' => $order->order_number,
-                'user_id' => $user->id
-            ]);
-
-            // Return Inertia response
-            return redirect()->route('orders.thankyou', ['order' => $order->id])
-                ->with('success', 'Pesanan berhasil dibuat')
-                ->with('order', [
-                    'id' => $order->id,
-                    'order_number' => $order->order_number
-                ]);
-                
+            // Redirect ke halaman thank you
+            return redirect()->route('orders.thankyou', $order)->with('order', $order);
         } catch (\Exception $e) {
+            // Rollback transaction on error
             DB::rollBack();
+            
+            // Log error
             \Log::error('Order creation failed', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'user_id' => auth()->id(),
-                'session_id' => $sessionId ?? null,
-                'cart_items' => $cartItems ?? []
+                'trace' => $e->getTraceAsString()
             ]);
             
             return back()->with('error', 'Terjadi kesalahan saat membuat pesanan. Silakan coba lagi.');

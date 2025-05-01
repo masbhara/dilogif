@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Models\Order;
 use App\Http\Controllers\OrderDocumentController;
 use App\Http\Controllers\PaymentConfirmationController;
+use App\Http\Controllers\CouponController;
 
 Route::middleware(['auth'])->group(function () {
     // Dashboard Route
@@ -89,6 +90,10 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/cart/{id}', [CartController::class, 'removeFromCart'])->name('cart.remove');
     Route::delete('/cart', [CartController::class, 'clearCart'])->name('cart.clear');
     Route::get('/cart/count', [CartController::class, 'getCartCount'])->name('cart.count');
+    
+    // Coupon Routes
+    Route::post('/coupons/apply', [CouponController::class, 'apply'])->name('coupons.apply');
+    Route::post('/coupons/remove', [CouponController::class, 'remove'])->name('coupons.remove');
     
     // Order Routes
     Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');

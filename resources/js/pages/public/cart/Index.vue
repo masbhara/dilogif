@@ -137,6 +137,13 @@
             <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm p-6">
               <h2 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Ringkasan Pesanan</h2>
               
+              <!-- Coupon Form -->
+              <CouponForm 
+                :initial-coupon="coupon" 
+                @coupon-applied="handleCouponApplied" 
+                @coupon-removed="handleCouponRemoved"
+              />
+              
               <!-- Summary Items -->
               <div class="space-y-3 mb-6">
                 <div class="flex justify-between">
@@ -194,10 +201,12 @@ import { computed, ref } from 'vue';
 import { ArrowRightIcon, RefreshCcwIcon, TrashIcon } from 'lucide-vue-next';
 import { toast } from 'vue-sonner';
 import axios from 'axios';
+import CouponForm from '@/components/coupons/CouponForm.vue';
 
 const props = defineProps({
   cartItems: Array,
-  summary: Object
+  summary: Object,
+  coupon: Object
 });
 
 // State
@@ -308,5 +317,24 @@ const clearCart = () => {
 
 const goToCheckout = () => {
   router.get(route('checkout'));
+};
+
+// Handle coupon
+const handleCouponApplied = (coupon) => {
+  router.reload({
+    preserveScroll: true,
+    onSuccess: () => {
+      toast.success('Kupon berhasil diterapkan');
+    }
+  });
+};
+
+const handleCouponRemoved = () => {
+  router.reload({
+    preserveScroll: true,
+    onSuccess: () => {
+      toast.success('Kupon berhasil dihapus');
+    }
+  });
 };
 </script> 

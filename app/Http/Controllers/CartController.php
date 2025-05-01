@@ -32,11 +32,28 @@ class CartController extends Controller
         });
         
         $adminFee = 0; // Default admin fee, can be configurable
-        $discount = 0; // Default discount, can be applied later
+        $discount = 0;
+        $coupon = session('coupon');
+        
+        // Jika ada kupon yang diterapkan
+        if ($coupon) {
+            $couponModel = \App\Models\Coupon::find($coupon['id']);
+            if ($couponModel && $couponModel->isValid($subtotal)) {
+                $discount = $couponModel->calculateDiscount($subtotal);
+                $coupon['discount'] = $discount;
+                session(['coupon' => $coupon]);
+            } else {
+                // Jika kupon sudah tidak valid, hapus dari session
+                session()->forget('coupon');
+                $coupon = null;
+            }
+        }
+        
         $total = $subtotal + $adminFee - $discount;
         
         return Inertia::render('public/cart/Index', [
             'cartItems' => $cartItems,
+            'coupon' => $coupon,
             'summary' => [
                 'subtotal' => $subtotal,
                 'adminFee' => $adminFee,
