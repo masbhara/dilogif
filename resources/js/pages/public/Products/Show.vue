@@ -298,6 +298,7 @@ import {
 } from 'lucide-vue-next';
 import { toast } from 'vue-sonner';
 import axios from 'axios';
+import { updateCartCount } from '@/event-bus';
 
 const props = defineProps({
   product: Object,
@@ -505,10 +506,8 @@ const addToCart = () => {
     if (response.data.success) {
       toast.success(response.data.message);
       
-      // Update cart count in the header
-      if (window.updateCartCount && typeof window.updateCartCount === 'function') {
-        window.updateCartCount(response.data.cart_count);
-      }
+      // Update cart count using event bus
+      updateCartCount(response.data.cart_count);
     } else {
       toast.error(response.data.message);
     }

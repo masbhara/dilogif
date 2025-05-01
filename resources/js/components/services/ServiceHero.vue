@@ -1,3 +1,7 @@
+<script setup>
+import { Button } from '@/components/ui/button';
+</script>
+
 <template>
   <section class="py-20 bg-slate-50 dark:bg-background">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -12,7 +16,7 @@
           </p>
           
           <!-- Service Stats -->
-          <div class="grid grid-cols-2 gap-6 mb-8">
+          <!-- <div class="grid grid-cols-2 gap-6 mb-8">
             <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm">
               <span class="block text-3xl font-bold text-blue-600 dark:text-blue-400 mb-1">50+</span>
               <span class="text-sm text-slate-700 dark:text-slate-300">Project Selesai</span>
@@ -21,11 +25,13 @@
               <span class="block text-3xl font-bold text-blue-600 dark:text-blue-400 mb-1">100%</span>
               <span class="text-sm text-slate-700 dark:text-slate-300">Kepuasan Klien</span>
             </div>
-          </div>
+          </div> -->
           
-          <a 
+          <Button 
             href="#service-list" 
-            class="inline-flex items-center gap-2 bg-blue-600 dark:bg-blue-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
+            variant="primary"
+            size="lg"
+            class="inline-flex items-center gap-2"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
@@ -35,7 +41,7 @@
               <line x1="10" y1="9" x2="8" y2="9"/>
             </svg>
             Lihat Semua Layanan
-          </a>
+          </Button>
         </div>
         
         <div class="lg:col-span-7 order-1 lg:order-2">

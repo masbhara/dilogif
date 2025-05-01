@@ -1,7 +1,7 @@
 <template>
-  <section class="py-20 bg-background">
+  <section class="py-20 bg-gray-50 dark:bg-background">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="bg-muted rounded-2xl p-8 lg:p-12 shadow-sm">
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-8 lg:p-12 shadow-sm">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <!-- Contact Header -->
           <div>

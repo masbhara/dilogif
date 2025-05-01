@@ -100,4 +100,28 @@ class PageController extends Controller
         return redirect()->route('dashboard.pages.index')
             ->with('success', 'Page deleted successfully.');
     }
+
+    /**
+     * Display the home page.
+     */
+    public function home()
+    {
+        return Inertia::render('public/home/Index');
+    }
+
+    /**
+     * Display the about page.
+     */
+    public function about()
+    {
+        return Inertia::render('public/about/Index');
+    }
+
+    /**
+     * Display the contact page.
+     */
+    public function contact()
+    {
+        return Inertia::render('public/contact/Index');
+    }
 }

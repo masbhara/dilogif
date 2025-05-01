@@ -9,15 +9,15 @@
           <Breadcrumb :items="breadcrumbItems" />
         </div>
         
-        <h1 class="text-3xl font-bold mb-8 dark:text-white">Keranjang Belanja</h1>
+        <h1 class="text-2xl font-bold mb-8 dark:text-white">Keranjang Belanja</h1>
         
         <div v-if="cartItems.length > 0" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <!-- Cart Items -->
           <div class="lg:col-span-2">
             <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm overflow-hidden">
               <!-- Cart Items Table -->
-              <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead class="bg-gray-50 dark:bg-slate-900">
+              <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-slate-900">
+                <thead>
                   <tr>
                     <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
                       Produk
@@ -107,10 +107,10 @@
               
               <!-- Cart Actions -->
               <div class="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
-                <div>
+                <div class="flex items-center">
                   <Button 
-                    variant="secondary" 
-                    colorScheme="secondary"
+                    variant="outline" 
+                    colorScheme="outline"
                     :disabled="isClearingCart"
                     @click="clearCart"
                   >
@@ -119,11 +119,11 @@
                     Kosongkan Keranjang
                   </Button>
                   <Link :href="route('products.index')" class="ml-2">
-                    <Button variant="destructive" colorScheme="destructive">Lanjut Belanja</Button>
+                    <Button variant="default" colorScheme="primary">Lanjut Belanja</Button>
                   </Link>
                 </div>
                 <div>
-                  <Button colorScheme="primary" @click="goToCheckout">
+                  <Button variant="destructive" colorScheme="destructive" @click="goToCheckout">
                     Lanjut ke Checkout
                     <ArrowRightIcon class="ml-2 h-4 w-4" />
                   </Button>
@@ -172,7 +172,7 @@
         </div>
         
         <!-- Empty Cart State -->
-        <div v-else class="text-center py-16 bg-white rounded-xl shadow-sm">
+        <div v-else class="text-center text-gray-900 dark:text-white py-16 bg-white dark:bg-slate-900 rounded-xl shadow-sm">
           <div class="text-6xl mb-4">🛒</div>
           <h3 class="text-2xl font-semibold mb-2">Keranjang Belanja Kosong</h3>
           <p class="text-gray-500 mb-6 max-w-md mx-auto">Sepertinya Anda belum menambahkan produk apa pun ke keranjang belanja Anda</p>

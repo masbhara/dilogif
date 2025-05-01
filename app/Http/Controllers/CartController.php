@@ -10,6 +10,12 @@ use Inertia\Inertia;
 
 class CartController extends Controller
 {
+    public function __construct()
+    {
+        // Hapus middleware auth karena kita ingin mendukung guest users
+        // $this->middleware('auth');
+    }
+
     /**
      * Display the cart page.
      */

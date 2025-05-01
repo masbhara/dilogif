@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 
 export type ButtonVariant = 
   | 'default'
+  | 'primary'
   | 'destructive'
   | 'outline'
   | 'secondary'

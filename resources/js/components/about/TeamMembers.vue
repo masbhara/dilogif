@@ -41,25 +41,25 @@ const team = [
     <!-- CTA Section -->
     <section class="py-20 bg-slate-50 dark:bg-background">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="bg-gradient-to-r from-primary to-primary/90 rounded-2xl overflow-hidden shadow-lg">
-        <div class="grid grid-cols-1 lg:grid-cols-2 items-center bg-slate-50 dark:bg-slate-900">
+      <div class="bg-gradient-to-r from-primary to-primary/90 rounded-2xl overflow-hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-2 items-center bg-slate-100 dark:bg-slate-900">
           <!-- CTA Content -->
           <div class="p-8 lg:p-12">
-            <h2 class="text-3xl font-bold text-white mb-4">Siap Memulai Perjalanan Digital Anda?</h2>
-            <p class="text-white/80 mb-8 text-lg">
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">Siap Memulai Perjalanan Digital Anda?</h2>
+            <p class=" text-gray-400 dark:text-gray-100 mb-8 text-lg">
               Kami siap membantu Anda menghadapi tantangan digital dan mengubahnya menjadi peluang untuk pertumbuhan bisnis.
             </p>
             
             <!-- Action Buttons -->
             <div class="flex flex-wrap gap-4">
-              <Button variant="secondary" class="px-8 py-4 inline-flex items-center gap-2" as="a" href="/contact">
+              <Button variant="primary" class="px-8 py-4 inline-flex items-center gap-2" as="a" href="/contact">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v5Z"/>
                   <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"/>
                 </svg>
                 Hubungi Kami
               </Button>
-              <Button variant="outline" class="px-8 py-4 inline-flex items-center gap-2 border-white text-white hover:bg-white hover:text-primary transition-all" as="a" href="/services">
+              <Button variant="outline" as="a" href="/services">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="m7 10 5 5 5-5"/>
                   <path d="M12 15V3"/>

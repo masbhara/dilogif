@@ -1,14 +1,9 @@
 <template>
   <!-- Company Profile Banner -->
-  <section class="bg-slate-50 dark:bg-background py-8 lg:py-20">
+  <section class="bg-slate-50 dark:bg-background py-8 lg:py-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-center mb-10">
-        <div class="bg-primary/10 rounded-full px-6 py-1.5 inline-flex items-center gap-2">
-        
-        </div>
-      </div>
-      
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-16">
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-16 items-center mb-2 sm:mb-8">
         <!-- Text Content -->
         <div>
           <h1 class="text-3xl lg:text-4xl font-bold text-foreground leading-tight mb-8">
@@ -34,7 +29,7 @@
         
         <!-- Visual Content -->
         <div class="relative">
-          <div class="bg-primary/10 rounded-tl-xl rounded-br-xl p-4 relative">
+          <div class="bg-primary/10 rounded-tl-xl rounded-br-xl relative">
             <img 
               src="/images/hero-dashboard.svg" 
               alt="Tim Dilogif" 
@@ -69,7 +64,7 @@
       <!-- Section Header with Brand Colors -->
       <div class="flex flex-col items-center mb-16">
        
-        <h2 class="text-3xl font-bold text-foreground mb-4 text-center">Nilai-Nilai yang Kami Pegang Teguh</h2>
+        <h2 class="text-2xl sm:text-4xl font-bold text-foreground mb-4 text-center">Nilai-Nilai yang Kami Pegang Teguh</h2>
         <div class="w-20 h-1 bg-primary"></div>
         <p class="text-muted-foreground text-center text-lg">
           Prinsip-prinsip yang menjadi pondasi Dilogif dalam memberikan layanan terbaik kepada klien.

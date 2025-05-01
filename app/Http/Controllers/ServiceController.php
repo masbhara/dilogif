@@ -10,14 +10,11 @@ use Illuminate\Support\Str;
 class ServiceController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display the services page.
      */
     public function index()
     {
-        $services = Service::orderBy('order')->get();
-        return Inertia::render('Dashboard/Services/Index', [
-            'services' => $services
-        ]);
+        return Inertia::render('public/services/Index');
     }
 
     /**

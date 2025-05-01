@@ -101,23 +101,31 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // Public Routes
-Route::get('/', function () {
-    return Inertia::render('public/home/Index');
-})->name('home');
-
-Route::get('/about', function () {
-    return Inertia::render('public/about/Index');
-})->name('about');
-
-Route::get('/services', function () {
-    return Inertia::render('public/services/Index');
-})->name('services');
-
-Route::get('/contact', function () {
-    return Inertia::render('public/contact/Index');
-})->name('contact');
-
+Route::get('/', [PageController::class, 'home'])->name('home');
+Route::get('/about', [PageController::class, 'about'])->name('about');
+Route::get('/services', [ServiceController::class, 'index'])->name('services');
+Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::post('/contact', [ContactMessageController::class, 'store'])->name('contact.store');
+
+// Products Routes (Public)
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+Route::get('/products/{product:slug}', [ProductController::class, 'show'])->name('products.show');
+
+// Cart Routes (Public)
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+Route::patch('/cart/{id}', [CartController::class, 'updateQuantity'])->name('cart.update');
+Route::delete('/cart/{id}', [CartController::class, 'removeFromCart'])->name('cart.remove');
+Route::delete('/cart', [CartController::class, 'clearCart'])->name('cart.clear');
+Route::get('/cart/count', [CartController::class, 'getCartCount'])->name('cart.count');
+
+// Checkout Routes (Requires Auth)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
+    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+    Route::get('/orders/thankyou/{order}', [OrderController::class, 'thankYou'])->name('orders.thankyou');
+    Route::get('/track-order', [OrderController::class, 'trackOrder'])->name('orders.track');
+});
 
 // Public routes with caching
 Route::middleware(['http-cache'])->group(function () {

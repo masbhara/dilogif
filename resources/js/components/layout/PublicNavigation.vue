@@ -278,10 +278,17 @@ import DropdownLink from '@/components/DropdownLink.vue';
 import NavLink from '@/components/NavLink.vue';
 import ResponsiveNavLink from '@/components/ResponsiveNavLink.vue';
 import { ShoppingCartIcon, ChevronDownIcon, Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline';
+import { cartCount, initializeCartCount } from '@/event-bus';
 
 const showingNavigationDropdown = ref(false);
 const isScrolled = ref(false);
 const isDark = ref(false);
+
+// Initialize cart count from page props
+const page = usePage()
+if (page.props.cartCount !== undefined) {
+  initializeCartCount(page.props.cartCount)
+}
 
 const navigation = [
   { name: 'Beranda', route: 'home' },
@@ -334,12 +341,5 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll);
-});
-
-defineProps({
-  cartCount: {
-    type: Number,
-    default: 0
-  }
 });
 </script> 

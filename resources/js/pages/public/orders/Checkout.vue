@@ -2,10 +2,10 @@
   <Head title="Checkout" />
 
   <MainLayout>
-    <div class="bg-slate-50 dark:bg-slate-900 py-12">
-      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="bg-slate-50 dark:bg-background py-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Breadcrumb -->
-        <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm mb-8">
+        <div class="bg-white dark:bg-slate-900 p-4 rounded-lg shadow-sm mb-8">
           <Breadcrumb :items="breadcrumbItems" />
         </div>
 
@@ -14,51 +14,51 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <!-- Order Form -->
           <div class="lg:col-span-2">
-            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-6">
-              <h2 class="text-lg font-medium text-gray-900 mb-4">Informasi Pesanan</h2>
+            <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm p-6">
+              <h2 class="text-lg font-medium text-gray-900 mb-4 dark:text-white">Informasi Pesanan</h2>
               
               <form @submit.prevent="submitOrder">
                 <!-- Customer Information -->
                 <div v-if="!$page.props.auth.user" class="space-y-4 mb-6">
-                  <h3 class="text-md font-medium text-gray-900">Informasi Pelanggan</h3>
+                  <h3 class="text-md font-medium text-gray-900 dark:text-white">Informasi Pelanggan</h3>
                   
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
+                      <label class="block text-sm font-medium text-gray-700 dark:text-white">Nama Lengkap</label>
                       <input
                         type="text"
                         v-model="form.name"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-primary-500 focus:ring-primary-500 bg-white dark:bg-slate-900 text-gray-900 dark:text-white"
                         required
                       />
                     </div>
                     
                     <div>
-                      <label class="block text-sm font-medium text-gray-700">Email</label>
+                      <label class="block text-sm font-medium text-gray-700 dark:text-white">Email</label>
                       <input
                         type="email"
                         v-model="form.email"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-primary-500 focus:ring-primary-500 bg-white dark:bg-slate-900 text-gray-900 dark:text-white"
                         required
                       />
                     </div>
                     
                     <div>
-                      <label class="block text-sm font-medium text-gray-700">Nomor WhatsApp</label>
+                      <label class="block text-sm font-medium text-gray-700 dark:text-white">Nomor WhatsApp</label>
                       <input
                         type="tel"
                         v-model="form.phone"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-primary-500 focus:ring-primary-500 bg-white dark:bg-slate-900 text-gray-900 dark:text-white"
                         required
                       />
                     </div>
                     
                     <div>
-                      <label class="block text-sm font-medium text-gray-700">Password</label>
+                      <label class="block text-sm font-medium text-gray-700 dark:text-white">Password</label>
                       <input
                         type="password"
                         v-model="form.password"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-primary-500 focus:ring-primary-500 bg-white dark:bg-slate-900 text-gray-900 dark:text-white"
                         required
                       />
                     </div>
@@ -67,19 +67,19 @@
 
                 <!-- Order Notes -->
                 <div class="mb-6">
-                  <label class="block text-sm font-medium text-gray-700">Catatan Pesanan (Opsional)</label>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-white">Catatan Pesanan (Opsional)</label>
                   <textarea
                     v-model="form.notes"
                     rows="3"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-primary-500 focus:ring-primary-500 bg-white dark:bg-slate-900 text-gray-900 dark:text-white"
                   ></textarea>
                 </div>
 
                 <!-- Order Items -->
                 <div class="mb-6">
-                  <h3 class="text-md font-medium text-gray-900 mb-4">Produk yang Dipesan</h3>
+                  <h3 class="text-md font-medium text-gray-900 mb-4 dark:text-white">Produk yang Dipesan</h3>
                   <div class="space-y-4">
-                    <div v-for="item in cartItems" :key="item.id" class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div v-for="item in cartItems" :key="item.id" class="flex items-center justify-between p-4 bg-gray-50 dark:bg-slate-800 rounded-lg">
                       <div class="flex items-center">
                         <img 
                           :src="`/storage/${item.product.featured_image}`" 
@@ -87,11 +87,11 @@
                           class="h-16 w-16 object-cover rounded-md"
                         />
                         <div class="ml-4">
-                          <h4 class="text-sm font-medium text-gray-900">{{ item.product.name }}</h4>
-                          <p class="text-sm text-gray-500">{{ formatPrice(item.product.price) }} x {{ item.quantity }}</p>
+                          <h4 class="text-sm font-medium text-gray-900 dark:text-white">{{ item.product.name }}</h4>
+                          <p class="text-sm text-gray-500 dark:text-gray-300">{{ formatPrice(item.product.price) }} x {{ item.quantity }}</p>
                         </div>
                       </div>
-                      <p class="text-sm font-medium text-gray-900">{{ formatPrice(item.product.price * item.quantity) }}</p>
+                      <p class="text-sm font-medium text-gray-900 dark:text-white">{{ formatPrice(item.product.price * item.quantity) }}</p>
                     </div>
                   </div>
                 </div>
@@ -115,29 +115,29 @@
 
           <!-- Order Summary -->
           <div class="lg:col-span-1">
-            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-6">
-              <h2 class="text-lg font-medium text-gray-900 mb-4">Ringkasan Pesanan</h2>
+            <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm p-6">
+              <h2 class="text-lg font-medium text-gray-900 mb-4 dark:text-white">Ringkasan Pesanan</h2>
               
               <!-- Summary Items -->
               <div class="space-y-3 mb-6">
                 <div class="flex justify-between">
-                  <p class="text-gray-600">Subtotal ({{ summary.itemCount }} item)</p>
-                  <p class="font-medium">{{ formatPrice(summary.subtotal) }}</p>
+                  <p class="text-gray-600 dark:text-gray-300">Subtotal ({{ summary.itemCount }} item)</p>
+                  <p class="font-medium dark:text-white">{{ formatPrice(summary.subtotal) }}</p>
                 </div>
                 <div class="flex justify-between">
-                  <p class="text-gray-600">Biaya Admin</p>
-                  <p class="font-medium">{{ formatPrice(summary.adminFee) }}</p>
+                  <p class="text-gray-600 dark:text-gray-300">Biaya Admin</p>
+                  <p class="font-medium dark:text-white">{{ formatPrice(summary.adminFee) }}</p>
                 </div>
                 <div class="flex justify-between">
-                  <p class="text-gray-600">Diskon</p>
-                  <p class="font-medium text-green-600">-{{ formatPrice(summary.discount) }}</p>
+                  <p class="text-gray-600 dark:text-gray-300">Diskon</p>
+                  <p class="font-medium text-green-600 dark:text-green-400">-{{ formatPrice(summary.discount) }}</p>
                 </div>
               </div>
               
               <!-- Total -->
-              <div class="flex justify-between pt-4 border-t border-gray-200">
-                <p class="text-lg font-medium text-gray-900">Total</p>
-                <p class="text-lg font-bold text-primary-600">{{ formatPrice(summary.total) }}</p>
+              <div class="flex justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                <p class="text-lg font-medium text-gray-900 dark:text-white">Total</p>
+                <p class="text-lg font-bold text-primary-600 dark:text-primary-400">{{ formatPrice(summary.total) }}</p>
               </div>
             </div>
           </div>

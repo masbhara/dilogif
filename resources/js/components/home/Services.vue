@@ -8,7 +8,7 @@
         Jadikan bisnis Anda agar semakin dikenal publik dengan profesional
       </p>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div class="bg-background p-6 rounded-lg shadow-sm">
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-lg shadow-sm">
           <img src="/images/web-design.svg" alt="Web Design" class="w-full h-auto mb-4" />
           <h3 class="text-xl font-semibold mb-2 text-foreground">Web Design</h3>
           <p class="text-foreground mb-4">
@@ -16,7 +16,7 @@
           </p>
           <a href="#" class="text-primary font-medium hover:underline">Learn More →</a>
         </div>
-        <div class="bg-background p-6 rounded-lg shadow-sm">
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-lg shadow-sm">
           <img src="/images/logo-design.svg" alt="Logo Design" class="w-full h-auto mb-4" />
           <h3 class="text-xl font-semibold mb-2 text-foreground">Logo Design</h3>
           <p class="text-foreground mb-4">
@@ -24,7 +24,7 @@
           </p>
           <a href="#" class="text-primary font-medium hover:underline">Learn More →</a>
         </div>
-        <div class="bg-background p-6 rounded-lg shadow-sm">
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-lg shadow-sm">
           <img src="/images/content-creation.svg" alt="Content Creation" class="w-full h-auto mb-4" />
           <h3 class="text-xl font-semibold mb-2 text-foreground">Content Creation</h3>
           <p class="text-foreground mb-4">

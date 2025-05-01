@@ -1,5 +1,5 @@
 <template>
-  <section class="relative min-h-[80vh] flex items-center">
+  <section class="relative min-h-[80vh] flex items-center bg-gray-50 dark:bg-background">
     <!-- Background Image with Overlay -->
     <div class="absolute inset-0 z-0">
       <img 
@@ -8,12 +8,12 @@
         class="w-full h-full object-cover opacity-80"
       />
       <div 
-        class="absolute inset-0 bg-primary/50 mix-blend-multiply dark:bg-background/90 dark:mix-blend-normal transition-colors"
+        class="absolute inset-0 bg-primary/50 mix-blend-multiply dark:bg-background dark:mix-blend-normal transition-colors"
       ></div>
     </div>
 
     <!-- Content -->
-    <div class="relative z-10 w-full pt-28 pb-20">
+    <div class="relative z-10 w-full pt-32 pb-20">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div>
