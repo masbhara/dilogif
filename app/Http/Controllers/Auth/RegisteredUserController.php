@@ -56,7 +56,8 @@ class RegisteredUserController extends Controller
             $user->assignRole($userRole);
         }
 
-        event(new Registered($user));
+        // PENTING: TIDAK memanggil event Registered karena akan memicu pengiriman email bawaan Laravel
+        // event(new Registered($user));
 
         // Periksa apakah verifikasi email diaktifkan
         $emailSettings = EmailSetting::getSettings();
@@ -68,9 +69,14 @@ class RegisteredUserController extends Controller
                 ['id' => $user->getKey(), 'hash' => sha1($user->getEmailForVerification())]
             );
 
-            // Kirim email verifikasi
+            // Kirim email verifikasi kustom
             Mail::to($user->email)
                 ->send(new CustomVerifyEmail($user, $verificationUrl));
+
+            \Illuminate\Support\Facades\Log::info('Email verifikasi kustom dikirim saat pendaftaran', [
+                'user_id' => $user->id,
+                'email' => $user->email
+            ]);
 
             return redirect()->route('login')
                 ->with('status', 'Pendaftaran berhasil! Silakan verifikasi email Anda sebelum login.');

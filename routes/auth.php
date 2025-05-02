@@ -30,16 +30,17 @@ Route::middleware('guest')->group(function () {
 
     Route::post('reset-password', [NewPasswordController::class, 'store'])
         ->name('password.store');
-});
 
-Route::middleware('auth')->group(function () {
-    // Verifikasi Email - Menggunakan Controller Kustom
-    Route::get('verify-email', [EmailVerificationController::class, 'notice'])
-        ->name('verification.notice');
-
+    // Verifikasi email untuk pengguna yang belum login
     Route::get('verify-email/{id}/{hash}', [EmailVerificationController::class, 'verify'])
         ->middleware(['signed', 'throttle:6,1'])
         ->name('verification.verify');
+});
+
+Route::middleware('auth')->group(function () {
+    // Verifikasi Email - Halaman notice dan kirim ulang
+    Route::get('verify-email', [EmailVerificationController::class, 'notice'])
+        ->name('verification.notice');
 
     Route::post('email/verification-notification', [EmailVerificationController::class, 'send'])
         ->middleware('throttle:6,1')

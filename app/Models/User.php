@@ -60,4 +60,16 @@ class User extends Authenticatable implements MustVerifyEmailContract
     {
         return $this->hasMany(Order::class);
     }
+
+    /**
+     * Override metode sendEmailVerificationNotification untuk mencegah Laravel mengirim email otomatis
+     */
+    public function sendEmailVerificationNotification(): void
+    {
+        // Tidak melakukan apa-apa untuk mencegah pengiriman email verifikasi bawaan Laravel
+        \Illuminate\Support\Facades\Log::info('Mencegah pengiriman email verifikasi bawaan Laravel', [
+            'user_id' => $this->id,
+            'email' => $this->email
+        ]);
+    }
 }

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Models\User;
 
 class EmailVerificationController extends Controller
 {
@@ -63,14 +64,39 @@ class EmailVerificationController extends Controller
      */
     public function verify(Request $request): RedirectResponse
     {
-        if ($request->user()?->hasVerifiedEmail()) {
+        // Cari user berdasarkan ID yang diberikan pada URL
+        $user = User::findOrFail($request->route('id'));
+        
+        // Jika email sudah diverifikasi, redirect saja
+        if ($user->hasVerifiedEmail()) {
             return redirect()->intended(route('dashboard').'?verified=1');
         }
 
-        if ($request->user()?->markEmailAsVerified()) {
-            event(new Verified($request->user()));
+        // Verifikasi hash
+        $hash = sha1($user->getEmailForVerification());
+        if (!hash_equals($hash, (string) $request->route('hash'))) {
+            abort(403, 'URL verifikasi tidak valid');
         }
 
-        return redirect()->intended(route('dashboard').'?verified=1');
+        // Tandai email sebagai terverifikasi
+        $user->markEmailAsVerified();
+        
+        // Aktifkan akun user jika statusnya masih inactive
+        if ($user->status === 'inactive') {
+            $user->update(['status' => 'active']);
+            
+            // Log informasi aktivasi
+            \Log::info('User diaktifkan setelah verifikasi email dari link verifikasi', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+            ]);
+        }
+        
+        // Dispatch event Verified
+        event(new Verified($user));
+
+        return redirect()->intended(route('dashboard').'?verified=1')
+            ->with('verified', true)
+            ->with('message', 'Email berhasil diverifikasi dan akun Anda telah diaktifkan.');
     }
 }
