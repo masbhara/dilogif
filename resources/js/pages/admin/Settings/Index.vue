@@ -897,7 +897,8 @@ const getPlatformLabel = (platform: string) => {
 
         <!-- Tab Kontak -->
         <TabsContent value="contact" class="mt-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Baris pertama: Pengaturan Email dan Pengaturan Webhook -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <!-- Pengaturan Email -->
             <Card>
               <CardHeader>
@@ -917,6 +918,28 @@ const getPlatformLabel = (platform: string) => {
               </CardContent>
             </Card>
 
+            <!-- Pengaturan Webhook -->
+            <Card>
+              <CardHeader>
+                <CardTitle>Pengaturan Webhook</CardTitle>
+                <CardDescription>
+                  Konfigurasi webhook untuk integrasi dengan layanan pihak ketiga
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p class="text-sm text-gray-600 mb-4">
+                  Kelola pengaturan webhook untuk WhatsApp Marketing dan integrasi lainnya.
+                </p>
+                <Button type="button" disabled>
+                  <Settings class="mr-2 h-4 w-4" />
+                  Buka Pengaturan Webhook
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          <!-- Baris kedua: WhatsApp Admin dan Social Media -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- WhatsApp Admin -->
             <Card>
               <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -968,7 +991,7 @@ const getPlatformLabel = (platform: string) => {
             </Card>
 
             <!-- Social Media -->
-            <Card class="md:col-span-2">
+            <Card>
               <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle>Media Sosial</CardTitle>
                 <Button 
@@ -986,34 +1009,36 @@ const getPlatformLabel = (platform: string) => {
                   <div v-if="socialMedia.length === 0" class="text-center py-4">
                     <p class="text-sm text-gray-500">Belum ada media sosial</p>
                   </div>
-                  <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div v-for="social in socialMedia" :key="social.id" class="flex items-center justify-between border rounded-lg p-3">
-                      <div class="flex items-center space-x-3">
-                        <div class="bg-gray-100 rounded-full p-2">
-                          <component :is="getSocialIcon(social.platform)" class="h-5 w-5 text-gray-600" />
+                  <div v-else class="max-h-[250px] overflow-y-auto pr-2">
+                    <div class="space-y-3">
+                      <div v-for="social in socialMedia" :key="social.id" class="flex items-center justify-between border rounded-lg p-3">
+                        <div class="flex items-center space-x-3">
+                          <div class="bg-gray-100 rounded-full p-2">
+                            <component :is="getSocialIcon(social.platform)" class="h-5 w-5 text-gray-600" />
+                          </div>
+                          <div>
+                            <div class="font-medium capitalize">{{ social.platform }}</div>
+                            <div class="text-sm text-gray-500">@{{ social.username }}</div>
+                          </div>
                         </div>
-                        <div>
-                          <div class="font-medium capitalize">{{ social.platform }}</div>
-                          <div class="text-sm text-gray-500">@{{ social.username }}</div>
+                        <div class="flex items-center space-x-2">
+                          <button 
+                            type="button"
+                            class="text-sm text-gray-500 hover:text-indigo-600 focus:outline-none transition-colors"
+                            @click="toggleSocialMediaStatus(social)"
+                          >
+                            <Check v-if="social.is_active" class="h-5 w-5 text-green-500" />
+                            <span v-else class="h-5 w-5 flex items-center justify-center text-gray-300 rounded-full border border-gray-300">-</span>
+                          </button>
+                          
+                          <button 
+                            type="button" 
+                            class="text-sm text-gray-500 hover:text-red-600 focus:outline-none transition-colors"
+                            @click="deleteSocialMedia(social.id)"
+                          >
+                            <Trash2 class="h-4 w-4" />
+                          </button>
                         </div>
-                      </div>
-                      <div class="flex items-center space-x-2">
-                        <button 
-                          type="button"
-                          class="text-sm text-gray-500 hover:text-indigo-600 focus:outline-none transition-colors"
-                          @click="toggleSocialMediaStatus(social)"
-                        >
-                          <Check v-if="social.is_active" class="h-5 w-5 text-green-500" />
-                          <span v-else class="h-5 w-5 flex items-center justify-center text-gray-300 rounded-full border border-gray-300">-</span>
-                        </button>
-                        
-                        <button 
-                          type="button" 
-                          class="text-sm text-gray-500 hover:text-red-600 focus:outline-none transition-colors"
-                          @click="deleteSocialMedia(social.id)"
-                        >
-                          <Trash2 class="h-4 w-4" />
-                        </button>
                       </div>
                     </div>
                   </div>
@@ -1254,5 +1279,66 @@ const getPlatformLabel = (platform: string) => {
 /* Fix untuk Safari dan Chrome */
 .custom-select-trigger::-webkit-focus-inner {
   border: 0;
+}
+
+/* Perbaikan dark mode */
+:root {
+  --card-bg-dark: #1a2234;
+  --card-border-dark: #2c3850;
+  --text-primary-dark: #ffffff;
+  --text-secondary-dark: #a8b3cf;
+  --text-muted-dark: #6b7a9a;
+  --border-subtle-dark: #2c3850;
+}
+
+.dark .text-gray-900 {
+  color: var(--text-primary-dark);
+}
+
+.dark .text-gray-600, 
+.dark .text-gray-500, 
+.dark .text-gray-400 {
+  color: var(--text-secondary-dark);
+}
+
+.dark .border-b {
+  border-color: var(--border-subtle-dark);
+}
+
+.dark .bg-gray-50, 
+.dark .bg-gray-100 {
+  background-color: #283042;
+}
+
+/* Perbaikan tampilan card di dark mode */
+.dark .border {
+  border-color: var(--card-border-dark);
+}
+
+.dark .rounded-lg {
+  background-color: #232b3d;
+  border-color: var(--card-border-dark);
+}
+
+/* Tingkatkan kontras pada tombol-tombol */
+.dark button.text-gray-500:hover {
+  color: #c1d1f7;
+}
+
+/* Perbaikan warna hover pada form element */
+.dark .focus\:border-blue-500:focus,
+.dark .hover\:border-blue-500:hover {
+  border-color: #60a5fa;
+}
+
+/* Perbaikan kontras pada label dan text pada dark mode */
+.dark label, 
+.dark h3.text-sm {
+  color: var(--text-primary-dark);
+}
+
+/* Perbaikan tampilan dialog/modal di dark mode */
+.dark .bg-background {
+  background-color: var(--card-bg-dark);
 }
 </style> 
