@@ -5,10 +5,10 @@
     <div v-if="appliedCoupon" class="flex items-center justify-between mb-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md">
       <div>
         <p class="text-sm font-medium text-green-700 dark:text-green-400">
-          Kupon diterapkan: {{ appliedCoupon.name }}
+          Kupon diterapkan: {{ appliedCoupon.code || appliedCoupon.name }}
         </p>
         <p class="text-xs text-green-600 dark:text-green-500">
-          Potongan: {{ appliedCoupon.formattedDiscount }}
+          Potongan: {{ appliedCoupon.formattedDiscount || formatDiscountValue(appliedCoupon) }}
         </p>
       </div>
       <Button variant="ghost" size="sm" @click="removeCoupon" class="text-red-500">
@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { router } from '@inertiajs/vue3';
 import axios from 'axios';
 import { Input } from '@/components/ui/input';
@@ -77,9 +77,47 @@ const appliedCoupon = ref<Coupon | null>(props.initialCoupon || null);
 const loading = ref(false);
 const error = ref('');
 
-watch(() => props.initialCoupon, (newVal) => {
-  appliedCoupon.value = newVal;
+onMounted(() => {
+  console.log('Initial coupon data:', props.initialCoupon);
 });
+
+const formatDiscountValue = (coupon: Coupon | null) => {
+  if (!coupon) return '';
+  
+  console.log('Formatting discount for coupon:', coupon);
+  
+  if (coupon.formattedDiscount) return coupon.formattedDiscount;
+  
+  if (coupon.discount) {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0
+    }).format(coupon.discount);
+  }
+  
+  if (coupon.type === 'fixed') {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0
+    }).format(coupon.value);
+  } else if (coupon.type === 'percentage') {
+    return `${coupon.value}%`;
+  }
+  
+  return '';
+};
+
+watch(() => props.initialCoupon, (newVal) => {
+  console.log('Coupon prop changed:', newVal);
+  if (newVal) {
+    appliedCoupon.value = newVal;
+    console.log('Applied coupon updated:', appliedCoupon.value);
+  } else {
+    appliedCoupon.value = null;
+  }
+}, { immediate: true, deep: true });
 
 const applyCoupon = async () => {
   if (!couponCode.value) return;

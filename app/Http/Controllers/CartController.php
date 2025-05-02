@@ -41,7 +41,20 @@ class CartController extends Controller
             if ($couponModel && $couponModel->isValid($subtotal)) {
                 $discount = $couponModel->calculateDiscount($subtotal);
                 $coupon['discount'] = $discount;
+                $coupon['formattedDiscount'] = 'Rp ' . number_format($discount, 0, ',', '.');
+                
+                // Pastikan name selalu ada
+                if (!isset($coupon['name']) || empty($coupon['name'])) {
+                    $coupon['name'] = $coupon['code'];
+                }
+                
                 session(['coupon' => $coupon]);
+                
+                // Log informasi kupon untuk debugging
+                \Log::info('Kupon yang digunakan pada cart:', [
+                    'coupon_data' => $coupon,
+                    'discount_calculated' => $discount
+                ]);
             } else {
                 // Jika kupon sudah tidak valid, hapus dari session
                 session()->forget('coupon');

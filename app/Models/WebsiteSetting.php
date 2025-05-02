@@ -20,6 +20,8 @@ class WebsiteSetting extends Model
         'site_description',
         'homepage_route',
         'contact_email',
+        'contact_phone',
+        'contact_address',
         'copyright_text',
         'copyright_year',
         'logo_path',

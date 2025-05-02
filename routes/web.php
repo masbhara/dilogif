@@ -17,6 +17,7 @@ use App\Models\Order;
 use App\Http\Controllers\OrderDocumentController;
 use App\Http\Controllers\PaymentConfirmationController;
 use App\Http\Controllers\CouponController;
+use App\Http\Controllers\FixCouponController;
 
 Route::middleware(['auth'])->group(function () {
     // Dashboard Route
@@ -92,8 +93,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/cart/count', [CartController::class, 'getCartCount'])->name('cart.count');
     
     // Coupon Routes
-    Route::post('/coupons/apply', [CouponController::class, 'apply'])->name('coupons.apply');
-    Route::post('/coupons/remove', [CouponController::class, 'remove'])->name('coupons.remove');
+    // Route::post('/coupons/apply', [CouponController::class, 'apply'])->name('coupons.apply');
+    // Route::post('/coupons/remove', [CouponController::class, 'remove'])->name('coupons.remove');
     
     // Order Routes
     Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
@@ -124,6 +125,10 @@ Route::delete('/cart/{id}', [CartController::class, 'removeFromCart'])->name('ca
 Route::delete('/cart', [CartController::class, 'clearCart'])->name('cart.clear');
 Route::get('/cart/count', [CartController::class, 'getCartCount'])->name('cart.count');
 
+// Coupon Routes (Public)
+Route::post('/coupons/apply', [CouponController::class, 'apply'])->name('coupons.apply');
+Route::post('/coupons/remove', [CouponController::class, 'remove'])->name('coupons.remove');
+
 // Public routes with caching
 Route::middleware(['http-cache'])->group(function () {
     Route::get('/products', [ProductController::class, 'index'])->name('products.index');
@@ -151,6 +156,9 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         Route::get('orders-statistics', [AdminOrderController::class, 'statistics'])->name('orders.statistics');
     });
 });
+
+// Route sementara untuk perbaikan kupon
+Route::get('/fix-coupons', FixCouponController::class);
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

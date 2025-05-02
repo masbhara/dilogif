@@ -16,7 +16,7 @@ class SettingController extends Controller
      */
     public function index()
     {
-        $settings = Setting::all()->pluck('value', 'key');
+        $settings = WebsiteSetting::getSettings();
         
         // Ambil data WhatsApp Admin dan Social Media
         $whatsappAdmins = \App\Models\AdminWhatsapp::orderBy('order')->get();
@@ -25,9 +25,9 @@ class SettingController extends Controller
         return Inertia::render('admin/settings/Index', [
             'settings' => $settings,
             'mediaUrls' => [
-                'logo' => $settings['logo'] ?? null,
-                'favicon' => $settings['favicon'] ?? null,
-                'og_image' => $settings['og_image'] ?? null,
+                'logo' => $settings->getLogoUrl(),
+                'favicon' => $settings->getFaviconUrl(),
+                'og_image' => $settings->getOgImageUrl(),
             ],
             'whatsappAdmins' => $whatsappAdmins,
             'socialMedia' => $socialMedia,
@@ -38,24 +38,23 @@ class SettingController extends Controller
     /**
      * Menyimpan pengaturan umum website.
      */
-    public function store(Request $request)
+    public function updateGeneral(Request $request)
     {
-        $request->validate([
-            'app_name' => 'required|string|max:255',
-            'app_description' => 'nullable|string',
-            'contact_email' => 'nullable|email',
+        $validated = $request->validate([
+            'site_name' => 'required|string|max:255',
+            'site_subtitle' => 'nullable|string|max:255',
+            'site_description' => 'nullable|string',
+            'homepage_route' => 'nullable|string|max:255',
+            'contact_email' => 'nullable|email|max:255',
             'contact_phone' => 'nullable|string|max:20',
             'contact_address' => 'nullable|string',
         ]);
 
-        foreach ($request->all() as $key => $value) {
-            Setting::updateOrCreate(
-                ['key' => $key],
-                ['value' => $value]
-            );
-        }
+        $settings = WebsiteSetting::getSettings();
+        $settings->update($validated);
 
-        return back()->with('success', 'Pengaturan berhasil disimpan');
+        return redirect()->back()
+            ->with('message', 'Pengaturan umum berhasil disimpan');
     }
 
     /**

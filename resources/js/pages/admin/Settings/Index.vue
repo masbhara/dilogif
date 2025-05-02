@@ -22,6 +22,8 @@ const props = defineProps<{
     site_description: string | null;
     homepage_route: string;
     contact_email: string | null;
+    contact_phone: string | null;
+    contact_address: string | null;
     copyright_text: string | null;
     copyright_year: number | null;
     logo_path: string | null;
@@ -82,6 +84,8 @@ const generalForm = useForm({
   site_description: props.settings.site_description || '',
   homepage_route: props.settings.homepage_route || '/',
   contact_email: props.settings.contact_email || '',
+  contact_phone: props.settings.contact_phone || '',
+  contact_address: props.settings.contact_address || '',
 });
 
 // Form untuk pengaturan footer
@@ -495,111 +499,700 @@ const getPlatformLabel = (platform: string) => {
         </div>
       </header>
 
-      <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <!-- General Settings -->
-        <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
-          <div class="p-6">
-            <h3 class="text-lg font-medium">Pengaturan Umum</h3>
-            <p class="text-sm text-muted-foreground">
-              Konfigurasi dasar aplikasi Anda
-            </p>
+      <Tabs v-model="activeTab" class="w-full">
+        <TabsList class="grid w-full grid-cols-4 lg:w-auto">
+          <TabsTrigger value="general" class="flex items-center gap-2">
+            <Globe class="h-4 w-4" />
+            <span class="hidden md:inline">Umum</span>
+          </TabsTrigger>
+          <TabsTrigger value="branding" class="flex items-center gap-2">
+            <ImageIcon class="h-4 w-4" />
+            <span class="hidden md:inline">Branding</span>
+          </TabsTrigger>
+          <TabsTrigger value="scripts" class="flex items-center gap-2">
+            <FileCode class="h-4 w-4" />
+            <span class="hidden md:inline">Scripts</span>
+          </TabsTrigger>
+          <TabsTrigger value="contact" class="flex items-center gap-2">
+            <Phone class="h-4 w-4" />
+            <span class="hidden md:inline">Kontak</span>
+          </TabsTrigger>
+        </TabsList>
 
-            <div class="mt-6 space-y-4">
-              <div class="space-y-2">
-                <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="app-name">
-                  Nama Aplikasi
-                </label>
-                <input
-                  id="app-name"
-                  v-model="generalForm.site_name"
-                  type="text"
-                  class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  placeholder="Masukkan nama aplikasi"
-                />
-              </div>
+        <!-- Tab Pengaturan Umum -->
+        <TabsContent value="general" class="mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Pengaturan Umum</CardTitle>
+              <CardDescription>
+                Konfigurasi dasar website Anda
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form @submit.prevent="submitGeneral" class="space-y-6">
+                <div class="space-y-4">
+                  <div>
+                    <Label for="site_name">Nama Website</Label>
+                    <Input 
+                      id="site_name" 
+                      v-model="generalForm.site_name" 
+                      type="text" 
+                      class="mt-1" 
+                      placeholder="Masukkan nama website" 
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label for="site_subtitle">Subtitle Website</Label>
+                    <Input 
+                      id="site_subtitle" 
+                      v-model="generalForm.site_subtitle" 
+                      type="text" 
+                      class="mt-1" 
+                      placeholder="Masukkan subtitle/slogan website" 
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label for="site_description">Deskripsi Website</Label>
+                    <Textarea 
+                      id="site_description" 
+                      v-model="generalForm.site_description" 
+                      class="mt-1" 
+                      placeholder="Masukkan deskripsi singkat tentang website Anda" 
+                      rows="3"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label for="homepage_route">Rute Halaman Utama</Label>
+                    <Input 
+                      id="homepage_route" 
+                      v-model="generalForm.homepage_route" 
+                      type="text" 
+                      class="mt-1" 
+                      placeholder="Contoh: /" 
+                    />
+                  </div>
 
-              <div class="space-y-2">
-                <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="app-description">
-                  Deskripsi Aplikasi
-                </label>
-                <textarea
-                  id="app-description"
-                  v-model="generalForm.site_description"
-                  class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  placeholder="Masukkan deskripsi aplikasi"
-                />
+                  <div>
+                    <Label for="contact_email">Email Kontak</Label>
+                    <Input 
+                      id="contact_email" 
+                      v-model="generalForm.contact_email" 
+                      type="email" 
+                      class="mt-1" 
+                      placeholder="Masukkan email kontak" 
+                    />
+                  </div>
+                </div>
+
+                <div class="flex justify-end">
+                  <Button type="submit" :disabled="generalForm.processing">
+                    <span v-if="generalForm.processing" class="mr-2">
+                      <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" />
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                    </span>
+                    Simpan Pengaturan
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+
+          <Card class="mt-6">
+            <CardHeader>
+              <CardTitle>Pengaturan Footer</CardTitle>
+              <CardDescription>
+                Konfigurasi footer website
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form @submit.prevent="submitFooter" class="space-y-6">
+                <div class="space-y-4">
+                  <div>
+                    <Label for="copyright_text">Teks Copyright</Label>
+                    <Input 
+                      id="copyright_text" 
+                      v-model="footerForm.copyright_text" 
+                      type="text" 
+                      class="mt-1" 
+                      placeholder="Masukkan teks copyright" 
+                    />
+                  </div>
+
+                  <div>
+                    <Label for="copyright_year">Tahun Copyright</Label>
+                    <Input 
+                      id="copyright_year" 
+                      v-model="footerForm.copyright_year" 
+                      type="number" 
+                      class="mt-1" 
+                      placeholder="2023" 
+                    />
+                  </div>
+                </div>
+
+                <div class="flex justify-end">
+                  <Button type="submit" :disabled="footerForm.processing">
+                    <span v-if="footerForm.processing" class="mr-2">
+                      <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" />
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                    </span>
+                    Simpan Pengaturan Footer
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <!-- Tab Branding -->
+        <TabsContent value="branding" class="mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Logo dan Favicon</CardTitle>
+              <CardDescription>
+                Upload logo dan favicon untuk website Anda
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Logo -->
+                <div>
+                  <h3 class="text-sm font-medium text-gray-900">Logo Website</h3>
+                  
+                  <div class="mt-3 flex items-center">
+                    <div class="h-24 w-24 overflow-hidden rounded-md border bg-gray-50 flex items-center justify-center">
+                      <img v-if="logoPreview" :src="logoPreview" alt="Logo Preview" class="h-full w-full object-contain" />
+                      <ImageIcon v-else class="h-12 w-12 text-gray-300" />
+                    </div>
+                    
+                    <div class="ml-4">
+                      <label for="logo" class="cursor-pointer rounded-md bg-white font-medium text-blue-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 hover:text-blue-500">
+                        <span>Upload Logo</span>
+                        <input 
+                          id="logo" 
+                          name="logo" 
+                          type="file" 
+                          class="sr-only" 
+                          accept="image/*" 
+                          @change="(e) => handleFileChange(e, 'logo')"
+                        />
+                      </label>
+                      <p class="mt-1 text-xs text-gray-500">PNG, JPG, GIF up to 2MB</p>
+                      
+                      <Button 
+                        v-if="logoForm.logo" 
+                        type="button"
+                        size="sm"
+                        @click="uploadLogo"
+                        :disabled="logoForm.processing"
+                        class="mt-2"
+                      >
+                        <Upload v-if="!logoForm.processing" class="mr-2 h-4 w-4" />
+                        <svg v-else class="mr-2 h-4 w-4 animate-spin" viewBox="0 0 24 24">
+                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" />
+                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        </svg>
+                        Simpan Logo
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Favicon -->
+                <div>
+                  <h3 class="text-sm font-medium text-gray-900">Favicon</h3>
+                  
+                  <div class="mt-3 flex items-center">
+                    <div class="h-12 w-12 overflow-hidden rounded-md border bg-gray-50 flex items-center justify-center">
+                      <img v-if="faviconPreview" :src="faviconPreview" alt="Favicon Preview" class="h-full w-full object-contain" />
+                      <ImageIcon v-else class="h-6 w-6 text-gray-300" />
+                    </div>
+                    
+                    <div class="ml-4">
+                      <label for="favicon" class="cursor-pointer rounded-md bg-white font-medium text-blue-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 hover:text-blue-500">
+                        <span>Upload Favicon</span>
+                        <input 
+                          id="favicon" 
+                          name="favicon" 
+                          type="file" 
+                          class="sr-only" 
+                          accept="image/x-icon,image/png" 
+                          @change="(e) => handleFileChange(e, 'favicon')"
+                        />
+                      </label>
+                      <p class="mt-1 text-xs text-gray-500">ICO, PNG up to 1MB</p>
+                      
+                      <Button 
+                        v-if="faviconForm.favicon" 
+                        type="button"
+                        size="sm"
+                        @click="uploadFavicon"
+                        :disabled="faviconForm.processing"
+                        class="mt-2"
+                      >
+                        <Upload v-if="!faviconForm.processing" class="mr-2 h-4 w-4" />
+                        <svg v-else class="mr-2 h-4 w-4 animate-spin" viewBox="0 0 24 24">
+                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" />
+                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        </svg>
+                        Simpan Favicon
+                      </Button>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
+            </CardContent>
+          </Card>
+
+          <Card class="mt-6">
+            <CardHeader>
+              <CardTitle>Gambar OG (Open Graph)</CardTitle>
+              <CardDescription>
+                Gambar default yang ditampilkan saat link website dibagikan
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div>
+                <div class="mt-3 flex items-center">
+                  <div class="h-32 w-64 overflow-hidden rounded-md border bg-gray-50 flex items-center justify-center">
+                    <img v-if="ogImagePreview" :src="ogImagePreview" alt="OG Image Preview" class="h-full w-full object-contain" />
+                    <ImageIcon v-else class="h-12 w-12 text-gray-300" />
+                  </div>
+                  
+                  <div class="ml-4">
+                    <label for="og_image" class="cursor-pointer rounded-md bg-white font-medium text-blue-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 hover:text-blue-500">
+                      <span>Upload Gambar OG</span>
+                      <input 
+                        id="og_image" 
+                        name="og_image" 
+                        type="file" 
+                        class="sr-only" 
+                        accept="image/*" 
+                        @change="(e) => handleFileChange(e, 'og_image')"
+                      />
+                    </label>
+                    <p class="mt-1 text-xs text-gray-500">PNG, JPG up to 2MB</p>
+                    
+                    <Button 
+                      v-if="ogImageForm.og_image" 
+                      type="button"
+                      size="sm"
+                      @click="uploadOgImage"
+                      :disabled="ogImageForm.processing"
+                      class="mt-2"
+                    >
+                      <Upload v-if="!ogImageForm.processing" class="mr-2 h-4 w-4" />
+                      <svg v-else class="mr-2 h-4 w-4 animate-spin" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" />
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      Simpan Gambar OG
+                    </Button>
+                  </div>
+                </div>
+                <p class="mt-4 text-sm text-gray-500">
+                  Gambar ini akan muncul saat URL website Anda dibagikan di media sosial. Ukuran ideal adalah 1200×630 piksel.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <!-- Tab Scripts -->
+        <TabsContent value="scripts" class="mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Skrip Kustom</CardTitle>
+              <CardDescription>
+                Tambahkan skrip kustom ke website Anda
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form @submit.prevent="submitScripts" class="space-y-6">
+                <div class="space-y-4">
+                  <div>
+                    <Label for="header_scripts">Skrip Header</Label>
+                    <Textarea 
+                      id="header_scripts" 
+                      v-model="scriptsForm.header_scripts" 
+                      class="mt-1 font-mono text-sm" 
+                      placeholder="<!-- Masukkan skrip untuk header -->" 
+                      rows="5"
+                    />
+                    <p class="mt-1 text-xs text-gray-500">
+                      Kode akan ditempatkan di akhir tag &lt;head&gt;
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <Label for="meta_pixel_script">Facebook Pixel</Label>
+                    <Textarea 
+                      id="meta_pixel_script" 
+                      v-model="scriptsForm.meta_pixel_script" 
+                      class="mt-1 font-mono text-sm" 
+                      placeholder="<!-- Masukkan kode Meta Pixel -->" 
+                      rows="3"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label for="tiktok_pixel_script">TikTok Pixel</Label>
+                    <Textarea 
+                      id="tiktok_pixel_script" 
+                      v-model="scriptsForm.tiktok_pixel_script" 
+                      class="mt-1 font-mono text-sm" 
+                      placeholder="<!-- Masukkan kode TikTok Pixel -->" 
+                      rows="3"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label for="google_tag_script">Google Tag Manager</Label>
+                    <Textarea 
+                      id="google_tag_script" 
+                      v-model="scriptsForm.google_tag_script" 
+                      class="mt-1 font-mono text-sm" 
+                      placeholder="<!-- Masukkan kode Google Tag Manager -->" 
+                      rows="3"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label for="footer_scripts">Skrip Footer</Label>
+                    <Textarea 
+                      id="footer_scripts" 
+                      v-model="scriptsForm.footer_scripts" 
+                      class="mt-1 font-mono text-sm" 
+                      placeholder="<!-- Masukkan skrip untuk footer -->" 
+                      rows="5"
+                    />
+                    <p class="mt-1 text-xs text-gray-500">
+                      Kode akan ditempatkan sebelum tag &lt;/body&gt;
+                    </p>
+                  </div>
+                </div>
+                
+                <div class="flex justify-end">
+                  <Button type="submit" :disabled="scriptsForm.processing">
+                    <span v-if="scriptsForm.processing" class="mr-2">
+                      <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" />
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                    </span>
+                    Simpan Skrip
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <!-- Tab Kontak -->
+        <TabsContent value="contact" class="mt-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Pengaturan Email -->
+            <Card>
+              <CardHeader>
+                <CardTitle>Pengaturan Email</CardTitle>
+                <CardDescription>
+                  Konfigurasi email untuk notifikasi dan komunikasi
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p class="text-sm text-gray-600 mb-4">
+                  Kelola pengaturan SMTP, template email, dan pengaturan lainnya terkait email.
+                </p>
+                <Button type="button" @click="navigateToEmailSettings">
+                  <MailIcon class="mr-2 h-4 w-4" />
+                  Buka Pengaturan Email
+                </Button>
+              </CardContent>
+            </Card>
+
+            <!-- WhatsApp Admin -->
+            <Card>
+              <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle>WhatsApp Admin</CardTitle>
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  @click="showWhatsappDialog = true"
+                  class="h-8 w-8"
+                >
+                  <Plus class="h-4 w-4" />
+                  <span class="sr-only">Tambah WhatsApp</span>
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <div class="space-y-4">
+                  <div v-if="whatsappAdmins.length === 0" class="text-center py-4">
+                    <p class="text-sm text-gray-500">Belum ada kontak WhatsApp Admin</p>
+                  </div>
+                  <div v-else class="space-y-3">
+                    <div v-for="whatsapp in whatsappAdmins" :key="whatsapp.id" class="flex items-center justify-between border-b pb-3 last:border-0 last:pb-0">
+                      <div>
+                        <div class="font-medium">{{ whatsapp.name }}</div>
+                        <div class="text-sm text-gray-500">{{ whatsapp.phone_number }}</div>
+                        <div v-if="whatsapp.description" class="text-xs text-gray-400 mt-1">{{ whatsapp.description }}</div>
+                      </div>
+                      <div class="flex items-center space-x-2">
+                        <button 
+                          type="button"
+                          class="text-sm text-gray-500 hover:text-indigo-600 focus:outline-none transition-colors"
+                          @click="toggleWhatsappStatus(whatsapp)"
+                        >
+                          <Check v-if="whatsapp.is_active" class="h-5 w-5 text-green-500" />
+                          <span v-else class="h-5 w-5 flex items-center justify-center text-gray-300 rounded-full border border-gray-300">-</span>
+                        </button>
+                        
+                        <button 
+                          type="button" 
+                          class="text-sm text-gray-500 hover:text-red-600 focus:outline-none transition-colors"
+                          @click="deleteWhatsappAdmin(whatsapp.id)"
+                        >
+                          <Trash2 class="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <!-- Social Media -->
+            <Card class="md:col-span-2">
+              <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle>Media Sosial</CardTitle>
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  @click="showSocialDialog = true"
+                  class="h-8 w-8"
+                >
+                  <Plus class="h-4 w-4" />
+                  <span class="sr-only">Tambah Media Sosial</span>
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <div class="space-y-4">
+                  <div v-if="socialMedia.length === 0" class="text-center py-4">
+                    <p class="text-sm text-gray-500">Belum ada media sosial</p>
+                  </div>
+                  <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div v-for="social in socialMedia" :key="social.id" class="flex items-center justify-between border rounded-lg p-3">
+                      <div class="flex items-center space-x-3">
+                        <div class="bg-gray-100 rounded-full p-2">
+                          <component :is="getSocialIcon(social.platform)" class="h-5 w-5 text-gray-600" />
+                        </div>
+                        <div>
+                          <div class="font-medium capitalize">{{ social.platform }}</div>
+                          <div class="text-sm text-gray-500">@{{ social.username }}</div>
+                        </div>
+                      </div>
+                      <div class="flex items-center space-x-2">
+                        <button 
+                          type="button"
+                          class="text-sm text-gray-500 hover:text-indigo-600 focus:outline-none transition-colors"
+                          @click="toggleSocialMediaStatus(social)"
+                        >
+                          <Check v-if="social.is_active" class="h-5 w-5 text-green-500" />
+                          <span v-else class="h-5 w-5 flex items-center justify-center text-gray-300 rounded-full border border-gray-300">-</span>
+                        </button>
+                        
+                        <button 
+                          type="button" 
+                          class="text-sm text-gray-500 hover:text-red-600 focus:outline-none transition-colors"
+                          @click="deleteSocialMedia(social.id)"
+                        >
+                          <Trash2 class="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
-          <div class="flex items-center justify-end space-x-4 border-t p-4">
-            <button
-              :disabled="generalForm.processing"
-              class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
-              @click="submitGeneral"
-            >
-              <span v-if="generalForm.processing" class="mr-2">
-                <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" />
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                </svg>
-              </span>
-              Simpan Pengaturan
-            </button>
-          </div>
-        </div>
-
-        <!-- Contact Settings -->
-        <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
-          <div class="p-6">
-            <h3 class="text-lg font-medium">Pengaturan Kontak</h3>
-            <p class="text-sm text-muted-foreground">
-              Informasi kontak untuk aplikasi Anda
-            </p>
-
-            <div class="mt-6 space-y-4">
-              <div class="space-y-2">
-                <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="email">
-                  Email
-                </label>
-                <input
-                  id="email"
-                  v-model="generalForm.contact_email"
-                  type="email"
-                  class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  placeholder="Masukkan email kontak"
-                />
-              </div>
-
-              <div class="space-y-2">
-                <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="phone">
-                  Nomor Telepon
-                </label>
-                <input
-                  id="phone"
-                  v-model="generalForm.contact_phone"
-                  type="tel"
-                  class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  placeholder="Masukkan nomor telepon"
-                />
-              </div>
-
-              <div class="space-y-2">
-                <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="address">
-                  Alamat
-                </label>
-                <textarea
-                  id="address"
-                  v-model="generalForm.contact_address"
-                  class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  placeholder="Masukkan alamat"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+        </TabsContent>
+      </Tabs>
     </div>
   </AppLayout>
+
+  <!-- Dialog untuk WhatsApp Admin -->
+  <Dialog :open="showWhatsappDialog" @update:open="showWhatsappDialog = $event">
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Tambah WhatsApp Admin</DialogTitle>
+        <DialogDescription>
+          Tambahkan kontak WhatsApp untuk admin atau customer service.
+        </DialogDescription>
+      </DialogHeader>
+      
+      <form @submit.prevent="createWhatsappAdmin" class="space-y-4">
+        <div>
+          <Label for="whatsapp_name">Nama</Label>
+          <Input 
+            id="whatsapp_name" 
+            v-model="whatsappForm.name" 
+            type="text" 
+            class="mt-1" 
+            placeholder="Admin Support" 
+            required
+          />
+        </div>
+        
+        <div>
+          <Label for="whatsapp_phone">Nomor WhatsApp</Label>
+          <Input 
+            id="whatsapp_phone" 
+            v-model="whatsappForm.phone_number" 
+            type="text" 
+            class="mt-1" 
+            placeholder="6281234567890" 
+            required
+          />
+          <p class="mt-1 text-xs text-gray-500">
+            Format: kode negara + nomor telepon (tanpa spasi & tanda)
+          </p>
+        </div>
+        
+        <div>
+          <Label for="whatsapp_description">Deskripsi (Opsional)</Label>
+          <Input 
+            id="whatsapp_description" 
+            v-model="whatsappForm.description" 
+            type="text" 
+            class="mt-1" 
+            placeholder="Customer Service" 
+          />
+        </div>
+        
+        <DialogFooter>
+          <Button type="button" variant="outline" @click="showWhatsappDialog = false">
+            Batal
+          </Button>
+          <Button type="submit" :disabled="whatsappForm.processing">
+            <span v-if="whatsappForm.processing" class="mr-2">
+              <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" />
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+            </span>
+            Tambahkan
+          </Button>
+        </DialogFooter>
+      </form>
+    </DialogContent>
+  </Dialog>
+
+  <!-- Dialog untuk Social Media -->
+  <Dialog :open="showSocialDialog" @update:open="showSocialDialog = $event">
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Tambah Media Sosial</DialogTitle>
+        <DialogDescription>
+          Tambahkan profil media sosial perusahaan Anda.
+        </DialogDescription>
+      </DialogHeader>
+      
+      <form @submit.prevent="createSocialMedia" class="space-y-4">
+        <div>
+          <Label for="social_platform">Platform</Label>
+          <div class="relative mt-1">
+            <div 
+              class="custom-select-container" 
+              ref="platformSelectRef"
+            >
+              <div 
+                @click="togglePlatformSelect" 
+                class="custom-select-trigger flex w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer h-10"
+              >
+                <span>
+                  <span v-if="socialMediaForm.platform" class="flex items-center">
+                    <component 
+                      :is="getPlatformIcon(socialMediaForm.platform)" 
+                      class="mr-2 h-4 w-4" 
+                    />
+                    {{ getPlatformLabel(socialMediaForm.platform) }}
+                  </span>
+                  <span v-else>Pilih Platform</span>
+                </span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-50 transition-transform" :class="{ 'rotate-180': isPlatformSelectOpen }">
+                  <path d="m6 9 6 6 6-6"></path>
+                </svg>
+              </div>
+              
+              <div 
+                v-if="isPlatformSelectOpen" 
+                class="custom-select-dropdown bg-background border border-input rounded-md shadow-lg mt-1 overflow-hidden z-50"
+              >
+                <div 
+                  v-for="platform in availablePlatforms" 
+                  :key="platform.value"
+                  @click="selectPlatform(platform.value)"
+                  class="custom-select-option py-2 px-3 hover:bg-secondary cursor-pointer text-sm flex items-center"
+                  :class="{ 'bg-secondary font-medium': socialMediaForm.platform === platform.value }"
+                >
+                  <component 
+                    :is="platform.icon || Share2" 
+                    class="mr-2 h-4 w-4" 
+                  />
+                  {{ platform.label }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div>
+          <Label for="social_username">Username</Label>
+          <Input 
+            id="social_username" 
+            v-model="socialMediaForm.username" 
+            type="text" 
+            class="mt-1" 
+            placeholder="username" 
+            required
+          />
+        </div>
+        
+        <div>
+          <Label for="social_url">URL</Label>
+          <Input 
+            id="social_url" 
+            v-model="socialMediaForm.url" 
+            type="url" 
+            class="mt-1" 
+            placeholder="https://example.com/username" 
+            required
+          />
+        </div>
+        
+        <DialogFooter>
+          <Button type="button" variant="outline" @click="showSocialDialog = false">
+            Batal
+          </Button>
+          <Button type="submit" :disabled="socialMediaForm.processing || !socialMediaForm.platform">
+            <span v-if="socialMediaForm.processing" class="mr-2">
+              <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" />
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+            </span>
+            Tambahkan
+          </Button>
+        </DialogFooter>
+      </form>
+    </DialogContent>
+  </Dialog>
 </template>
 
 <style>

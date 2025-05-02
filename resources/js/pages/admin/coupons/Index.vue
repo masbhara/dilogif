@@ -45,25 +45,33 @@
               </span>
               <span v-else class="text-xs text-muted-foreground">Tidak dibatasi</span>
             </TableCell>
-            <TableCell class="text-right">
-              <Button variant="ghost" size="icon" @click="toggleActive(coupon)" class="mr-1">
-                <PowerIcon v-if="coupon.is_active" class="h-4 w-4 text-green-500" />
-                <PowerOffIcon v-else class="h-4 w-4 text-red-500" />
-              </Button>
-              <Link 
-                :href="route('admin.coupons.edit', coupon.id)" 
-                class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 w-8 p-0 mr-1"
-              >
-                <PencilIcon class="h-4 w-4" />
-              </Link>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                class="hover:bg-red-50 hover:text-red-500"
-                @click="confirmDelete(coupon)"
-              >
-                <TrashIcon class="h-4 w-4" />
-              </Button>
+            <TableCell class="text-center">
+              <div class="flex items-center justify-center">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <MoreHorizontalIcon class="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem @click="toggleActive(coupon)">
+                      <PowerIcon v-if="coupon.is_active" class="h-4 w-4 mr-2 text-green-500" />
+                      <PowerOffIcon v-else class="h-4 w-4 mr-2 text-red-500" />
+                      {{ coupon.is_active ? 'Nonaktifkan' : 'Aktifkan' }}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Link :href="route('admin.coupons.edit', coupon.id)" class="flex w-full items-center">
+                        <PencilIcon class="h-4 w-4 mr-2" />
+                        Edit
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem @click="confirmDelete(coupon)">
+                      <TrashIcon class="h-4 w-4 mr-2 text-red-500" />
+                      <span class="text-red-500">Hapus</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             </TableCell>
           </TableRow>
         </AdminTable>
@@ -115,11 +123,14 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { 
   Dialog, DialogContent, DialogDescription, 
-  DialogFooter, DialogHeader, DialogTitle 
+  DialogFooter, DialogHeader, DialogTitle
 } from '@/components/ui/dialog';
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
 import { 
   PlusIcon, PencilIcon, TrashIcon, 
-  Loader2Icon, PowerIcon, PowerOffIcon 
+  Loader2Icon, PowerIcon, PowerOffIcon, MoreHorizontalIcon
 } from 'lucide-vue-next';
 import { toast } from '@/lib/toast';
 
@@ -150,8 +161,8 @@ interface Props {
 const props = defineProps<Props>();
 
 const breadcrumbs = [
-  { label: 'Dashboard', href: route('admin.dashboard') },
-  { label: 'Manajemen Kupon', href: route('admin.coupons.index') },
+  { title: 'Dashboard', href: route('admin.dashboard') },
+  { title: 'Manajemen Kupon', href: route('admin.coupons.index') },
 ];
 
 // Definisi kolom tabel
