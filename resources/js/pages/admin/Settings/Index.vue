@@ -294,21 +294,28 @@ const navigateToEmailSettings = () => {
   router.visit(route('admin.email.index'));
 };
 
+// Sinkronisasi data lokal dengan props jika berubah
+watch(() => props.whatsappAdmins, (val) => {
+  whatsappAdmins.value = val || [];
+});
+watch(() => props.socialMedia, (val) => {
+  socialMedia.value = val || [];
+});
+
 // WhatsApp Admin - Create New
 const createWhatsappAdmin = () => {
   whatsappForm.post(route('admin.settings.whatsapp.store'), {
     headers: {
       'X-Inertia': 'true'
     },
-    onSuccess: () => {
+    onSuccess: (page) => {
       toast.success('Berhasil', {
         description: 'Nomor WhatsApp Admin berhasil ditambahkan',
       });
-      
-      // Refresh data
-      router.reload({ only: ['whatsappAdmins'] });
-      
-      // Reset form & close dialog
+      // Update array lokal dari response jika ada
+      if (page?.props?.whatsappAdmins) {
+        whatsappAdmins.value = page.props.whatsappAdmins;
+      }
       whatsappForm.reset();
       showWhatsappDialog.value = false;
     },
@@ -372,15 +379,13 @@ const createSocialMedia = () => {
     headers: {
       'X-Inertia': 'true'
     },
-    onSuccess: () => {
+    onSuccess: (page) => {
       toast.success('Berhasil', {
         description: 'Media sosial berhasil ditambahkan',
       });
-      
-      // Refresh data
-      router.reload({ only: ['socialMedia'] });
-      
-      // Reset form & close dialog
+      if (page?.props?.socialMedia) {
+        socialMedia.value = page.props.socialMedia;
+      }
       socialMediaForm.reset();
       showSocialDialog.value = false;
     },
