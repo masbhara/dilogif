@@ -504,7 +504,7 @@ const getPlatformLabel = (platform: string) => {
         </div>
       </header>
 
-      <Tabs v-model="activeTab" class="w-full">
+      <Tabs v-model="activeTab" :default-value="'general'" class="w-full">
         <TabsList class="grid w-full grid-cols-4 lg:w-auto">
           <TabsTrigger value="general" class="flex items-center gap-2">
             <Globe class="h-4 w-4" />
