@@ -94,6 +94,7 @@
 
 <script setup>
 import { ref, reactive } from 'vue'
+import { router } from '@inertiajs/vue3'
 
 const isOpen = ref(false)
 const form = reactive({
@@ -101,24 +102,56 @@ const form = reactive({
   message: ''
 })
 
-const adminNumber = '+6281234567890' // Ganti dengan nomor WhatsApp Admin
-
-function submitForm() {
-  // Format pesan untuk WhatsApp
-  const formattedMessage = encodeURIComponent(
-    `*Pesan dari Website*\n\nNama: ${form.name}\nPesan: ${form.message}`
-  )
-  
-  // Buat URL WhatsApp
-  const whatsappUrl = `https://wa.me/${adminNumber.replace(/\+/g, '')}?text=${formattedMessage}`
-  
-  // Buka WhatsApp di tab baru
-  window.open(whatsappUrl, '_blank')
-  
-  // Reset form dan tutup modal
-  form.name = ''
-  form.message = ''
-  isOpen.value = false
+async function submitForm() {
+  try {
+    console.log('Mengirim request ke API WhatsApp...')
+    // Dapatkan nomor WhatsApp berikutnya dalam rotasi
+    const response = await fetch(route('api.whatsapp.next'))
+    console.log('Response status:', response.status)
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+    
+    const data = await response.json()
+    console.log('WhatsApp API Response:', data)
+    
+    if (!data.success) {
+      console.error('API Error:', data.message)
+      throw new Error(data.message || 'Gagal mendapatkan nomor WhatsApp')
+    }
+    
+    if (!data.phone_number) {
+      console.error('Phone number missing in response:', data)
+      throw new Error('Nomor WhatsApp tidak tersedia')
+    }
+    
+    const whatsappNumber = data.phone_number
+    console.log('WhatsApp number:', whatsappNumber)
+    
+    // Format pesan untuk WhatsApp
+    const formattedMessage = encodeURIComponent(
+      `*Pesan dari Website*\n\nNama: ${form.name}\nPesan: ${form.message}`
+    )
+    
+    // Buat URL WhatsApp
+    const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/\+/g, '')}?text=${formattedMessage}`
+    console.log('WhatsApp URL:', whatsappUrl)
+    
+    // Buka WhatsApp di tab baru
+    window.open(whatsappUrl, '_blank')
+    
+    // Reset form dan tutup modal
+    form.name = ''
+    form.message = ''
+    isOpen.value = false
+  } catch (error) {
+    console.error('Error detail:', {
+      message: error.message,
+      stack: error.stack
+    })
+    alert('Terjadi kesalahan saat mengirim pesan. Silakan coba lagi.')
+  }
 }
 </script>
 

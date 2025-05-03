@@ -24,7 +24,7 @@
           </div>
           <p class="text-gray-600 mb-8">Silakan simpan nomor pesanan ini sebagai referensi. Anda juga dapat melacak status pesanan Anda menggunakan tombol di bawah.</p>
           <div class="flex flex-col sm:flex-row justify-center gap-4">
-            <Link :href="route('orders.track', { order: order.id })" class="inline-flex items-center justify-center">
+            <Link :href="route('orders.track', { order: order.order_number })" class="inline-flex items-center justify-center">
               <Button colorScheme="primary" class="px-6">
                 <SearchIcon class="h-4 w-4 mr-2" />
                 Lacak Pesanan

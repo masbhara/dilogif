@@ -98,7 +98,7 @@
             
             <!-- Actions -->
             <TableCell class="py-3.5 px-6 align-middle text-center">
-              <Link :href="route('orders.track', { order_number: order.order_number, customer_phone: order.customer_phone })">
+              <Link :href="route('orders.track', { order: order.order_number })">
                 <Button size="sm" variant="ghost" class="h-8 px-2">
                   <EyeIcon class="h-4 w-4" />
                   <span class="sr-only">Lihat Detail</span>

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('description')->nullable()->comment('Deskripsi opsional');
             $table->boolean('is_active')->default(true)->comment('Status aktif/nonaktif');
             $table->integer('order')->default(0)->comment('Urutan tampilan');
+            $table->timestamp('last_used_at')->nullable()->comment('Waktu terakhir digunakan dalam rotasi');
             $table->timestamps();
         });
     }
