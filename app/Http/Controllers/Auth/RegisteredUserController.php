@@ -37,7 +37,65 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
+            'email' => [
+                'required',
+                'string',
+                'lowercase',
+                'email',
+                'max:255',
+                'unique:'.User::class,
+                function ($attribute, $value, $fail) {
+                    // Daftar domain yang diblokir (contoh: domain disposable email)
+                    $blockedDomains = [
+                        'tempmail.com',
+                        'throwawaymail.com',
+                        'mailinator.com',
+                        'guerrillamail.com',
+                        '10minutemail.com',
+                        'yopmail.com',
+                        'temp-mail.org',
+                        'fakeinbox.com',
+                        'tempmail.net',
+                        'dispostable.com',
+                    ];
+                    
+                    // Daftar domain yang diperbolehkan (opsional, bisa dikosongkan untuk mengizinkan semua domain)
+                    $allowedDomains = [
+                        // Contoh domain yang diperbolehkan
+                        // 'gmail.com',
+                        // 'yahoo.com',
+                        // 'hotmail.com',
+                        // 'outlook.com',
+                    ];
+                    
+                    $domain = substr(strrchr($value, "@"), 1);
+                    
+                    // Cek domain yang diblokir
+                    if (in_array($domain, $blockedDomains)) {
+                        $fail('Domain email ini tidak diperbolehkan untuk pendaftaran.');
+                        return;
+                    }
+                    
+                    // Jika ada daftar domain yang diperbolehkan, cek apakah domain ada dalam daftar
+                    if (!empty($allowedDomains) && !in_array($domain, $allowedDomains)) {
+                        $fail('Domain email tidak diperbolehkan untuk pendaftaran.');
+                        return;
+                    }
+                    
+                    // Validasi MX record hanya jika domain tidak dalam daftar yang diperbolehkan
+                    if (empty($allowedDomains)) {
+                        try {
+                            if (!checkdnsrr($domain, 'MX') && !checkdnsrr($domain, 'A')) {
+                                $fail('Domain email tidak valid atau tidak memiliki server email.');
+                            }
+                        } catch (\Exception $e) {
+                            // Jika terjadi error saat pengecekan DNS, kita abaikan
+                            // Ini untuk menghindari masalah jika server DNS tidak merespons
+                            \Log::warning('Gagal memeriksa DNS record untuk domain: ' . $domain);
+                        }
+                    }
+                },
+            ],
             'whatsapp' => 'nullable|string|max:20|regex:/^\+?[0-9\s\-\(\)]+$/',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
