@@ -27,7 +27,7 @@ const { isMobile, state } = useSidebar();
                     </SidebarMenuButton>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent 
-                    class="min-w-56 w-full rounded-lg"
+                    class="min-w-56"
                     :side="isMobile ? 'bottom' : state === 'collapsed' ? 'left' : 'bottom'"
                     align="end" 
                     :side-offset="4"

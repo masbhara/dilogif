@@ -114,7 +114,7 @@
               </template>
 
               <template #content>
-                <div class="bg-background rounded-lg shadow-lg ring-1 ring-border ring-opacity-5 py-1">
+                <div>
                   <DropdownLink :href="route('dashboard')" class="block px-4 py-2 text-sm text-foreground hover:bg-muted hover:text-primary">
                     Dashboard
                   </DropdownLink>
