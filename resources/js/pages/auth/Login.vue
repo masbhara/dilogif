@@ -42,8 +42,17 @@ const form = useForm({
 });
 
 const submit = () => {
+    console.log('Form submitted:', form);
+    console.log('CSRF Token:', document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'));
+    
     form.post(route('login'), {
         onFinish: () => form.reset('password'),
+        onError: (errors) => {
+            console.error('Login error:', errors);
+        },
+        onSuccess: () => {
+            console.log('Login successful');
+        }
     });
 };
 </script>

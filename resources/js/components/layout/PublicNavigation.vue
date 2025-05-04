@@ -129,14 +129,15 @@
             </Dropdown>
           </div>
           <div v-else class="flex items-center space-x-4">
-            <Button
-              :href="route('login')"
-              variant="default"
-              size="sm"
-              class="font-medium"
-            >
-              Masuk
-            </Button>
+            <Link :href="route('login')">
+              <Button
+                variant="default"
+                size="sm"
+                class="font-medium"
+              >
+                Masuk
+              </Button>
+            </Link>
           </div>
         </div>
 

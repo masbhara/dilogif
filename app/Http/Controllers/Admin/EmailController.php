@@ -40,6 +40,7 @@ class EmailController extends Controller
             'mail_from_name' => 'required|string|max:255',
             'enable_verification' => 'boolean',
             'verification_template' => 'required_if:enable_verification,true|nullable|string',
+            'reset_password_template' => 'nullable|string',
         ]);
 
         // Perbarui atau buat pengaturan email

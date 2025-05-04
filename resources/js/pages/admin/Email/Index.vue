@@ -25,6 +25,7 @@ const props = defineProps<{
     mail_from_name: string | null;
     enable_verification: boolean;
     verification_template: string | null;
+    reset_password_template: string | null;
   }
 }>();
 
@@ -76,6 +77,41 @@ const form = useForm({
                 <a href="{verification_url}" class="button">Verifikasi Email</a>
             </div>
             <p>Jika Anda tidak membuat akun, abaikan email ini.</p>
+            <p>Salam,<br>Tim Kami</p>
+        </div>
+        <div class="footer">
+            <p>Email ini dikirim secara otomatis, mohon tidak membalas email ini.</p>
+        </div>
+    </div>
+</body>
+</html>`,
+  reset_password_template: props.emailSettings?.reset_password_template || `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Reset Password</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .header { background-color: #4f46e5; color: white; padding: 20px; text-align: center; }
+        .content { padding: 20px; }
+        .button { display: inline-block; background-color: #4f46e5; color: white; text-decoration: none; padding: 10px 20px; border-radius: 4px; margin-top: 20px; }
+        .footer { background-color: #f9fafb; padding: 15px; text-align: center; font-size: 12px; color: #6b7280; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Reset Password</h1>
+        </div>
+        <div class="content">
+            <p>Hai {name},</p>
+            <p>Kami menerima permintaan untuk mereset password akun Anda. Silakan klik tombol di bawah ini untuk membuat password baru.</p>
+            <div style="text-align: center;">
+                <a href="{reset_url}" class="button">Reset Password</a>
+            </div>
+            <p>Link reset password ini akan kadaluarsa dalam 60 menit.</p>
+            <p>Jika Anda tidak meminta reset password, abaikan email ini.</p>
             <p>Salam,<br>Tim Kami</p>
         </div>
         <div class="footer">
@@ -352,17 +388,35 @@ const sendTestEmail = () => {
             
             <!-- Template Email -->
             <div class="mt-4" v-if="form.enable_verification">
-              <Label for="verification_template">Template Email Verifikasi (HTML)</Label>
-              <textarea 
-                v-model="form.verification_template" 
-                id="verification_template" 
-                rows="10" 
-                class="flex min-h-[80px] w-full rounded-md border border-slate-200 dark:border-slate-700 bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none mt-1.5 font-mono text-sm"
-                placeholder="Template HTML dengan variabel: {name}, {verification_url}"
-              ></textarea>
-              <p class="text-xs text-muted-foreground mt-1">
-                Gunakan variabel: {name} untuk nama pengguna, {verification_url} untuk tautan verifikasi
-              </p>
+              <div class="space-y-6">
+                <div>
+                  <Label for="verification_template">Template Email Verifikasi (HTML)</Label>
+                  <textarea 
+                    v-model="form.verification_template" 
+                    id="verification_template" 
+                    rows="10" 
+                    class="flex min-h-[80px] w-full rounded-md border border-slate-200 dark:border-slate-700 bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none mt-1.5 font-mono text-sm"
+                    placeholder="Template HTML dengan variabel: {name}, {verification_url}"
+                  ></textarea>
+                  <p class="text-xs text-muted-foreground mt-1">
+                    Gunakan variabel: {name} untuk nama pengguna, {verification_url} untuk tautan verifikasi
+                  </p>
+                </div>
+
+                <div>
+                  <Label for="reset_password_template">Template Email Reset Password (HTML)</Label>
+                  <textarea 
+                    v-model="form.reset_password_template" 
+                    id="reset_password_template" 
+                    rows="10" 
+                    class="flex min-h-[80px] w-full rounded-md border border-slate-200 dark:border-slate-700 bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none mt-1.5 font-mono text-sm"
+                    placeholder="Template HTML dengan variabel: {name}, {reset_url}"
+                  ></textarea>
+                  <p class="text-xs text-muted-foreground mt-1">
+                    Gunakan variabel: {name} untuk nama pengguna, {reset_url} untuk tautan reset password
+                  </p>
+                </div>
+              </div>
             </div>
             
             <div class="flex gap-4 mt-8">

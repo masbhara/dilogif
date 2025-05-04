@@ -20,6 +20,7 @@ class EmailSetting extends Model
         'mail_from_name',
         'enable_verification',
         'verification_template',
+        'reset_password_template',
     ];
 
     protected $casts = [

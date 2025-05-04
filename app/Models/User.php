@@ -72,4 +72,16 @@ class User extends Authenticatable implements MustVerifyEmailContract
             'email' => $this->email
         ]);
     }
+
+    /**
+     * Override metode sendPasswordResetNotification untuk mencegah Laravel mengirim email reset password bawaan
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        // Tidak melakukan apa-apa untuk mencegah pengiriman email reset password bawaan Laravel
+        \Illuminate\Support\Facades\Log::info('Mencegah pengiriman email reset password bawaan Laravel', [
+            'user_id' => $this->id,
+            'email' => $this->email
+        ]);
+    }
 }

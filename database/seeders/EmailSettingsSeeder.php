@@ -58,6 +58,41 @@ class EmailSettingsSeeder extends Seeder
     </div>
 </body>
 </html>',
+            'reset_password_template' => '<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Reset Password</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .header { background-color: #4f46e5; color: white; padding: 20px; text-align: center; }
+        .content { padding: 20px; }
+        .button { display: inline-block; background-color: #4f46e5; color: white; text-decoration: none; padding: 10px 20px; border-radius: 4px; margin-top: 20px; }
+        .footer { background-color: #f9fafb; padding: 15px; text-align: center; font-size: 12px; color: #6b7280; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Reset Password</h1>
+        </div>
+        <div class="content">
+            <p>Hai {name},</p>
+            <p>Kami menerima permintaan untuk mereset password akun Anda. Silakan klik tombol di bawah ini untuk membuat password baru.</p>
+            <div style="text-align: center;">
+                <a href="{reset_url}" class="button">Reset Password</a>
+            </div>
+            <p>Link reset password ini akan kadaluarsa dalam 60 menit.</p>
+            <p>Jika Anda tidak meminta reset password, abaikan email ini.</p>
+            <p>Salam,<br>Tim Kami</p>
+        </div>
+        <div class="footer">
+            <p>Email ini dikirim secara otomatis, mohon tidak membalas email ini.</p>
+        </div>
+    </div>
+</body>
+</html>',
         ]);
     }
 } 
