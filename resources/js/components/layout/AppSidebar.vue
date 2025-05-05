@@ -59,7 +59,7 @@ const mainNavItems: NavItem[] = [
         icon: Mail,
     },
     {
-        title: 'Payment Confirmations',
+        title: 'Confirmations',
         href: route('orders.payment.index'),
         icon: CheckSquare,
     }
@@ -88,7 +88,7 @@ const adminNavItems: NavItem[] = [
         requiresPermission: 'view orders',
     },
     {
-        title: 'Dokumen Order',
+        title: 'Document Orders',
         href: route('admin.documents.all'),
         icon: Receipt,
         requiresRole: 'admin',
@@ -108,14 +108,14 @@ const adminNavItems: NavItem[] = [
         requiresRole: 'admin',
     },
     {
-        title: 'Kupon Diskon',
+        title: 'coupons',
         href: route('admin.coupons.index'),
         icon: TicketPercent,
         requiresRole: 'admin',
         requiresPermission: 'manage_settings',
     },
     {
-        title: 'Payment Confirmations',
+        title: 'Confirmations',
         href: route('admin.payment-confirmations.index'),
         icon: Receipt,
         requiresRole: 'admin',
