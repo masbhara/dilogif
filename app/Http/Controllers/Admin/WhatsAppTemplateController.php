@@ -22,7 +22,7 @@ class WhatsAppTemplateController extends Controller
             ->orderBy('order')
             ->get();
             
-        return Inertia::render('admin/notifications/WhatsAppTemplates', [
+        return Inertia::render('admin/notifications/Index', [
             'customerTemplates' => $customerTemplates,
             'adminTemplates' => $adminTemplates,
             'availableVariables' => WhatsAppTemplate::getAvailableVariables(),
@@ -67,7 +67,7 @@ class WhatsAppTemplateController extends Controller
 
         WhatsAppTemplate::create($validated);
 
-        return redirect()->route('admin.notifications.whatsapp-templates.index')
+        return redirect()->route('admin.notifications.index')
             ->with('success', 'Template berhasil dibuat');
     }
 
@@ -86,7 +86,7 @@ class WhatsAppTemplateController extends Controller
 
         $whatsAppTemplate->update($validated);
 
-        return redirect()->route('admin.notifications.whatsapp-templates.index')
+        return redirect()->route('admin.notifications.index')
             ->with('success', 'Template berhasil diperbarui');
     }
 
@@ -97,7 +97,7 @@ class WhatsAppTemplateController extends Controller
     {
         $whatsAppTemplate->delete();
 
-        return redirect()->route('admin.notifications.whatsapp-templates.index')
+        return redirect()->route('admin.notifications.index')
             ->with('success', 'Template berhasil dihapus');
     }
 

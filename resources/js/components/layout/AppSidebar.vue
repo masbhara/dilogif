@@ -123,7 +123,7 @@ const adminNavItems: NavItem[] = [
     },
     {
         title: 'WhatsApp Templates',
-        href: route('admin.notifications.whatsapp-templates.index'),
+        href: route('admin.notifications.index'),
         icon: MessageSquare,
         requiresRole: 'admin',
         requiresPermission: 'manage_settings',
