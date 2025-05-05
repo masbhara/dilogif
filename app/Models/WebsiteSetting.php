@@ -32,6 +32,9 @@ class WebsiteSetting extends Model
         'tiktok_pixel_script',
         'google_tag_script',
         'footer_scripts',
+        'webhook_api_key',
+        'webhook_url',
+        'webhook_is_active',
     ];
 
     /**

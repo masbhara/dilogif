@@ -9,6 +9,7 @@ use App\Models\Payment;
 use App\Models\PaymentMethod;
 use App\Models\Product;
 use App\Models\User;
+use App\Services\WhatsAppService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -19,6 +20,7 @@ use Inertia\Inertia;
 use App\Mail\UserCredentials;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -335,6 +337,21 @@ class OrderController extends Controller
                 \Cache::put('last_order_id', $order->id, now()->addHour());
                 \Cache::put('last_order_number', $order->order_number, now()->addHour());
                 \Cache::put('last_order_email', $request->customer_email, now()->addHour());
+                
+                // Kirim WhatsApp notifikasi
+                try {
+                    app(WhatsAppService::class)->sendOrderCreatedNotification($order);
+                    \Log::channel('daily')->info('Notifikasi WhatsApp berhasil dikirim', [
+                        'order_id' => $order->id,
+                        'order_number' => $order->order_number
+                    ]);
+                } catch (\Exception $e) {
+                    \Log::channel('daily')->error('Gagal mengirim notifikasi WhatsApp', [
+                        'order_id' => $order->id,
+                        'error' => $e->getMessage()
+                    ]);
+                    // Tidak throw exception untuk tidak menggagalkan order
+                }
                 
                 // Data untuk halaman thank you
                 $orderId = $order->id;

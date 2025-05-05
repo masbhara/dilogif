@@ -6,9 +6,11 @@ use App\Models\Order;
 use App\Models\Payment;
 use App\Models\PaymentConfirmation;
 use App\Models\PaymentMethod;
+use App\Services\WhatsAppService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 
 class PaymentConfirmationController extends Controller
 {
@@ -151,10 +153,47 @@ class PaymentConfirmationController extends Controller
             $payment->status = Payment::STATUS_COMPLETED;
             $payment->save();
             
-            // If you want to update order status as well
-            // $order = $payment->order;
-            // $order->status = Order::STATUS_PROCESSING;
-            // $order->save();
+            // Update order status to PROCESSING
+            $order = $payment->order;
+            $oldStatus = $order->status;
+            $order->status = Order::STATUS_PROCESSING;
+            $order->save();
+            
+            // Kirim notifikasi WhatsApp saat pembayaran dikonfirmasi
+            try {
+                app(WhatsAppService::class)->sendPaymentConfirmedNotification($order);
+                
+                \Log::info('Notifikasi WhatsApp pembayaran dikonfirmasi berhasil dikirim', [
+                    'order_id' => $order->id,
+                    'order_number' => $order->order_number,
+                    'payment_id' => $payment->id
+                ]);
+            } catch (\Exception $e) {
+                \Log::error('Gagal mengirim notifikasi WhatsApp pembayaran dikonfirmasi', [
+                    'order_id' => $order->id,
+                    'error' => $e->getMessage()
+                ]);
+                // Tidak throw exception untuk tidak menggagalkan update status
+            }
+            
+            // Kirim notifikasi perubahan status order jika status berubah
+            if ($oldStatus !== Order::STATUS_PROCESSING) {
+                try {
+                    app(WhatsAppService::class)->sendOrderStatusChangedNotification($order, $oldStatus);
+                    
+                    \Log::info('Notifikasi WhatsApp perubahan status order berhasil dikirim', [
+                        'order_id' => $order->id,
+                        'order_number' => $order->order_number,
+                        'old_status' => $oldStatus,
+                        'new_status' => $order->status
+                    ]);
+                } catch (\Exception $e) {
+                    \Log::error('Gagal mengirim notifikasi WhatsApp perubahan status order', [
+                        'order_id' => $order->id,
+                        'error' => $e->getMessage()
+                    ]);
+                }
+            }
         }
         
         return redirect()->back()->with('success', 'Status konfirmasi pembayaran berhasil diperbarui');

@@ -64,6 +64,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         Route::post('settings/logo', [SettingController::class, 'uploadLogo'])->name('settings.upload-logo');
         Route::post('settings/favicon', [SettingController::class, 'uploadFavicon'])->name('settings.upload-favicon');
         Route::post('settings/og-image', [SettingController::class, 'uploadOgImage'])->name('settings.upload-og-image');
+        Route::post('settings/update-webhook', [SettingController::class, 'updateWebhook'])->name('settings.update-webhook');
         
         // Coupon Routes
         Route::resource('coupons', \App\Http\Controllers\Admin\CouponController::class);

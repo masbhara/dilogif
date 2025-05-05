@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
+use App\Services\WhatsAppService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class AdminOrderController extends Controller
 {
@@ -104,12 +106,24 @@ class AdminOrderController extends Controller
             return redirect()->back()->withErrors($validator);
         }
         
-        $order->update([
-            'status' => $request->status,
-            'admin_notes' => $request->filled('admin_notes') ? $request->admin_notes : $order->admin_notes,
-        ]);
+        // Update status
+        $oldStatus = $order->status;
+        $order->status = $request->status;
         
-        return redirect()->back()->with('success', 'Status pesanan berhasil diperbarui');
+        if ($request->filled('admin_notes')) {
+            $order->admin_notes = $request->admin_notes;
+        }
+        
+        $order->save();
+
+        // Kirim notifikasi WhatsApp
+        try {
+            app(WhatsAppService::class)->sendOrderStatusChangedNotification($order, $oldStatus);
+        } catch (\Exception $e) {
+            Log::error('Gagal mengirim notifikasi WhatsApp perubahan status', ['error' => $e->getMessage()]);
+        }
+
+        return back()->with('success', 'Status order berhasil diperbarui');
     }
 
     /**

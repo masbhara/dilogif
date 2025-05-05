@@ -12,6 +12,7 @@ import { toast } from 'vue-sonner';
 import { Globe, FileCode, Upload, Image as ImageIcon, Mail as MailIcon, Settings, Phone, Share2, Plus, Trash2, Instagram, Facebook, Twitter, Youtube, Linkedin, X, Check } from 'lucide-vue-next';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
 
 // Define props
 const props = defineProps<{
@@ -34,6 +35,9 @@ const props = defineProps<{
     tiktok_pixel_script: string | null;
     google_tag_script: string | null;
     footer_scripts: string | null;
+    webhook_api_key: string | null;
+    webhook_url: string | null;
+    webhook_is_active: boolean;
   };
   mediaUrls: {
     logo: string | null;
@@ -76,6 +80,31 @@ const activeTab = ref('general');
 const isProcessing = ref(false);
 const showWhatsappDialog = ref(false);
 const showSocialDialog = ref(false);
+const showWebhookDialog = ref(false);
+
+// Form untuk pengaturan webhook
+const webhookForm = useForm({
+  api_key: props.settings?.webhook_api_key || '',
+  webhook_url: props.settings?.webhook_url || '',
+  is_active: props.settings?.webhook_is_active !== undefined ? props.settings.webhook_is_active : true,
+});
+
+// Method untuk menyimpan pengaturan webhook
+const saveWebhookSettings = () => {
+  webhookForm.post(route('admin.settings.update-webhook'), {
+    onSuccess: () => {
+      toast.success('Berhasil', {
+        description: 'Pengaturan webhook berhasil disimpan',
+      });
+      showWebhookDialog.value = false;
+    },
+    onError: () => {
+      toast.error('Gagal', {
+        description: 'Terjadi kesalahan saat menyimpan pengaturan webhook',
+      });
+    },
+  });
+};
 
 // Form untuk pengaturan umum
 const generalForm = useForm({
@@ -935,7 +964,7 @@ const getPlatformLabel = (platform: string) => {
                 <p class="text-sm text-gray-600 mb-4">
                   Kelola pengaturan webhook untuk WhatsApp Marketing dan integrasi lainnya.
                 </p>
-                <Button type="button" disabled>
+                <Button type="button" @click="showWebhookDialog = true">
                   <Settings class="mr-2 h-4 w-4" />
                   Buka Pengaturan Webhook
                 </Button>
@@ -1218,6 +1247,71 @@ const getPlatformLabel = (platform: string) => {
               </svg>
             </span>
             Tambahkan
+          </Button>
+        </DialogFooter>
+      </form>
+    </DialogContent>
+  </Dialog>
+
+  <!-- Dialog untuk Webhook Settings -->
+  <Dialog :open="showWebhookDialog" @update:open="showWebhookDialog = $event">
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Pengaturan WhatsApp Webhook</DialogTitle>
+        <DialogDescription>
+          Konfigurasi API dan webhook untuk integrasi WhatsApp Marketing
+        </DialogDescription>
+      </DialogHeader>
+      
+      <form @submit.prevent="saveWebhookSettings" class="space-y-4">
+        <div>
+          <Label for="api_key">API Key</Label>
+          <Input 
+            id="api_key" 
+            v-model="webhookForm.api_key" 
+            type="text" 
+            class="mt-1" 
+            placeholder="f75acb01-32d8-4448-8086-4aedce9f1d6f" 
+          />
+          <p class="mt-1 text-xs text-gray-500">
+            API Key dari layanan WhatsApp Marketing Anda
+          </p>
+        </div>
+        
+        <div>
+          <Label for="webhook_url">Webhook URL</Label>
+          <Input 
+            id="webhook_url" 
+            v-model="webhookForm.webhook_url" 
+            type="text" 
+            class="mt-1" 
+            placeholder="https://example.dripsender.id:14773/api/integration/uuid" 
+          />
+          <p class="mt-1 text-xs text-gray-500">
+            URL webhook untuk mengirim pesan otomatis
+          </p>
+        </div>
+
+        <div class="flex items-center space-x-2">
+          <Checkbox 
+            id="is_active" 
+            v-model="webhookForm.is_active"
+          />
+          <Label for="is_active">Aktifkan notifikasi WhatsApp</Label>
+        </div>
+        
+        <DialogFooter>
+          <Button type="button" variant="outline" @click="showWebhookDialog = false">
+            Batal
+          </Button>
+          <Button type="submit" :disabled="webhookForm.processing">
+            <span v-if="webhookForm.processing" class="mr-2">
+              <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" />
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+            </span>
+            Simpan Pengaturan
           </Button>
         </DialogFooter>
       </form>
