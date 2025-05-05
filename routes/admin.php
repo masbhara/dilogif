@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Http\Controllers\PaymentConfirmationController;
+use App\Http\Controllers\Admin\WhatsAppTemplateController;
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     // Dashboard Admin
@@ -151,5 +152,14 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         Route::get('payment-confirmations', [PaymentConfirmationController::class, 'index'])->name('payment-confirmations.index');
         Route::get('payment-confirmations/{confirmation}', [PaymentConfirmationController::class, 'show'])->name('payment-confirmations.show');
         Route::patch('payment-confirmations/{confirmation}/status', [PaymentConfirmationController::class, 'updateStatus'])->name('payment-confirmations.status.update');
+    });
+
+    // WhatsApp Template routes
+    Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('whatsapp-templates', [WhatsAppTemplateController::class, 'index'])->name('whatsapp-templates.index');
+        Route::post('whatsapp-templates', [WhatsAppTemplateController::class, 'store'])->name('whatsapp-templates.store');
+        Route::put('whatsapp-templates/{whatsAppTemplate}', [WhatsAppTemplateController::class, 'update'])->name('whatsapp-templates.update');
+        Route::delete('whatsapp-templates/{whatsAppTemplate}', [WhatsAppTemplateController::class, 'destroy'])->name('whatsapp-templates.destroy');
+        Route::patch('whatsapp-templates/{whatsAppTemplate}/toggle-active', [WhatsAppTemplateController::class, 'toggleActive'])->name('whatsapp-templates.toggle-active');
     });
 });

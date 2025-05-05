@@ -5,7 +5,7 @@ import NavUser from "@/components/layout/NavUser.vue";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
-import { LayoutGrid, UsersIcon, ShieldIcon, KeyIcon, Settings, Package, FolderTree, ShoppingBag, BarChart3, Receipt, Wallet, Mail, CreditCard, CheckSquare, TicketPercent } from 'lucide-vue-next';
+import { LayoutGrid, UsersIcon, ShieldIcon, KeyIcon, Settings, Package, FolderTree, ShoppingBag, BarChart3, Receipt, Wallet, Mail, CreditCard, CheckSquare, TicketPercent, MessageSquare } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 import { computed } from 'vue';
 
@@ -120,6 +120,13 @@ const adminNavItems: NavItem[] = [
         icon: Receipt,
         requiresRole: 'admin',
         requiresPermission: 'manage payments',
+    },
+    {
+        title: 'WhatsApp Templates',
+        href: route('admin.notifications.whatsapp-templates.index'),
+        icon: MessageSquare,
+        requiresRole: 'admin',
+        requiresPermission: 'manage_settings',
     },
     {
         title: 'Expenses',

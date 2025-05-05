@@ -33,6 +33,7 @@ class DatabaseSeeder extends Seeder
             PermissionRoleSeeder::class,
             PaymentMethodSeeder::class,
             PaymentPermissionSeeder::class,
+            WhatsAppTemplateSeeder::class,
         ]);
 
         // Buat role customer jika belum ada
