@@ -31,7 +31,6 @@
                                     :error="errors.name"
                                     required
                                 />
-                                <InputError :message="errors.name" />
                             </div>
                             
                             <!-- Template Type -->
@@ -44,7 +43,6 @@
                                     :error="errors.type"
                                     required
                                 />
-                                <InputError :message="errors.type" />
                             </div>
                             
                             <!-- Trigger Status -->
@@ -57,7 +55,6 @@
                                     :error="errors.trigger_status"
                                     required
                                 />
-                                <InputError :message="errors.trigger_status" />
                             </div>
                             
                             <!-- Order -->
@@ -71,7 +68,6 @@
                                     placeholder="Urutan tampilan"
                                     :error="errors.order"
                                 />
-                                <InputError :message="errors.order" />
                             </div>
                         </div>
                         
@@ -86,7 +82,6 @@
                                 :error="errors.message_template"
                                 required
                             />
-                            <InputError :message="errors.message_template" />
                             
                             <!-- Variabel yang tersedia -->
                             <div class="mt-3">
@@ -114,7 +109,6 @@
                                 placeholder="Deskripsi penggunaan template"
                                 :error="errors.description"
                             />
-                            <InputError :message="errors.description" />
                         </div>
                         
                         <!-- Active Status -->
@@ -149,7 +143,12 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeftIcon, LoaderIcon } from 'lucide-vue-next';
-import { Input, InputError, Label, Select, Textarea, Checkbox } from '@/components/ui/form';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Select } from '@/components/ui/select';
+import { InputError } from '@/components/ui/InputError.vue';
 import { toast } from 'vue-sonner';
 
 const props = defineProps({

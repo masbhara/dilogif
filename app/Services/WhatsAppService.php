@@ -19,11 +19,40 @@ class WhatsAppService
     public function __construct()
     {
         // Ambil pengaturan dari database
-        $settings = WebsiteSetting::first();
-        
-        $this->apiKey = $settings->webhook_api_key ?? env('DRIPSENDER_API_KEY');
-        $this->webhookUrl = $settings->webhook_url ?? env('DRIPSENDER_WEBHOOK_URL');
-        $this->isActive = $settings->webhook_is_active ?? false;
+        try {
+            $settings = WebsiteSetting::first();
+            
+            $this->apiKey = $settings->webhook_api_key ?? env('DRIPSENDER_API_KEY');
+            $this->webhookUrl = $settings->webhook_url ?? env('DRIPSENDER_WEBHOOK_URL');
+            $this->isActive = $settings->webhook_is_active ?? false;
+            
+            // Log konfigurasi saat service dimulai, tapi sembunyikan API key untuk keamanan
+            Log::info('WhatsApp service initialized', [
+                'api_key_set' => !empty($this->apiKey),
+                'webhook_url_set' => !empty($this->webhookUrl),
+                'is_active' => $this->isActive
+            ]);
+            
+            // Validasi konfigurasi
+            if ($this->isActive) {
+                if (empty($this->apiKey)) {
+                    Log::warning('WhatsApp notification is active but API key is empty');
+                }
+                
+                if (empty($this->webhookUrl)) {
+                    Log::warning('WhatsApp notification is active but webhook URL is empty');
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to initialize WhatsApp service', [
+                'error' => $e->getMessage()
+            ]);
+            
+            // Set default values
+            $this->apiKey = env('DRIPSENDER_API_KEY');
+            $this->webhookUrl = env('DRIPSENDER_WEBHOOK_URL');
+            $this->isActive = false;
+        }
     }
 
     /**

@@ -160,6 +160,44 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
 // Route sementara untuk perbaikan kupon
 Route::get('/fix-coupons', FixCouponController::class);
 
+// Tambahkan di akhir file sebelum akhir grup
+Route::get('/debug-whatsapp/{order}', function (\App\Models\Order $order) {
+    // Atur log level ke debug untuk melihat semua pesan
+    \Illuminate\Support\Facades\Log::info('Debugging WhatsApp notification', [
+        'order_id' => $order->id,
+        'order_number' => $order->order_number,
+        'customer_phone' => $order->customer_phone
+    ]);
+    
+    try {
+        // Cek konfigurasi WhatsApp
+        $settings = \App\Models\WebsiteSetting::first();
+        \Illuminate\Support\Facades\Log::info('WhatsApp configuration', [
+            'api_key' => !empty($settings->webhook_api_key) ? 'Set (not shown)' : 'Not set',
+            'webhook_url' => $settings->webhook_url ?? 'Not set',
+            'is_active' => $settings->webhook_is_active ?? false
+        ]);
+        
+        // Coba kirim notifikasi
+        $result = app(\App\Services\WhatsAppService::class)->sendOrderCreatedNotification($order);
+        
+        return response()->json([
+            'success' => $result,
+            'message' => $result ? 'Notification sent successfully' : 'Failed to send notification'
+        ]);
+    } catch (\Exception $e) {
+        \Illuminate\Support\Facades\Log::error('Error in debug WhatsApp', [
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage()
+        ], 500);
+    }
+})->middleware(['auth', 'role:admin']);
+
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
 require __DIR__.'/admin.php';
