@@ -34,7 +34,6 @@ class WhatsAppTemplateController extends Controller
                 WhatsAppTemplate::TRIGGER_COMPLETED => 'Selesai',
                 WhatsAppTemplate::TRIGGER_CANCELLED => 'Dibatalkan',
                 WhatsAppTemplate::TRIGGER_PAYMENT_CONFIRMED => 'Pembayaran Dikonfirmasi',
-                WhatsAppTemplate::TRIGGER_SHIPPED => 'Dikirim',
             ],
         ]);
     }

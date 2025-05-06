@@ -49,7 +49,6 @@ class WhatsAppTemplate extends Model
     const TRIGGER_COMPLETED = 'completed';
     const TRIGGER_CANCELLED = 'cancelled';
     const TRIGGER_PAYMENT_CONFIRMED = 'payment_confirmed';
-    const TRIGGER_SHIPPED = 'shipped';
 
     /**
      * The table associated with the model.
@@ -71,11 +70,9 @@ class WhatsAppTemplate extends Model
             '{payment_method}' => 'Metode pembayaran',
             '{status}' => 'Status pesanan',
             '{items_list}' => 'Daftar item pesanan',
-            '{shipping_cost}' => 'Biaya pengiriman',
             '{subtotal}' => 'Subtotal belanja',
             '{admin_fee}' => 'Biaya admin',
             '{discount}' => 'Diskon',
-            '{tracking_number}' => 'Nomor resi pengiriman',
         ];
     }
 
@@ -95,7 +92,6 @@ class WhatsAppTemplate extends Model
         $statusMap = [
             Order::STATUS_PENDING => 'Menunggu Pembayaran',
             Order::STATUS_PROCESSING => 'Sedang Diproses',
-            Order::STATUS_SHIPPED => 'Telah Dikirim',
             Order::STATUS_COMPLETED => 'Selesai',
             Order::STATUS_CANCELLED => 'Dibatalkan',
             Order::STATUS_REVIEW => 'Menunggu Review',
@@ -112,11 +108,9 @@ class WhatsAppTemplate extends Model
             '{payment_method}' => $order->payment->paymentMethod->name ?? 'Belum dipilih',
             '{status}' => $readableStatus,
             '{items_list}' => $itemsList,
-            '{shipping_cost}' => 'Rp ' . number_format($order->shipping_cost, 0, ',', '.'),
             '{subtotal}' => 'Rp ' . number_format($order->subtotal, 0, ',', '.'),
             '{admin_fee}' => 'Rp ' . number_format($order->admin_fee, 0, ',', '.'),
             '{discount}' => 'Rp ' . number_format($order->discount, 0, ',', '.'),
-            '{tracking_number}' => $order->tracking_number ?? 'Belum tersedia',
         ];
         
         // Ganti semua variabel dalam template

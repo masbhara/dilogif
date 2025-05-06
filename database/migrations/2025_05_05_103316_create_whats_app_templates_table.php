@@ -22,8 +22,7 @@ return new class extends Migration
                 'review',
                 'completed',
                 'cancelled',
-                'payment_confirmed',
-                'shipped'
+                'payment_confirmed'
             ]); // Status yang memicu
             $table->text('message_template'); // Template pesan dengan variabel {order_number} dll
             $table->text('description')->nullable(); // Deskripsi penggunaan template

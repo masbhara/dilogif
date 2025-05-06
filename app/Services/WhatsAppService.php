@@ -176,12 +176,6 @@ class WhatsAppService
                     case Order::STATUS_PROCESSING:
                         $message .= "Pesanan Anda sedang diproses. Mohon tunggu informasi selanjutnya.";
                         break;
-                    case Order::STATUS_SHIPPED:
-                        $message .= "Pesanan Anda telah dikirim. ";
-                        if ($order->tracking_number) {
-                            $message .= "Nomor resi: *{$order->tracking_number}*";
-                        }
-                        break;
                     case Order::STATUS_COMPLETED:
                         $message .= "Pesanan Anda telah selesai. Terima kasih telah berbelanja!";
                         break;
@@ -349,7 +343,6 @@ class WhatsAppService
         $statusMap = [
             Order::STATUS_PENDING => 'Menunggu Pembayaran',
             Order::STATUS_PROCESSING => 'Sedang Diproses',
-            Order::STATUS_SHIPPED => 'Telah Dikirim',
             Order::STATUS_COMPLETED => 'Selesai',
             Order::STATUS_CANCELLED => 'Dibatalkan',
             Order::STATUS_REVIEW => 'Menunggu Review',
@@ -494,7 +487,6 @@ class WhatsAppService
             Order::STATUS_REVIEW => WhatsAppTemplate::TRIGGER_REVIEW,
             Order::STATUS_COMPLETED => WhatsAppTemplate::TRIGGER_COMPLETED,
             Order::STATUS_CANCELLED => WhatsAppTemplate::TRIGGER_CANCELLED,
-            Order::STATUS_SHIPPED => WhatsAppTemplate::TRIGGER_SHIPPED,
         ];
         
         return $map[$orderStatus] ?? WhatsAppTemplate::TRIGGER_PROCESSING;

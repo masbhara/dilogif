@@ -26,7 +26,6 @@ class WhatsAppTemplateSeeder extends Seeder
                     . "*DETAIL PESANAN*\n"
                     . "{items_list}\n\n"
                     . "*SubTotal:* {subtotal}\n"
-                    . "*Pengiriman:* {shipping_cost}\n"
                     . "*Total:* {total_amount}\n\n"
                     . "Silakan lakukan pembayaran sesuai dengan instruksi yang diberikan. Terima kasih!",
                 'description' => 'Template untuk notifikasi order baru ke customer',
@@ -59,18 +58,6 @@ class WhatsAppTemplateSeeder extends Seeder
                 'order' => 3,
             ],
             [
-                'name' => 'Order Dikirim',
-                'type' => WhatsAppTemplate::TYPE_CUSTOMER,
-                'trigger_status' => WhatsAppTemplate::TRIGGER_SHIPPED,
-                'message_template' => "🔔 *UPDATE STATUS PESANAN*\n\n"
-                    . "*No. Order:* #{order_number}\n"
-                    . "*Status:* {status}\n\n"
-                    . "Pesanan Anda telah dikirim. Nomor resi: *{tracking_number}*",
-                'description' => 'Template untuk notifikasi status pesanan dikirim ke customer',
-                'is_active' => true,
-                'order' => 4,
-            ],
-            [
                 'name' => 'Order Selesai',
                 'type' => WhatsAppTemplate::TYPE_CUSTOMER,
                 'trigger_status' => WhatsAppTemplate::TRIGGER_COMPLETED,
@@ -80,7 +67,7 @@ class WhatsAppTemplateSeeder extends Seeder
                     . "Pesanan Anda telah selesai. Terima kasih telah berbelanja!",
                 'description' => 'Template untuk notifikasi status pesanan selesai ke customer',
                 'is_active' => true,
-                'order' => 5,
+                'order' => 4,
             ],
             [
                 'name' => 'Order Dibatalkan',
@@ -92,7 +79,7 @@ class WhatsAppTemplateSeeder extends Seeder
                     . "Pesanan Anda telah dibatalkan. Silakan hubungi kami untuk informasi lebih lanjut.",
                 'description' => 'Template untuk notifikasi status pesanan dibatalkan ke customer',
                 'is_active' => true,
-                'order' => 6,
+                'order' => 5,
             ],
             
             // Template untuk admin
@@ -111,7 +98,7 @@ class WhatsAppTemplateSeeder extends Seeder
                     . "Silakan cek dashboard admin untuk detail lebih lanjut.",
                 'description' => 'Template untuk notifikasi order baru ke admin',
                 'is_active' => true,
-                'order' => 7,
+                'order' => 6,
             ],
             [
                 'name' => 'Notifikasi Konfirmasi Pembayaran ke Admin',
@@ -124,7 +111,7 @@ class WhatsAppTemplateSeeder extends Seeder
                     . "Ada konfirmasi pembayaran baru. Silakan cek dashboard admin untuk verifikasi.",
                 'description' => 'Template untuk notifikasi pembayaran baru ke admin',
                 'is_active' => true,
-                'order' => 8,
+                'order' => 7,
             ],
         ];
         
