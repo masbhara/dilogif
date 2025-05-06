@@ -157,9 +157,14 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // WhatsApp Template routes
     Route::prefix('notifications')->name('notifications.')->group(function () {
         Route::get('/', [WhatsAppTemplateController::class, 'index'])->name('index');
+        Route::get('/create', [WhatsAppTemplateController::class, 'create'])->name('create');
+        Route::get('/{template}', [WhatsAppTemplateController::class, 'show'])->name('show');
+        Route::get('/{template}/edit', [WhatsAppTemplateController::class, 'edit'])->name('edit');
+        
+        // API endpoints untuk operasi CRUD
         Route::post('/whatsapp-templates', [WhatsAppTemplateController::class, 'store'])->name('whatsapp-templates.store');
-        Route::put('/whatsapp-templates/{whatsAppTemplate}', [WhatsAppTemplateController::class, 'update'])->name('whatsapp-templates.update');
-        Route::delete('/whatsapp-templates/{whatsAppTemplate}', [WhatsAppTemplateController::class, 'destroy'])->name('whatsapp-templates.destroy');
-        Route::patch('/whatsapp-templates/{whatsAppTemplate}/toggle-active', [WhatsAppTemplateController::class, 'toggleActive'])->name('whatsapp-templates.toggle-active');
+        Route::put('/whatsapp-templates/{template}', [WhatsAppTemplateController::class, 'update'])->name('whatsapp-templates.update');
+        Route::delete('/whatsapp-templates/{template}', [WhatsAppTemplateController::class, 'destroy'])->name('whatsapp-templates.destroy');
+        Route::patch('/whatsapp-templates/{template}/toggle-active', [WhatsAppTemplateController::class, 'toggleActive'])->name('whatsapp-templates.toggle-active');
     });
 });
